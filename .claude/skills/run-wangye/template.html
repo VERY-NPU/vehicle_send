@@ -20,330 +20,332 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.6;
-    padding: 20px;
+    line-height: 1.5;
+    padding: 12px;
     min-height: 100vh;
   }
-  .container { max-width: 1200px; margin: 0 auto; }
+  .container { max-width: 1400px; margin: 0 auto; }
 
-  /* Header */
+  /* ====== Compact Header ====== */
   header {
-    text-align: center;
-    padding: 40px 20px 30px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 12px;
   }
   header h1 {
-    font-size: 2.2em;
+    font-size: 1.15em;
     background: linear-gradient(135deg, var(--accent), #f97316);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  header .subtitle {
+  header .meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.78em;
     color: var(--text2);
-    font-size: 0.95em;
-    margin-top: 8px;
-  }
-  header .update-time {
-    color: var(--text2);
-    font-size: 0.85em;
-    margin-top: 4px;
   }
 
-  /* AI Special Section */
+  /* ====== AI Special Section — Compact ====== */
   .ai-section {
-    background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(139,92,246,0.05));
+    background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(139,92,246,0.04));
     border: 1px solid rgba(124,58,237,0.3);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 30px;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
   }
   .ai-section .section-title {
     color: #a78bfa;
-    font-size: 1.3em;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 1em;
+    margin-bottom: 8px;
   }
-  .ai-section .section-title::before {
-    content: '🔥';
-    font-size: 1.2em;
+  .ai-section .section-title::before { content: '🔥 '; }
+
+  /* ====== Two-Column Layout ====== */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  @media (max-width: 900px) {
+    .two-col { grid-template-columns: 1fr; }
   }
 
-  /* Region Sections */
-  .region { margin-bottom: 30px; }
-  .region-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.5em;
-    padding: 12px 0;
-    border-bottom: 2px solid var(--border);
-    margin-bottom: 20px;
-  }
-  .region-header .flag { font-size: 1.2em; }
-
-  /* Category Tabs */
-  .category-tabs {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  .category-tab {
-    padding: 6px 16px;
+  .region {
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .region-header {
+    font-size: 0.95em;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  /* ====== Tabs ====== */
+  .category-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 6px 10px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .category-tab {
+    padding: 3px 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 14px;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.75em;
     color: var(--text2);
-    transition: all 0.2s;
+    transition: all 0.15s;
+    white-space: nowrap;
   }
   .category-tab:hover, .category-tab.active {
-    background: rgba(245,158,11,0.15);
-    border-color: var(--accent);
+    background: rgba(245,158,11,0.12);
+    border-color: rgba(245,158,11,0.3);
     color: var(--accent);
   }
 
-  /* Category Section */
-  .category-section { margin-bottom: 24px; }
-  .category-title {
-    font-size: 1.1em;
+  /* ====== News List ====== */
+  .category-section { padding: 8px 12px; }
+  .category-section .cat-label {
+    font-size: 0.72em;
     color: var(--accent2);
-    margin-bottom: 12px;
-    padding-left: 12px;
-    border-left: 3px solid var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    padding-left: 2px;
   }
+  .news-list { display: flex; flex-direction: column; gap: 6px; }
 
-  /* News Grid */
-  .news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 16px;
+  /* ====== Compact News Item ====== */
+  .news-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    transition: border-color 0.15s;
+    align-items: flex-start;
   }
-
-  /* News Card */
-  .news-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-  .news-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent);
-  }
-  .news-card-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    background: #1f2937;
+  .news-item:hover { border-color: var(--border); }
+  .news-item .thumb {
+    width: 70px;
+    height: 50px;
+    border-radius: 5px;
+    background: #1a1f2e;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text2);
-    font-size: 2.5em;
+    font-size: 1.4em;
+    overflow: hidden;
   }
-  .news-card-img img {
+  .news-item .thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  .news-card-body { padding: 16px; }
-  .news-card-body .card-tag {
-    display: inline-block;
-    font-size: 0.75em;
-    padding: 2px 8px;
-    border-radius: 4px;
-    background: rgba(16,185,129,0.15);
-    color: var(--accent2);
-    margin-bottom: 6px;
+  .news-item .info {
+    flex: 1;
+    min-width: 0;
   }
-  .news-card-body .card-tag.ai-tag {
-    background: rgba(124,58,237,0.15);
+  .news-item .info .tag {
+    display: inline-block;
+    font-size: 0.65em;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(16,185,129,0.12);
+    color: var(--accent2);
+    margin-bottom: 2px;
+  }
+  .news-item .info .tag.ai-tag {
+    background: rgba(124,58,237,0.12);
     color: #a78bfa;
   }
-  .news-card-body h3 {
-    font-size: 1em;
-    line-height: 1.4;
-    margin-bottom: 8px;
+  .news-item .info h3 {
+    font-size: 0.85em;
+    line-height: 1.35;
+    font-weight: 600;
   }
-  .news-card-body h3 a {
+  .news-item .info h3 a {
     color: var(--text);
     text-decoration: none;
   }
-  .news-card-body h3 a:hover { color: var(--accent); }
-  .news-card-body p {
+  .news-item .info h3 a:hover { color: var(--accent); }
+  .news-item .info .summary {
     color: var(--text2);
-    font-size: 0.88em;
-    line-height: 1.6;
+    font-size: 0.75em;
+    line-height: 1.4;
+    margin-top: 2px;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .news-card-body .source {
-    margin-top: 10px;
-    font-size: 0.8em;
-    color: var(--text2);
+  .news-item .info .meta-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    margin-top: 3px;
+    font-size: 0.7em;
+    color: var(--text2);
+    gap: 8px;
   }
-  .news-card-body .source a {
+  .news-item .info .meta-row a {
     color: var(--accent);
     text-decoration: none;
+    flex-shrink: 0;
   }
-  .news-card-body .source a:hover { text-decoration: underline; }
+  .news-item .info .meta-row a:hover { text-decoration: underline; }
 
-  /* Footer */
-  footer {
-    text-align: center;
-    padding: 30px;
-    color: var(--text2);
-    font-size: 0.85em;
-    border-top: 1px solid var(--border);
-    margin-top: 40px;
+  /* ====== AI News Item (compact) ====== */
+  .ai-section .news-list { gap: 6px; }
+  .ai-section .news-item {
+    background: rgba(124,58,237,0.04);
   }
 
-  /* Empty state */
+  /* ====== Empty state ====== */
   .empty-state {
     text-align: center;
-    padding: 40px;
+    padding: 16px;
     color: var(--text2);
+    font-size: 0.8em;
   }
-  .empty-state .icon { font-size: 3em; margin-bottom: 12px; }
 
-  /* Responsive */
+  /* ====== Footer ====== */
+  footer {
+    text-align: center;
+    padding: 10px;
+    color: var(--text2);
+    font-size: 0.72em;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ====== Responsive ====== */
   @media (max-width: 768px) {
-    header h1 { font-size: 1.5em; }
-    .news-grid { grid-template-columns: 1fr; }
-    .news-card-img { height: 140px; }
+    header { flex-direction: column; align-items: flex-start; }
+    .news-item .thumb { width: 50px; height: 38px; font-size: 1em; }
+    .news-item .info h3 { font-size: 0.8em; }
   }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- Header -->
+  <!-- Compact Header -->
   <header>
     <h1>🚀 装甲车辆每日资讯</h1>
-    <div class="subtitle">国内外坦克 · 装甲车 · 火炮 · AI 军事应用</div>
-    <div class="update-time">🕐 更新于: {{UPDATE_TIME}}</div>
+    <div class="meta">
+      <span>坦克 · 装甲车 · 火炮 · AI 军事应用</span>
+      <span>🕐 {{UPDATE_TIME}}</span>
+    </div>
   </header>
 
-  <!-- AI + Armor Special Section (TOP) -->
+  <!-- AI + Armor (TOP) -->
   <div class="ai-section">
     <div class="section-title">AI + 装甲 前沿动态</div>
-    <div class="news-grid">
-      {{AI_NEWS_CARDS}}
+    <div class="news-list">
+      {{AI_NEWS_ITEMS}}
       {{AI_NEWS_EMPTY}}
     </div>
   </div>
 
-  <!-- Domestic -->
-  <div class="region">
-    <div class="region-header"><span class="flag">🇨🇳</span> 国内资讯</div>
+  <!-- Two-Column: Domestic | International -->
+  <div class="two-col">
 
-    <div class="category-tabs">
-      <span class="category-tab active" onclick="filterCategory(this,'cn-tank')">🏗️ 坦克</span>
-      <span class="category-tab" onclick="filterCategory(this,'cn-artillery')">🔫 火炮</span>
-      <span class="category-tab" onclick="filterCategory(this,'cn-afv')">🚛 装甲车辆</span>
-      <span class="category-tab" onclick="filterCategory(this,'cn-ai')">🤖 AI 应用</span>
-      <span class="category-tab" onclick="filterCategory(this,'all')">📋 全部</span>
-    </div>
-
-    <div id="cn-tank" class="category-section">
-      <div class="category-title">🏗️ 坦克</div>
-      <div class="news-grid">{{CN_TANK_CARDS}}{{CN_TANK_EMPTY}}</div>
-    </div>
-    <div id="cn-artillery" class="category-section">
-      <div class="category-title">🔫 火炮</div>
-      <div class="news-grid">{{CN_ARTILLERY_CARDS}}{{CN_ARTILLERY_EMPTY}}</div>
-    </div>
-    <div id="cn-afv" class="category-section">
-      <div class="category-title">🚛 装甲车辆</div>
-      <div class="news-grid">{{CN_AFV_CARDS}}{{CN_AFV_EMPTY}}</div>
-    </div>
-    <div id="cn-ai" class="category-section">
-      <div class="category-title">🤖 AI 应用</div>
-      <div class="news-grid">{{CN_AI_CARDS}}{{CN_AI_EMPTY}}</div>
-    </div>
-  </div>
-
-  <!-- International -->
-  <div class="region">
-    <div class="region-header"><span class="flag">🌍</span> 国际资讯</div>
-
-    <div class="category-tabs">
-      <span class="category-tab active" onclick="filterCategory(this,'int-tank')">🏗️ 坦克</span>
-      <span class="category-tab" onclick="filterCategory(this,'int-artillery')">🔫 火炮</span>
-      <span class="category-tab" onclick="filterCategory(this,'int-afv')">🚛 装甲车辆</span>
-      <span class="category-tab" onclick="filterCategory(this,'int-ai')">🤖 AI 应用</span>
-      <span class="category-tab" onclick="filterCategory(this,'all')">📋 全部</span>
+    <!-- 🇨🇳 Domestic -->
+    <div class="region">
+      <div class="region-header">🇨🇳 国内资讯</div>
+      <div class="category-tabs">
+        <span class="category-tab active" onclick="filterCat(this,'cn-','all')">📋 全部</span>
+        <span class="category-tab" onclick="filterCat(this,'cn-','tank')">🏗️ 坦克</span>
+        <span class="category-tab" onclick="filterCat(this,'cn-','artillery')">🔫 火炮</span>
+        <span class="category-tab" onclick="filterCat(this,'cn-','afv')">🚛 装甲车</span>
+        <span class="category-tab" onclick="filterCat(this,'cn-','ai')">🤖 AI</span>
+      </div>
+      <div class="cn-all" style="display:block">
+        <div class="news-list">{{CN_ALL_ITEMS}}{{CN_ALL_EMPTY}}</div>
+      </div>
+      <div class="cn-tank" style="display:none">
+        <div class="news-list">{{CN_TANK_ITEMS}}{{CN_TANK_EMPTY}}</div>
+      </div>
+      <div class="cn-artillery" style="display:none">
+        <div class="news-list">{{CN_ARTILLERY_ITEMS}}{{CN_ARTILLERY_EMPTY}}</div>
+      </div>
+      <div class="cn-afv" style="display:none">
+        <div class="news-list">{{CN_AFV_ITEMS}}{{CN_AFV_EMPTY}}</div>
+      </div>
+      <div class="cn-ai" style="display:none">
+        <div class="news-list">{{CN_AI_ITEMS}}{{CN_AI_EMPTY}}</div>
+      </div>
     </div>
 
-    <div id="int-tank" class="category-section">
-      <div class="category-title">🏗️ 坦克</div>
-      <div class="news-grid">{{INT_TANK_CARDS}}{{INT_TANK_EMPTY}}</div>
+    <!-- 🌍 International -->
+    <div class="region">
+      <div class="region-header">🌍 国际资讯</div>
+      <div class="category-tabs">
+        <span class="category-tab active" onclick="filterCat(this,'int-','all')">📋 全部</span>
+        <span class="category-tab" onclick="filterCat(this,'int-','tank')">🏗️ 坦克</span>
+        <span class="category-tab" onclick="filterCat(this,'int-','artillery')">🔫 火炮</span>
+        <span class="category-tab" onclick="filterCat(this,'int-','afv')">🚛 装甲车</span>
+        <span class="category-tab" onclick="filterCat(this,'int-','ai')">🤖 AI</span>
+      </div>
+      <div class="int-all" style="display:block">
+        <div class="news-list">{{INT_ALL_ITEMS}}{{INT_ALL_EMPTY}}</div>
+      </div>
+      <div class="int-tank" style="display:none">
+        <div class="news-list">{{INT_TANK_ITEMS}}{{INT_TANK_EMPTY}}</div>
+      </div>
+      <div class="int-artillery" style="display:none">
+        <div class="news-list">{{INT_ARTILLERY_ITEMS}}{{INT_ARTILLERY_EMPTY}}</div>
+      </div>
+      <div class="int-afv" style="display:none">
+        <div class="news-list">{{INT_AFV_ITEMS}}{{INT_AFV_EMPTY}}</div>
+      </div>
+      <div class="int-ai" style="display:none">
+        <div class="news-list">{{INT_AI_ITEMS}}{{INT_AI_EMPTY}}</div>
+      </div>
     </div>
-    <div id="int-artillery" class="category-section">
-      <div class="category-title">🔫 火炮</div>
-      <div class="news-grid">{{INT_ARTILLERY_CARDS}}{{INT_ARTILLERY_EMPTY}}</div>
-    </div>
-    <div id="int-afv" class="category-section">
-      <div class="category-title">🚛 装甲车辆</div>
-      <div class="news-grid">{{INT_AFV_CARDS}}{{INT_AFV_EMPTY}}</div>
-    </div>
-    <div id="int-ai" class="category-section">
-      <div class="category-title">🤖 AI 应用</div>
-      <div class="news-grid">{{INT_AI_CARDS}}{{INT_AI_EMPTY}}</div>
-    </div>
+
   </div>
 
   <!-- Footer -->
   <footer>
-    <div>📡 资讯来源: 综合网络搜索 · 仅供学习参考</div>
-    <div style="margin-top:4px;">🕐 {{UPDATE_TIME}}</div>
+    <div>📡 资讯来源: 综合网络搜索 · 仅供学习参考 · {{UPDATE_TIME}}</div>
   </footer>
 
 </div>
 
 <script>
-function filterCategory(el, target) {
-  // Toggle active tab
-  const parent = el.parentElement;
-  parent.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+function filterCat(el, prefix, cat) {
+  // Highlight active tab
+  const tabs = el.parentElement.querySelectorAll('.category-tab');
+  tabs.forEach(t => t.classList.remove('active'));
   el.classList.add('active');
 
-  // Find sibling category sections
-  const region = parent.nextElementSibling;
-  if (target === 'all') {
-    let sib = region;
-    while (sib && sib.classList.contains('category-section')) {
-      sib.style.display = 'block';
-      sib = sib.nextElementSibling;
-    }
-    return;
-  }
-  let sib = region;
-  while (sib && sib.classList.contains('category-section')) {
-    sib.style.display = sib.id === target ? 'block' : 'none';
-    sib = sib.nextElementSibling;
-  }
-}
-
-// Show all on load
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.region').forEach(region => {
-    const firstTab = region.querySelector('.category-tab');
-    if (firstTab) firstTab.click();
+  // Show/hide category containers
+  const region = el.parentElement.parentElement;
+  const allCats = ['all','tank','artillery','afv','ai'];
+  allCats.forEach(c => {
+    const div = region.querySelector('.' + prefix + c);
+    if (div) div.style.display = (c === cat) ? 'block' : 'none';
   });
-});
+}
 </script>
 </body>
 </html>

@@ -48,20 +48,20 @@ function readStdin() {
    Card HTML Builder
    ============================================================ */
 
-function makeCard(item, isAi = false) {
+function makeItem(item, isAi = false) {
   const tag = item.tag || item.category || '综合';
   const imgHtml = item.image
     ? `<img src="${item.image}" alt="${escapeHtml(item.title)}" loading="lazy">`
     : getCategoryIcon(item.category || tag);
-  const tagClass = isAi ? 'card-tag ai-tag' : 'card-tag';
+  const tagClass = isAi ? 'tag ai-tag' : 'tag';
   return `
-    <div class="news-card">
-      <div class="news-card-img">${imgHtml}</div>
-      <div class="news-card-body">
+    <div class="news-item">
+      <div class="thumb">${imgHtml}</div>
+      <div class="info">
         <span class="${tagClass}">${escapeHtml(tag)}</span>
         <h3><a href="${item.url || '#'}" target="_blank" rel="noopener">${escapeHtml(item.title)}</a></h3>
-        <p>${escapeHtml(item.summary || item.description || '')}</p>
-        <div class="source">
+        <div class="summary">${escapeHtml(item.summary || item.description || '')}</div>
+        <div class="meta-row">
           <span>${escapeHtml(item.source || item.from || '网络')}</span>
           <a href="${item.url || '#'}" target="_blank" rel="noopener">阅读原文 →</a>
         </div>
@@ -78,7 +78,7 @@ function getCategoryIcon(category) {
     '综合': '📋',
   };
   const icon = icons[category] || '📰';
-  return `<span style="font-size:2.5em;">${icon}</span>`;
+  return `<span style="font-size:1.4em;">${icon}</span>`;
 }
 
 function escapeHtml(s) {
@@ -102,55 +102,64 @@ function generateHTML(data) {
   let html = readFileSync(TEMPLATE, 'utf8');
   const updateTime = now();
 
-  // Build cards for each section
-  const sections = {
-    ai: data.ai || [],
-    cn_tank: (data.cn || []).filter(i => matchesCategory(i, ['tank','坦克'])),
-    cn_artillery: (data.cn || []).filter(i => matchesCategory(i, ['artillery','artillery','火炮','榴弹炮'])),
-    cn_afv: (data.cn || []).filter(i => matchesCategory(i, ['afv','装甲车','装甲车辆','步战车','步兵战车'])),
-    cn_ai: (data.cn || []).filter(i => matchesCategory(i, ['ai','AI','人工智能','无人','自主'])),
-    int_tank: (data.int || []).filter(i => matchesCategory(i, ['tank','坦克'])),
-    int_artillery: (data.int || []).filter(i => matchesCategory(i, ['artillery','artillery','火炮','榴弹炮'])),
-    int_afv: (data.int || []).filter(i => matchesCategory(i, ['afv','装甲车','装甲车辆','步战车','步兵战车'])),
-    int_ai: (data.int || []).filter(i => matchesCategory(i, ['ai','AI','人工智能','无人','自主'])),
-  };
+  // Build sections
+  const cnAll = data.cn || [];
+  const intAll = data.int || [];
+  const aiAll = data.ai || [];
 
-  // Also tag AI-related items across all sections for the AI special section
-  const allAiItems = [
-    ...(data.ai || []),
-    ...(data.cn || []).filter(i => matchesCategory(i, ['ai','AI','人工智能','无人','自主','智能'])),
-    ...(data.int || []).filter(i => matchesCategory(i, ['ai','AI','人工智能','无人','自主','智能'])),
-  ];
-
-  // Deduplicate AI items
-  const seenUrls = new Set();
+  // Also collect AI-related items from cn/int for AI section
+  const cnAiItems = cnAll.filter(i => matchesCategory(i, ['ai','AI','人工智能','无人','自主','智能']));
+  const intAiItems = intAll.filter(i => matchesCategory(i, ['ai','AI','人工智能','无人','自主','智能']));
+  const allAiItems = [...aiAll, ...cnAiItems, ...intAiItems];
+  // Deduplicate
+  const seenAis = new Set();
   const dedupedAi = allAiItems.filter(i => {
-    const key = i.url || i.title;
-    if (seenUrls.has(key)) return false;
-    seenUrls.add(key);
+    const k = i.url || i.title;
+    if (seenAis.has(k)) return false;
+    seenAis.add(k);
     return true;
   });
 
-  const templateData = {};
-  const sectionKeys = ['ai','cn_tank','cn_artillery','cn_afv','cn_ai','int_tank','int_artillery','int_afv','int_ai'];
+  const cats = {
+    cn_tank:   cnAll.filter(i => matchesCategory(i, ['tank','坦克'])),
+    cn_artillery: cnAll.filter(i => matchesCategory(i, ['artillery','artillery','火炮','榴弹炮','火箭炮'])),
+    cn_afv:    cnAll.filter(i => matchesCategory(i, ['afv','装甲车','装甲车辆','步战车','步兵战车','输送车'])),
+    cn_ai:     cnAiItems,
+    int_tank:  intAll.filter(i => matchesCategory(i, ['tank','坦克'])),
+    int_artillery: intAll.filter(i => matchesCategory(i, ['artillery','artillery','火炮','榴弹炮','火箭炮'])),
+    int_afv:   intAll.filter(i => matchesCategory(i, ['afv','装甲车','装甲车辆','步战车','步兵战车','输送车'])),
+    int_ai:    intAiItems,
+  };
 
-  for (const key of sectionKeys) {
-    const items = key === 'ai' ? dedupedAi : sections[key];
-    const isAi = key === 'ai';
+  function fill(key, items, isAi = false) {
+    const upper = key.toUpperCase();
     if (items.length > 0) {
-      templateData[`${key.toUpperCase()}_CARDS`] = items.map(i => makeCard(i, isAi)).join('\n');
-      templateData[`${key.toUpperCase()}_EMPTY`] = '';
+      templateData[`${upper}_ITEMS`] = items.map(i => makeItem(i, isAi || (key === 'ai'))).join('\n');
+      templateData[`${upper}_EMPTY`] = '';
     } else {
-      templateData[`${key.toUpperCase()}_CARDS`] = '';
-      templateData[`${key.toUpperCase()}_EMPTY`] = `<div class="empty-state"><div class="icon">📭</div><p>暂无相关资讯</p></div>`;
+      templateData[`${upper}_ITEMS`] = '';
+      templateData[`${upper}_EMPTY`] = `<div class="empty-state">📭 暂无相关资讯</div>`;
     }
   }
 
+  const templateData = {};
+  fill('ai', dedupedAi, true);
+  fill('cn_all', cnAll);
+  fill('cn_tank', cats.cn_tank);
+  fill('cn_artillery', cats.cn_artillery);
+  fill('cn_afv', cats.cn_afv);
+  fill('cn_ai', cats.cn_ai, true);
+  fill('int_all', intAll);
+  fill('int_tank', cats.int_tank);
+  fill('int_artillery', cats.int_artillery);
+  fill('int_afv', cats.int_afv);
+  fill('int_ai', cats.int_ai, true);
+
   // Replace all placeholders
   for (const [key, value] of Object.entries(templateData)) {
-    html = html.replace(new RegExp(`{{${key}}}`, 'g'), value);
+    html = html.split(`{{${key}}}`).join(value);
   }
-  html = html.replace(/{{UPDATE_TIME}}/g, updateTime);
+  html = html.split('{{UPDATE_TIME}}').join(updateTime);
 
   const outPath = resolve(DOCS, 'index.html');
   writeFileSync(outPath, html, 'utf8');
