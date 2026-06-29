@@ -13,7 +13,7 @@
     --text: #f3f4f6;
     --text2: #9ca3af;
     --border: #1f2937;
-    --ai-highlight: #7c3aed;
+    --fav-color: #eab308;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -26,8 +26,8 @@
   }
   .container { max-width: 1400px; margin: 0 auto; }
 
-  /* ====== Compact Header ====== */
-  header {
+  /* ====== Top Bar ====== */
+  .top-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -39,22 +39,55 @@
     border-radius: 10px;
     margin-bottom: 12px;
   }
-  header h1 {
+  .top-bar h1 {
     font-size: 1.15em;
     background: linear-gradient(135deg, var(--accent), #f97316);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  header .meta {
+  .top-bar .right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     font-size: 0.78em;
     color: var(--text2);
   }
+  .top-bar .fav-toggle {
+    padding: 5px 14px;
+    background: rgba(234,179,8,0.12);
+    border: 1px solid rgba(234,179,8,0.3);
+    border-radius: 16px;
+    cursor: pointer;
+    color: var(--fav-color);
+    font-size: 0.85em;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .top-bar .fav-toggle:hover { background: rgba(234,179,8,0.2); }
+  .top-bar .fav-count {
+    background: var(--fav-color);
+    color: #000;
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 0.75em;
+    font-weight: 700;
+    margin-left: 2px;
+  }
 
-  /* ====== AI Special Section — Compact ====== */
+  /* ====== Favorites Panel ====== */
+  #fav-panel {
+    display: none;
+    background: var(--card-bg);
+    border: 2px solid rgba(234,179,8,0.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+  }
+  #fav-panel h2 { font-size: 1em; color: var(--fav-color); margin-bottom: 8px; }
+  #fav-panel .fav-empty { color: var(--text2); font-size: 0.8em; text-align: center; padding: 12px; }
+
+  /* ====== AI Section ====== */
   .ai-section {
     background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(139,92,246,0.04));
     border: 1px solid rgba(124,58,237,0.3);
@@ -62,23 +95,17 @@
     padding: 10px 14px;
     margin-bottom: 12px;
   }
-  .ai-section .section-title {
-    color: #a78bfa;
-    font-size: 1em;
-    margin-bottom: 8px;
-  }
+  .ai-section .section-title { color: #a78bfa; font-size: 1em; margin-bottom: 8px; }
   .ai-section .section-title::before { content: '🔥 '; }
 
-  /* ====== Two-Column Layout ====== */
+  /* ====== Two-Column ====== */
   .two-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-bottom: 12px;
   }
-  @media (max-width: 900px) {
-    .two-col { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 
   .region {
     background: var(--card-bg);
@@ -120,18 +147,9 @@
   }
 
   /* ====== News List ====== */
-  .category-section { padding: 8px 12px; }
-  .category-section .cat-label {
-    font-size: 0.72em;
-    color: var(--accent2);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-    padding-left: 2px;
-  }
+  .cat-section { padding: 8px 12px; }
   .news-list { display: flex; flex-direction: column; gap: 6px; }
 
-  /* ====== Compact News Item ====== */
   .news-item {
     display: flex;
     gap: 10px;
@@ -141,6 +159,7 @@
     border-radius: 8px;
     transition: border-color 0.15s;
     align-items: flex-start;
+    position: relative;
   }
   .news-item:hover { border-color: var(--border); }
   .news-item .thumb {
@@ -155,15 +174,8 @@
     font-size: 1.4em;
     overflow: hidden;
   }
-  .news-item .thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .news-item .info {
-    flex: 1;
-    min-width: 0;
-  }
+  .news-item .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .news-item .info { flex: 1; min-width: 0; }
   .news-item .info .tag {
     display: inline-block;
     font-size: 0.65em;
@@ -173,19 +185,9 @@
     color: var(--accent2);
     margin-bottom: 2px;
   }
-  .news-item .info .tag.ai-tag {
-    background: rgba(124,58,237,0.12);
-    color: #a78bfa;
-  }
-  .news-item .info h3 {
-    font-size: 0.85em;
-    line-height: 1.35;
-    font-weight: 600;
-  }
-  .news-item .info h3 a {
-    color: var(--text);
-    text-decoration: none;
-  }
+  .news-item .info .tag.ai-tag { background: rgba(124,58,237,0.12); color: #a78bfa; }
+  .news-item .info h3 { font-size: 0.85em; line-height: 1.35; font-weight: 600; }
+  .news-item .info h3 a { color: var(--text); text-decoration: none; }
   .news-item .info h3 a:hover { color: var(--accent); }
   .news-item .info .summary {
     color: var(--text2);
@@ -206,69 +208,73 @@
     color: var(--text2);
     gap: 8px;
   }
-  .news-item .info .meta-row a {
-    color: var(--accent);
-    text-decoration: none;
-    flex-shrink: 0;
-  }
+  .news-item .info .meta-row a { color: var(--accent); text-decoration: none; flex-shrink: 0; }
   .news-item .info .meta-row a:hover { text-decoration: underline; }
 
-  /* ====== AI News Item (compact) ====== */
-  .ai-section .news-list { gap: 6px; }
-  .ai-section .news-item {
-    background: rgba(124,58,237,0.04);
-  }
-
-  /* ====== Empty state ====== */
-  .empty-state {
-    text-align: center;
-    padding: 16px;
+  /* ====== Favorite Button ====== */
+  .fav-btn {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
     color: var(--text2);
-    font-size: 0.8em;
+    transition: all 0.15s;
+    padding: 2px 4px;
+    line-height: 1;
   }
+  .fav-btn:hover { color: var(--fav-color); transform: scale(1.2); }
+  .fav-btn.is-fav { color: var(--fav-color); }
+
+  /* ====== AI Section Items ====== */
+  .ai-section .news-item { background: rgba(124,58,237,0.04); }
+
+  /* ====== Empty State ====== */
+  .empty-state { text-align: center; padding: 16px; color: var(--text2); font-size: 0.8em; }
 
   /* ====== Footer ====== */
-  footer {
-    text-align: center;
-    padding: 10px;
-    color: var(--text2);
-    font-size: 0.72em;
-    border-top: 1px solid var(--border);
-  }
+  footer { text-align: center; padding: 10px; color: var(--text2); font-size: 0.72em; border-top: 1px solid var(--border); }
 
   /* ====== Responsive ====== */
   @media (max-width: 768px) {
-    header { flex-direction: column; align-items: flex-start; }
+    .top-bar { flex-direction: column; align-items: flex-start; }
     .news-item .thumb { width: 50px; height: 38px; font-size: 1em; }
     .news-item .info h3 { font-size: 0.8em; }
+    .fav-btn { top: 4px; right: 4px; }
   }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- Compact Header -->
-  <header>
+  <!-- Top Bar -->
+  <div class="top-bar">
     <h1>🚀 装甲车辆每日资讯</h1>
-    <div class="meta">
+    <div class="right">
       <span>坦克 · 装甲车 · 火炮 · AI 军事应用</span>
       <span>🕐 {{UPDATE_TIME}}</span>
+      <button class="fav-toggle" onclick="toggleFavPanel()">⭐ 我的收藏 <span class="fav-count" id="fav-count">0</span></button>
     </div>
-  </header>
+  </div>
+
+  <!-- Favorites Panel -->
+  <div id="fav-panel">
+    <h2>⭐ 我的收藏（永久保存，不会被清理）</h2>
+    <div class="news-list" id="fav-list"></div>
+    <div class="fav-empty" id="fav-empty">还没有收藏任何文章，点击新闻右上角的 ☆ 即可收藏</div>
+  </div>
 
   <!-- AI + Armor (TOP) -->
   <div class="ai-section">
     <div class="section-title">AI + 装甲 前沿动态</div>
-    <div class="news-list">
-      {{AI_NEWS_ITEMS}}
-      {{AI_NEWS_EMPTY}}
-    </div>
+    <div class="news-list">{{AI_NEWS_ITEMS}}{{AI_NEWS_EMPTY}}</div>
   </div>
 
-  <!-- Two-Column: Domestic | International -->
+  <!-- Two-Column -->
   <div class="two-col">
-
-    <!-- 🇨🇳 Domestic -->
+    <!-- 🇨🇳 -->
     <div class="region">
       <div class="region-header">🇨🇳 国内资讯</div>
       <div class="category-tabs">
@@ -278,24 +284,13 @@
         <span class="category-tab" onclick="filterCat(this,'cn-','afv')">🚛 装甲车</span>
         <span class="category-tab" onclick="filterCat(this,'cn-','ai')">🤖 AI</span>
       </div>
-      <div class="cn-all" style="display:block">
-        <div class="news-list">{{CN_ALL_ITEMS}}{{CN_ALL_EMPTY}}</div>
-      </div>
-      <div class="cn-tank" style="display:none">
-        <div class="news-list">{{CN_TANK_ITEMS}}{{CN_TANK_EMPTY}}</div>
-      </div>
-      <div class="cn-artillery" style="display:none">
-        <div class="news-list">{{CN_ARTILLERY_ITEMS}}{{CN_ARTILLERY_EMPTY}}</div>
-      </div>
-      <div class="cn-afv" style="display:none">
-        <div class="news-list">{{CN_AFV_ITEMS}}{{CN_AFV_EMPTY}}</div>
-      </div>
-      <div class="cn-ai" style="display:none">
-        <div class="news-list">{{CN_AI_ITEMS}}{{CN_AI_EMPTY}}</div>
-      </div>
+      <div class="cn-all cat-section" style="display:block"><div class="news-list">{{CN_ALL_ITEMS}}{{CN_ALL_EMPTY}}</div></div>
+      <div class="cn-tank cat-section" style="display:none"><div class="news-list">{{CN_TANK_ITEMS}}{{CN_TANK_EMPTY}}</div></div>
+      <div class="cn-artillery cat-section" style="display:none"><div class="news-list">{{CN_ARTILLERY_ITEMS}}{{CN_ARTILLERY_EMPTY}}</div></div>
+      <div class="cn-afv cat-section" style="display:none"><div class="news-list">{{CN_AFV_ITEMS}}{{CN_AFV_EMPTY}}</div></div>
+      <div class="cn-ai cat-section" style="display:none"><div class="news-list">{{CN_AI_ITEMS}}{{CN_AI_EMPTY}}</div></div>
     </div>
-
-    <!-- 🌍 International -->
+    <!-- 🌍 -->
     <div class="region">
       <div class="region-header">🌍 国际资讯</div>
       <div class="category-tabs">
@@ -305,43 +300,145 @@
         <span class="category-tab" onclick="filterCat(this,'int-','afv')">🚛 装甲车</span>
         <span class="category-tab" onclick="filterCat(this,'int-','ai')">🤖 AI</span>
       </div>
-      <div class="int-all" style="display:block">
-        <div class="news-list">{{INT_ALL_ITEMS}}{{INT_ALL_EMPTY}}</div>
-      </div>
-      <div class="int-tank" style="display:none">
-        <div class="news-list">{{INT_TANK_ITEMS}}{{INT_TANK_EMPTY}}</div>
-      </div>
-      <div class="int-artillery" style="display:none">
-        <div class="news-list">{{INT_ARTILLERY_ITEMS}}{{INT_ARTILLERY_EMPTY}}</div>
-      </div>
-      <div class="int-afv" style="display:none">
-        <div class="news-list">{{INT_AFV_ITEMS}}{{INT_AFV_EMPTY}}</div>
-      </div>
-      <div class="int-ai" style="display:none">
-        <div class="news-list">{{INT_AI_ITEMS}}{{INT_AI_EMPTY}}</div>
-      </div>
+      <div class="int-all cat-section" style="display:block"><div class="news-list">{{INT_ALL_ITEMS}}{{INT_ALL_EMPTY}}</div></div>
+      <div class="int-tank cat-section" style="display:none"><div class="news-list">{{INT_TANK_ITEMS}}{{INT_TANK_EMPTY}}</div></div>
+      <div class="int-artillery cat-section" style="display:none"><div class="news-list">{{INT_ARTILLERY_ITEMS}}{{INT_ARTILLERY_EMPTY}}</div></div>
+      <div class="int-afv cat-section" style="display:none"><div class="news-list">{{INT_AFV_ITEMS}}{{INT_AFV_EMPTY}}</div></div>
+      <div class="int-ai cat-section" style="display:none"><div class="news-list">{{INT_AI_ITEMS}}{{INT_AI_EMPTY}}</div></div>
     </div>
-
   </div>
 
-  <!-- Footer -->
   <footer>
     <div>📡 资讯来源: 综合网络搜索 · 仅供学习参考 · {{UPDATE_TIME}}</div>
   </footer>
-
 </div>
 
 <script>
+// ====== Favorites System ======
+const STORAGE_KEY = 'wangye_favs';
+let favorites = {};
+
+try {
+  favorites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+} catch(e) { favorites = {}; }
+
+function saveFavs() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+  updateFavCount();
+  renderFavPanel();
+}
+
+function getItemId(el) {
+  // The news-item has data-id attribute
+  const item = el.closest('.news-item');
+  return item ? item.dataset.id : '';
+}
+
+function toggleFav(btn) {
+  const item = btn.closest('.news-item');
+  const id = item.dataset.id;
+  if (!id) return;
+
+  if (favorites[id]) {
+    delete favorites[id];
+    btn.textContent = '☆';
+    btn.classList.remove('is-fav');
+    btn.title = '点击收藏';
+  } else {
+    favorites[id] = {
+      id: id,
+      title: item.dataset.title || '',
+      url: item.dataset.url || '#',
+      summary: item.dataset.summary || '',
+      source: item.dataset.source || '',
+      category: item.dataset.category || '',
+      image: item.dataset.image || '',
+      savedAt: new Date().toISOString(),
+    };
+    btn.textContent = '★';
+    btn.classList.add('is-fav');
+    btn.title = '已收藏，点击取消';
+  }
+  saveFavs();
+}
+
+function updateFavCount() {
+  const count = Object.keys(favorites).length;
+  const el = document.getElementById('fav-count');
+  if (el) el.textContent = count;
+}
+
+function toggleFavPanel() {
+  const panel = document.getElementById('fav-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  renderFavPanel();
+}
+
+function renderFavPanel() {
+  const list = document.getElementById('fav-list');
+  const empty = document.getElementById('fav-empty');
+  const favs = Object.values(favorites);
+  if (!list) return;
+
+  if (favs.length === 0) {
+    list.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  list.innerHTML = favs.map(f => `
+    <div class="news-item" data-id="${escapeHtml(f.id)}">
+      <div class="thumb">${f.image ? `<img src="${escapeHtml(f.image)}" alt="">` : '📌'}</div>
+      <div class="info">
+        <span class="tag">${escapeHtml(f.category || '收藏')}</span>
+        <h3><a href="${escapeHtml(f.url) || '#'}" target="_blank" rel="noopener">${escapeHtml(f.title)}</a></h3>
+        <div class="summary">${escapeHtml(f.summary || '')}</div>
+        <div class="meta-row">
+          <span>${escapeHtml(f.source || '')} · 收藏于 ${(f.savedAt || '').slice(0,10)}</span>
+          <a href="${escapeHtml(f.url) || '#'}" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn is-fav" onclick="removeFav('${escapeHtml(f.id)}')" title="取消收藏">★</button>
+    </div>
+  `).join('');
+}
+
+function removeFav(id) {
+  delete favorites[id];
+  saveFavs();
+  // Also update the corresponding button on the main page
+  const btn = document.querySelector(`.news-item[data-id="${id}"] .fav-btn`);
+  if (btn) { btn.textContent = '☆'; btn.classList.remove('is-fav'); }
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Init all fav buttons on page load
+document.addEventListener('DOMContentLoaded', () => {
+  updateFavCount();
+  // Mark already-favorited items
+  document.querySelectorAll('.news-item[data-id]').forEach(item => {
+    const id = item.dataset.id;
+    const btn = item.querySelector('.fav-btn');
+    if (btn && favorites[id]) {
+      btn.textContent = '★';
+      btn.classList.add('is-fav');
+      btn.title = '已收藏，点击取消';
+    }
+  });
+});
+
+// ====== Category Filter ======
 function filterCat(el, prefix, cat) {
-  // Highlight active tab
   const tabs = el.parentElement.querySelectorAll('.category-tab');
   tabs.forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-
-  // Show/hide category containers
   const region = el.parentElement.parentElement;
-  const allCats = ['all','tank','artillery','afv','ai'];
-  allCats.forEach(c => {
+  ['all','tank','artillery','afv','ai'].forEach(c => {
     const div = region.querySelector('.' + prefix + c);
     if (div) div.style.display = (c === cat) ? 'block' : 'none';
   });

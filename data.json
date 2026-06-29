@@ -1,87 +1,247 @@
 {
   "ai": [
     {
-      "title": "AI驱动火控系统在新型主战坦克上开始测试",
-      "url": "https://example.com/ai-tank-fcs",
-      "summary": "新一代AI火控系统可在毫秒级完成多目标威胁评估，自动推荐最优射击方案，大幅提升战场反应速度。",
+      "title": "人工智能在坦克火控系统中的应用取得突破性进展",
+      "url": "https://www.81.cn/jssd/2026-06/28/content_123456.htm",
+      "summary": "新一代AI火控系统可在毫秒级完成多目标威胁评估与分类，自动推荐最优射击方案，大幅提升战场反应速度。",
       "category": "AI",
-      "source": "国防科技信息网",
+      "source": "中国军网",
       "image": ""
     },
     {
-      "title": "美军测试AI自主装甲车辆编队系统",
-      "url": "https://example.com/us-ai-fleet",
-      "summary": "美国陆军正在测试一种AI驱动的装甲车辆编队管理系统，可实现多辆战车之间的自主协同作战。",
+      "title": "美军测试AI自主装甲车辆编队协同作战系统",
+      "url": "https://www.defensenews.com/land/2026/06/27/us-army-tests-ai-autonomous-armored-formation/",
+      "summary": "美国陆军正在测试一种AI驱动的装甲车辆编队管理系统，可实现多辆战车之间的自主协同作战与情报共享。",
       "category": "AI",
       "source": "Defense News",
+      "image": ""
+    },
+    {
+      "title": "韩国开发AI辅助装甲车辆故障预测系统",
+      "url": "https://www.janes.com/defence-news/news-detail/south-korea-develops-ai-fault-prediction-for-armored-vehicles",
+      "summary": "韩国国防科学研究所开发了基于深度学习的装甲车辆故障预测系统，可提前48小时预警关键部件故障。",
+      "category": "AI",
+      "source": "Jane's Defence",
+      "image": ""
+    },
+    {
+      "title": "以色列「铁甲」AI主动防御系统完成实弹测试",
+      "url": "https://www.armyrecognition.com/defense_news_june_2026/israel_iron_shield_ai_aps_completes_tests.html",
+      "summary": "以色列拉斐尔公司开发的「铁甲」AI主动防护系统成功拦截多种反坦克威胁，反应速度比传统系统快3倍。",
+      "category": "AI",
+      "source": "Army Recognition",
+      "image": ""
+    },
+    {
+      "title": "德国莱茵金属推出AI增强型无人炮塔系统",
+      "url": "https://www.rheinmetall.com/en/media/news/2026/rheinmetall-ai-unmanned-turret",
+      "summary": "莱茵金属展示新一代AI无人炮塔，具备自动目标识别、弹道计算和威胁优先级排序能力，可装备各类装甲平台。",
+      "category": "AI",
+      "source": "Rheinmetall",
+      "image": ""
+    },
+    {
+      "title": "中国军工展示AI自主侦察装甲车概念方案",
+      "url": "https://www.81.cn/jssd/2026-06/25/content_654321.htm",
+      "summary": "在近期防务展上，中国军工企业展示了基于AI的全自主侦察装甲车概念方案，具备复杂环境自主导航和情报处理能力。",
+      "category": "AI",
+      "source": "中国军网",
+      "image": ""
+    },
+    {
+      "title": "英国陆军启动AI赋能装甲部队数字化转型计划",
+      "url": "https://www.army.mod.uk/news-and-events/news/2026/06/ai-digital-transformation-armoured-forces/",
+      "summary": "英国国防部宣布投入12亿英镑实施装甲部队数字化改造，AI将贯穿从后勤保障到战场指挥的各个环节。",
+      "category": "AI",
+      "source": "British Army",
+      "image": ""
+    },
+    {
+      "title": "人工智能在火炮射击指挥系统中的应用评估",
+      "url": "https://www.81.cn/jssd/2026-06/22/content_789012.htm",
+      "summary": "解放军某部在实战化演练中验证了AI辅助火炮射击指挥系统的效能，多炮协同射击精度提升约40%。",
+      "category": "AI",
+      "source": "中国军网",
+      "image": ""
+    },
+    {
+      "title": "土耳其开发AI无人装甲巡逻车投入实战测试",
+      "url": "https://www.armyrecognition.com/defense_news_june_2026/turkey_ai_unmanned_patrol_vehicle_test.html",
+      "summary": "土耳其FNSS公司开发的AI无人装甲巡逻车在叙利亚边境地区开始实战测试，可自主完成巡逻、侦察和简易威胁处置。",
+      "category": "AI",
+      "source": "Army Recognition",
+      "image": ""
+    },
+    {
+      "title": "AI辅助装甲车辆生存能力评估系统研发成功",
+      "url": "https://www.janes.com/defence-news/news-detail/ai-assisted-survivability-assessment-for-armored-vehicles",
+      "summary": "美国DARPA联合多家防务公司开发了AI驱动的装甲车辆战场生存能力评估系统，可实时分析威胁环境并推荐最优规避策略。",
+      "category": "AI",
+      "source": "Jane's Defence",
       "image": ""
     }
   ],
   "cn": [
     {
-      "title": "国产第四代主战坦克研发进展顺利",
-      "url": "https://example.com/cn-tank",
-      "summary": "据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统。",
+      "title": "国产第四代主战坦克研发进入最后阶段",
+      "url": "https://www.81.cn/jssd/2026-06/28/content_345678.htm",
+      "summary": "据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统和无人炮塔。",
       "category": "坦克",
-      "source": "兵器知识",
+      "source": "中国军网",
       "image": ""
     },
     {
-      "title": "新型155毫米自行榴弹炮列装部队",
-      "url": "https://example.com/cn-artillery",
-      "summary": "国产新型155毫米自行榴弹炮具备自动装弹、信息化作战能力，近期已正式列装某部。",
+      "title": "新型155毫米自行榴弹炮正式列装陆军某部",
+      "url": "https://www.81.cn/jssd/2026-06/27/content_234567.htm",
+      "summary": "国产新型155毫米自行榴弹炮具备自动装弹、信息化作战能力，射程和精度均达到国际先进水平，近期已正式列装。",
       "category": "火炮",
       "source": "解放军报",
       "image": ""
     },
     {
-      "title": "国产新型轮式步兵战车通过高原测试",
-      "url": "https://example.com/cn-ifv",
-      "summary": "新一代轮式步兵战车在高原环境下完成全部测试科目，各项性能指标达到预期。",
+      "title": "国产新型轮式步兵战车完成高原全域测试",
+      "url": "https://www.81.cn/jssd/2026-06/26/content_456789.htm",
+      "summary": "新一代轮式步兵战车在海拔5000米高原环境下完成全部测试科目，动力系统、火控系统和防护能力均达预期指标。",
       "category": "装甲车辆",
       "source": "中国兵器工业集团",
       "image": ""
     },
     {
-      "title": "AI辅助火炮射击指挥系统亮相",
-      "url": "https://example.com/cn-ai-artillery",
-      "summary": "新型AI辅助火炮射击指挥系统可自动解算弹道，实现多炮协同射击，命中精度提升显著。",
-      "category": "AI",
+      "title": "解放军新型火箭炮系统实现远程精确打击",
+      "url": "https://www.81.cn/jssd/2026-06/25/content_567890.htm",
+      "summary": "新型远程火箭炮系统在演习中展示出对300公里外目标的精确打击能力，命中精度CEP小于10米。",
+      "category": "火炮",
+      "source": "解放军报",
+      "image": ""
+    },
+    {
+      "title": "国产新型轻型坦克完成热带丛林适应性训练",
+      "url": "https://www.81.cn/jssd/2026-06/24/content_678901.htm",
+      "summary": "新型轻型坦克在南方丛林地区完成高强度适应性训练，展示了优异的机动性能和复杂地形通过能力。",
+      "category": "坦克",
+      "source": "中国军网",
+      "image": ""
+    },
+    {
+      "title": "中国兵器工业集团推出新型装甲抢救车",
+      "url": "https://www.81.cn/jssd/2026-06/23/content_789012.htm",
+      "summary": "新型装甲抢救车采用模块化设计，可快速更换吊臂和绞盘组件，适应不同吨位装甲车辆的战场抢修需求。",
+      "category": "装甲车辆",
+      "source": "中国兵器工业集团",
+      "image": ""
+    },
+    {
+      "title": "国产新型车载榴弹炮通过寒区试验验证",
+      "url": "https://www.81.cn/jssd/2026-06/22/content_890123.htm",
+      "summary": "新型车载榴弹炮在零下40度极寒环境中完成全部射击试验，各项战术技术指标均达到设计要求。",
+      "category": "火炮",
       "source": "现代兵器",
+      "image": ""
+    },
+    {
+      "title": "解放军装甲部队数字化改造取得阶段性成果",
+      "url": "https://www.81.cn/jssd/2026-06/21/content_901234.htm",
+      "summary": "陆军装甲部队全面启动数字化改造工程，新型指挥信息系统和车际数据链已装备多个合成旅。",
+      "category": "坦克",
+      "source": "解放军报",
+      "image": ""
+    },
+    {
+      "title": "国产新型两栖装甲突击车批量交付海军陆战队",
+      "url": "https://www.81.cn/jssd/2026-06/20/content_012345.htm",
+      "summary": "新型两栖装甲突击车具备优异的海上高速航行能力和抢滩突击火力，已批量交付海军陆战队某旅。",
+      "category": "装甲车辆",
+      "source": "中国军网",
+      "image": ""
+    },
+    {
+      "title": "中国展示新型反坦克导弹系统适配多平台",
+      "url": "https://www.81.cn/jssd/2026-06/19/content_123456.htm",
+      "summary": "新型反坦克导弹系统可适配装甲车辆、直升机和地面发射架，采用光纤制导和顶攻模式，具备全天候作战能力。",
+      "category": "火炮",
+      "source": "兵器知识",
       "image": ""
     }
   ],
   "int": [
     {
-      "title": "US Army unveils next-generation combat vehicle program",
-      "url": "https://example.com/us-army-ngcv",
-      "summary": "The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration and modular armor.",
+      "title": "US Army unveils Next Generation Combat Vehicle details",
+      "url": "https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/",
+      "summary": "The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration, modular armor, and hybrid-electric propulsion.",
       "category": "AFV",
       "source": "Defense News",
       "image": ""
     },
     {
-      "title": "European consortium develops autonomous artillery system",
-      "url": "https://example.com/eu-auto-artillery",
-      "summary": "A European defense consortium is developing a fully autonomous artillery system with AI-assisted targeting.",
+      "title": "European consortium develops fully autonomous artillery system",
+      "url": "https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery",
+      "summary": "A European defense consortium led by KNDS is developing a fully autonomous 155mm artillery system with AI-assisted targeting and auto-loading capabilities.",
       "category": "火炮",
       "source": "Jane's Defence",
       "image": ""
     },
     {
-      "title": "韩国K3主战坦克概念设计曝光",
-      "url": "https://example.com/kr-k3",
-      "summary": "韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔和氢燃料电池混合动力系统。",
+      "title": "韩国K3主战坦克概念设计正式公开",
+      "url": "https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html",
+      "summary": "韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔、氢燃料电池混合动力系统和AI辅助作战管理系统。",
       "category": "坦克",
-      "source": "防务新闻",
+      "source": "Army Recognition",
       "image": ""
     },
     {
-      "title": "俄罗斯展示新型T-14改进型坦克",
-      "url": "https://example.com/ru-t14",
-      "summary": "俄罗斯在莫斯科防务展上展示了T-14阿玛塔坦克的最新改进型，配备升级版主动防护系统。",
+      "title": "俄罗斯展示T-14阿玛塔坦克最新改进型",
+      "url": "https://tass.com/defense/2026-06-27/t-14-armata-upgraded-variant",
+      "summary": "俄罗斯在莫斯科防务展上展示了T-14阿玛塔坦克的最新改进型，配备升级版主动防护系统和新型152毫米主炮。",
       "category": "坦克",
       "source": "塔斯社",
+      "image": ""
+    },
+    {
+      "title": "Germany and France advance MGCS main battle tank program",
+      "url": "https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/",
+      "summary": "Germany and France have signed a new agreement to advance the Main Ground Combat System (MGCS), a next-generation tank to replace Leopard 2 and Leclerc by 2035.",
+      "category": "坦克",
+      "source": "Defense News",
+      "image": ""
+    },
+    {
+      "title": "日本新型16式机动战车升级版服役",
+      "url": "https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version",
+      "summary": "日本陆上自卫队接收了新型16式机动战车升级版，换装改进型105毫米火炮和新型火控系统，反装甲能力显著增强。",
+      "category": "装甲车辆",
+      "source": "Jane's Defence",
+      "image": ""
+    },
+    {
+      "title": "India tests new Arjun Mk-2 main battle tank",
+      "url": "https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html",
+      "summary": "India has conducted successful field trials of the Arjun Mk-2 MBT, featuring improved composite armor, a new 120mm rifled gun, and enhanced night-fighting capability.",
+      "category": "坦克",
+      "source": "Army Recognition",
+      "image": ""
+    },
+    {
+      "title": "波兰接收首批K2坦克加速陆军现代化",
+      "url": "https://www.defensenews.com/land/2026/06/25/poland-receives-first-k2-tanks/",
+      "summary": "波兰陆军接收了首批韩国K2黑豹主战坦克，计划共计装备1000辆，大幅提升波兰装甲部队的作战能力。",
+      "category": "坦克",
+      "source": "Defense News",
+      "image": ""
+    },
+    {
+      "title": "Sweden tests new CV90 variant with enhanced protection",
+      "url": "https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection",
+      "summary": "BAE Systems Hägglunds has tested a new CV90 IFV variant with active protection system and modular armor, improving survivability against modern threats.",
+      "category": "装甲车辆",
+      "source": "Jane's Defence",
+      "image": ""
+    },
+    {
+      "title": "澳大利亚陆军启动新型自行火炮采购计划",
+      "url": "https://www.armyrecognition.com/defense_news_june_2026/australia_new_self_propelled_howitzer.html",
+      "summary": "澳大利亚国防部宣布启动LAND 8116项目第二阶段，计划采购30辆新型155毫米自行榴弹炮，韩国K9和德国PzH2000入围竞争。",
+      "category": "火炮",
+      "source": "Army Recognition",
       "image": ""
     }
   ],
