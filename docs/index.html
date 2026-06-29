@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚀 装甲车辆每日资讯</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --card-bg: #111827;
+    --accent: #f59e0b;
+    --accent2: #10b981;
+    --text: #f3f4f6;
+    --text2: #9ca3af;
+    --border: #1f2937;
+    --ai-highlight: #7c3aed;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 30px;
+  }
+  header h1 {
+    font-size: 2.2em;
+    background: linear-gradient(135deg, var(--accent), #f97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header .subtitle {
+    color: var(--text2);
+    font-size: 0.95em;
+    margin-top: 8px;
+  }
+  header .update-time {
+    color: var(--text2);
+    font-size: 0.85em;
+    margin-top: 4px;
+  }
+
+  /* AI Special Section */
+  .ai-section {
+    background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(139,92,246,0.05));
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 30px;
+  }
+  .ai-section .section-title {
+    color: #a78bfa;
+    font-size: 1.3em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ai-section .section-title::before {
+    content: '🔥';
+    font-size: 1.2em;
+  }
+
+  /* Region Sections */
+  .region { margin-bottom: 30px; }
+  .region-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5em;
+    padding: 12px 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .region-header .flag { font-size: 1.2em; }
+
+  /* Category Tabs */
+  .category-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .category-tab {
+    padding: 6px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--text2);
+    transition: all 0.2s;
+  }
+  .category-tab:hover, .category-tab.active {
+    background: rgba(245,158,11,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Category Section */
+  .category-section { margin-bottom: 24px; }
+  .category-title {
+    font-size: 1.1em;
+    color: var(--accent2);
+    margin-bottom: 12px;
+    padding-left: 12px;
+    border-left: 3px solid var(--accent2);
+  }
+
+  /* News Grid */
+  .news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  /* News Card */
+  .news-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .news-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+  .news-card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background: #1f2937;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text2);
+    font-size: 2.5em;
+  }
+  .news-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .news-card-body { padding: 16px; }
+  .news-card-body .card-tag {
+    display: inline-block;
+    font-size: 0.75em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(16,185,129,0.15);
+    color: var(--accent2);
+    margin-bottom: 6px;
+  }
+  .news-card-body .card-tag.ai-tag {
+    background: rgba(124,58,237,0.15);
+    color: #a78bfa;
+  }
+  .news-card-body h3 {
+    font-size: 1em;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .news-card-body h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .news-card-body h3 a:hover { color: var(--accent); }
+  .news-card-body p {
+    color: var(--text2);
+    font-size: 0.88em;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .news-card-body .source {
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: var(--text2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .news-card-body .source a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .news-card-body .source a:hover { text-decoration: underline; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text2);
+    font-size: 0.85em;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text2);
+  }
+  .empty-state .icon { font-size: 3em; margin-bottom: 12px; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    header h1 { font-size: 1.5em; }
+    .news-grid { grid-template-columns: 1fr; }
+    .news-card-img { height: 140px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <h1>🚀 装甲车辆每日资讯</h1>
+    <div class="subtitle">国内外坦克 · 装甲车 · 火炮 · AI 军事应用</div>
+    <div class="update-time">🕐 更新于: 2026/06/29 09:57:10</div>
+  </header>
+
+  <!-- AI + Armor Special Section (TOP) -->
+  <div class="ai-section">
+    <div class="section-title">AI + 装甲 前沿动态</div>
+    <div class="news-grid">
+      {{AI_NEWS_CARDS}}
+      {{AI_NEWS_EMPTY}}
+    </div>
+  </div>
+
+  <!-- Domestic -->
+  <div class="region">
+    <div class="region-header"><span class="flag">🇨🇳</span> 国内资讯</div>
+
+    <div class="category-tabs">
+      <span class="category-tab active" onclick="filterCategory(this,'cn-tank')">🏗️ 坦克</span>
+      <span class="category-tab" onclick="filterCategory(this,'cn-artillery')">🔫 火炮</span>
+      <span class="category-tab" onclick="filterCategory(this,'cn-afv')">🚛 装甲车辆</span>
+      <span class="category-tab" onclick="filterCategory(this,'cn-ai')">🤖 AI 应用</span>
+      <span class="category-tab" onclick="filterCategory(this,'all')">📋 全部</span>
+    </div>
+
+    <div id="cn-tank" class="category-section">
+      <div class="category-title">🏗️ 坦克</div>
+      <div class="news-grid">
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🏗️</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">坦克</span>
+        <h3><a href="https://example.com/cn-tank" target="_blank" rel="noopener">国产第四代主战坦克研发进展顺利</a></h3>
+        <p>据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统。</p>
+        <div class="source">
+          <span>兵器知识</span>
+          <a href="https://example.com/cn-tank" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div></div>
+    </div>
+    <div id="cn-artillery" class="category-section">
+      <div class="category-title">🔫 火炮</div>
+      <div class="news-grid">
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🔫</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">火炮</span>
+        <h3><a href="https://example.com/cn-artillery" target="_blank" rel="noopener">新型155毫米自行榴弹炮列装部队</a></h3>
+        <p>国产新型155毫米自行榴弹炮具备自动装弹、信息化作战能力，近期已正式列装某部。</p>
+        <div class="source">
+          <span>解放军报</span>
+          <a href="https://example.com/cn-artillery" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🤖</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">AI</span>
+        <h3><a href="https://example.com/cn-ai-artillery" target="_blank" rel="noopener">AI辅助火炮射击指挥系统亮相</a></h3>
+        <p>新型AI辅助火炮射击指挥系统可自动解算弹道，实现多炮协同射击，命中精度提升显著。</p>
+        <div class="source">
+          <span>现代兵器</span>
+          <a href="https://example.com/cn-ai-artillery" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div></div>
+    </div>
+    <div id="cn-afv" class="category-section">
+      <div class="category-title">🚛 装甲车辆</div>
+      <div class="news-grid">
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🚛</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">装甲车辆</span>
+        <h3><a href="https://example.com/cn-ifv" target="_blank" rel="noopener">国产新型轮式步兵战车通过高原测试</a></h3>
+        <p>新一代轮式步兵战车在高原环境下完成全部测试科目，各项性能指标达到预期。</p>
+        <div class="source">
+          <span>中国兵器工业集团</span>
+          <a href="https://example.com/cn-ifv" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div></div>
+    </div>
+    <div id="cn-ai" class="category-section">
+      <div class="category-title">🤖 AI 应用</div>
+      <div class="news-grid">
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🤖</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">AI</span>
+        <h3><a href="https://example.com/cn-ai-artillery" target="_blank" rel="noopener">AI辅助火炮射击指挥系统亮相</a></h3>
+        <p>新型AI辅助火炮射击指挥系统可自动解算弹道，实现多炮协同射击，命中精度提升显著。</p>
+        <div class="source">
+          <span>现代兵器</span>
+          <a href="https://example.com/cn-ai-artillery" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div></div>
+    </div>
+  </div>
+
+  <!-- International -->
+  <div class="region">
+    <div class="region-header"><span class="flag">🌍</span> 国际资讯</div>
+
+    <div class="category-tabs">
+      <span class="category-tab active" onclick="filterCategory(this,'int-tank')">🏗️ 坦克</span>
+      <span class="category-tab" onclick="filterCategory(this,'int-artillery')">🔫 火炮</span>
+      <span class="category-tab" onclick="filterCategory(this,'int-afv')">🚛 装甲车辆</span>
+      <span class="category-tab" onclick="filterCategory(this,'int-ai')">🤖 AI 应用</span>
+      <span class="category-tab" onclick="filterCategory(this,'all')">📋 全部</span>
+    </div>
+
+    <div id="int-tank" class="category-section">
+      <div class="category-title">🏗️ 坦克</div>
+      <div class="news-grid">
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🏗️</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">坦克</span>
+        <h3><a href="https://example.com/kr-k3" target="_blank" rel="noopener">韩国K3主战坦克概念设计曝光</a></h3>
+        <p>韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔和氢燃料电池混合动力系统。</p>
+        <div class="source">
+          <span>防务新闻</span>
+          <a href="https://example.com/kr-k3" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🏗️</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">坦克</span>
+        <h3><a href="https://example.com/ru-t14" target="_blank" rel="noopener">俄罗斯展示新型T-14改进型坦克</a></h3>
+        <p>俄罗斯在莫斯科防务展上展示了T-14阿玛塔坦克的最新改进型，配备升级版主动防护系统。</p>
+        <div class="source">
+          <span>塔斯社</span>
+          <a href="https://example.com/ru-t14" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div></div>
+    </div>
+    <div id="int-artillery" class="category-section">
+      <div class="category-title">🔫 火炮</div>
+      <div class="news-grid">
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🔫</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">火炮</span>
+        <h3><a href="https://example.com/eu-auto-artillery" target="_blank" rel="noopener">European consortium develops autonomous artillery system</a></h3>
+        <p>A European defense consortium is developing a fully autonomous artillery system with AI-assisted targeting.</p>
+        <div class="source">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://example.com/eu-auto-artillery" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div></div>
+    </div>
+    <div id="int-afv" class="category-section">
+      <div class="category-title">🚛 装甲车辆</div>
+      <div class="news-grid">
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">📰</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">AFV</span>
+        <h3><a href="https://example.com/us-army-ngcv" target="_blank" rel="noopener">US Army unveils next-generation combat vehicle program</a></h3>
+        <p>The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration and modular armor.</p>
+        <div class="source">
+          <span>Defense News</span>
+          <a href="https://example.com/us-army-ngcv" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div></div>
+    </div>
+    <div id="int-ai" class="category-section">
+      <div class="category-title">🤖 AI 应用</div>
+      <div class="news-grid">
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">📰</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">AFV</span>
+        <h3><a href="https://example.com/us-army-ngcv" target="_blank" rel="noopener">US Army unveils next-generation combat vehicle program</a></h3>
+        <p>The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration and modular armor.</p>
+        <div class="source">
+          <span>Defense News</span>
+          <a href="https://example.com/us-army-ngcv" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🔫</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">火炮</span>
+        <h3><a href="https://example.com/eu-auto-artillery" target="_blank" rel="noopener">European consortium develops autonomous artillery system</a></h3>
+        <p>A European defense consortium is developing a fully autonomous artillery system with AI-assisted targeting.</p>
+        <div class="source">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://example.com/eu-auto-artillery" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-card-img"><span style="font-size:2.5em;">🏗️</span></div>
+      <div class="news-card-body">
+        <span class="card-tag">坦克</span>
+        <h3><a href="https://example.com/kr-k3" target="_blank" rel="noopener">韩国K3主战坦克概念设计曝光</a></h3>
+        <p>韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔和氢燃料电池混合动力系统。</p>
+        <div class="source">
+          <span>防务新闻</span>
+          <a href="https://example.com/kr-k3" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+    </div></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div>📡 资讯来源: 综合网络搜索 · 仅供学习参考</div>
+    <div style="margin-top:4px;">🕐 2026/06/29 09:57:10</div>
+  </footer>
+
+</div>
+
+<script>
+function filterCategory(el, target) {
+  // Toggle active tab
+  const parent = el.parentElement;
+  parent.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+
+  // Find sibling category sections
+  const region = parent.nextElementSibling;
+  if (target === 'all') {
+    let sib = region;
+    while (sib && sib.classList.contains('category-section')) {
+      sib.style.display = 'block';
+      sib = sib.nextElementSibling;
+    }
+    return;
+  }
+  let sib = region;
+  while (sib && sib.classList.contains('category-section')) {
+    sib.style.display = sib.id === target ? 'block' : 'none';
+    sib = sib.nextElementSibling;
+  }
+}
+
+// Show all on load
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.region').forEach(region => {
+    const firstTab = region.querySelector('.category-tab');
+    if (firstTab) firstTab.click();
+  });
+});
+</script>
+</body>
+</html>

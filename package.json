@@ -1,0 +1,17 @@
+{
+  "name": "wangye",
+  "version": "1.0.0",
+  "private": true,
+  "description": "装甲车辆每日资讯聚合 - 自动搜集国内外装甲车辆最新资讯",
+  "type": "module",
+  "scripts": {
+    "generate": "node .claude/skills/run-wangye/driver.mjs generate",
+    "deploy": "node .claude/skills/run-wangye/driver.mjs deploy",
+    "push": "node .claude/skills/run-wangye/driver.mjs push",
+    "daily": "node .claude/skills/run-wangye/driver.mjs daily",
+    "serve": "npx serve docs"
+  },
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "ai": [
+    {
+      "title": "AI驱动火控系统在新型主战坦克上开始测试",
+      "url": "https://example.com/ai-tank-fcs",
+      "summary": "新一代AI火控系统可在毫秒级完成多目标威胁评估，自动推荐最优射击方案，大幅提升战场反应速度。",
+      "category": "AI",
+      "source": "国防科技信息网",
+      "image": ""
+    },
+    {
+      "title": "美军测试AI自主装甲车辆编队系统",
+      "url": "https://example.com/us-ai-fleet",
+      "summary": "美国陆军正在测试一种AI驱动的装甲车辆编队管理系统，可实现多辆战车之间的自主协同作战。",
+      "category": "AI",
+      "source": "Defense News",
+      "image": ""
+    }
+  ],
+  "cn": [
+    {
+      "title": "国产第四代主战坦克研发进展顺利",
+      "url": "https://example.com/cn-tank",
+      "summary": "据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统。",
+      "category": "坦克",
+      "source": "兵器知识",
+      "image": ""
+    },
+    {
+      "title": "新型155毫米自行榴弹炮列装部队",
+      "url": "https://example.com/cn-artillery",
+      "summary": "国产新型155毫米自行榴弹炮具备自动装弹、信息化作战能力，近期已正式列装某部。",
+      "category": "火炮",
+      "source": "解放军报",
+      "image": ""
+    },
+    {
+      "title": "国产新型轮式步兵战车通过高原测试",
+      "url": "https://example.com/cn-ifv",
+      "summary": "新一代轮式步兵战车在高原环境下完成全部测试科目，各项性能指标达到预期。",
+      "category": "装甲车辆",
+      "source": "中国兵器工业集团",
+      "image": ""
+    },
+    {
+      "title": "AI辅助火炮射击指挥系统亮相",
+      "url": "https://example.com/cn-ai-artillery",
+      "summary": "新型AI辅助火炮射击指挥系统可自动解算弹道，实现多炮协同射击，命中精度提升显著。",
+      "category": "AI",
+      "source": "现代兵器",
+      "image": ""
+    }
+  ],
+  "int": [
+    {
+      "title": "US Army unveils next-generation combat vehicle program",
+      "url": "https://example.com/us-army-ngcv",
+      "summary": "The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration and modular armor.",
+      "category": "AFV",
+      "source": "Defense News",
+      "image": ""
+    },
+    {
+      "title": "European consortium develops autonomous artillery system",
+      "url": "https://example.com/eu-auto-artillery",
+      "summary": "A European defense consortium is developing a fully autonomous artillery system with AI-assisted targeting.",
+      "category": "火炮",
+      "source": "Jane's Defence",
+      "image": ""
+    },
+    {
+      "title": "韩国K3主战坦克概念设计曝光",
+      "url": "https://example.com/kr-k3",
+      "summary": "韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔和氢燃料电池混合动力系统。",
+      "category": "坦克",
+      "source": "防务新闻",
+      "image": ""
+    },
+    {
+      "title": "俄罗斯展示新型T-14改进型坦克",
+      "url": "https://example.com/ru-t14",
+      "summary": "俄罗斯在莫斯科防务展上展示了T-14阿玛塔坦克的最新改进型，配备升级版主动防护系统。",
+      "category": "坦克",
+      "source": "塔斯社",
+      "image": ""
+    }
+  ],
+  "generated_at": ""
+}
