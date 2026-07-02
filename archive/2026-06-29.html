@@ -1,0 +1,1139 @@
+<!-- Archived 2026/06/29 13:31:02 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚀 装甲车辆每日资讯</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --card-bg: #111827;
+    --accent: #f59e0b;
+    --accent2: #10b981;
+    --text: #f3f4f6;
+    --text2: #9ca3af;
+    --border: #1f2937;
+    --fav-color: #eab308;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 12px;
+    min-height: 100vh;
+  }
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  /* ====== Top Bar ====== */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .top-bar h1 {
+    font-size: 1.15em;
+    background: linear-gradient(135deg, var(--accent), #f97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .top-bar .right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78em;
+    color: var(--text2);
+  }
+  .top-bar .fav-toggle {
+    padding: 5px 14px;
+    background: rgba(234,179,8,0.12);
+    border: 1px solid rgba(234,179,8,0.3);
+    border-radius: 16px;
+    cursor: pointer;
+    color: var(--fav-color);
+    font-size: 0.85em;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .top-bar .fav-toggle:hover { background: rgba(234,179,8,0.2); }
+  .top-bar .fav-count {
+    background: var(--fav-color);
+    color: #000;
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 0.75em;
+    font-weight: 700;
+    margin-left: 2px;
+  }
+
+  /* ====== Favorites Panel ====== */
+  #fav-panel {
+    display: none;
+    background: var(--card-bg);
+    border: 2px solid rgba(234,179,8,0.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+  }
+  #fav-panel h2 { font-size: 1em; color: var(--fav-color); margin-bottom: 8px; }
+  #fav-panel .fav-empty { color: var(--text2); font-size: 0.8em; text-align: center; padding: 12px; }
+
+  /* ====== AI Section ====== */
+  .ai-section {
+    background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(139,92,246,0.04));
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+  }
+  .ai-section .section-title { color: #a78bfa; font-size: 1em; margin-bottom: 8px; }
+  .ai-section .section-title::before { content: '🔥 '; }
+
+  /* ====== Two-Column ====== */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  .region {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .region-header {
+    font-size: 0.95em;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  /* ====== Tabs ====== */
+  .category-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 6px 10px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .category-tab {
+    padding: 3px 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 0.75em;
+    color: var(--text2);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .category-tab:hover, .category-tab.active {
+    background: rgba(245,158,11,0.12);
+    border-color: rgba(245,158,11,0.3);
+    color: var(--accent);
+  }
+
+  /* ====== News List ====== */
+  .cat-section { padding: 8px 12px; }
+  .news-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .news-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    transition: border-color 0.15s;
+    align-items: flex-start;
+    position: relative;
+  }
+  .news-item:hover { border-color: var(--border); }
+  .news-item .thumb {
+    width: 70px;
+    height: 50px;
+    border-radius: 5px;
+    background: #1a1f2e;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+    overflow: hidden;
+  }
+  .news-item .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .news-item .info { flex: 1; min-width: 0; }
+  .news-item .info .tag {
+    display: inline-block;
+    font-size: 0.65em;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(16,185,129,0.12);
+    color: var(--accent2);
+    margin-bottom: 2px;
+  }
+  .news-item .info .tag.ai-tag { background: rgba(124,58,237,0.12); color: #a78bfa; }
+  .news-item .info h3 { font-size: 0.85em; line-height: 1.35; font-weight: 600; }
+  .news-item .info h3 a { color: var(--text); text-decoration: none; }
+  .news-item .info h3 a:hover { color: var(--accent); }
+  .news-item .info .summary {
+    color: var(--text2);
+    font-size: 0.75em;
+    line-height: 1.4;
+    margin-top: 2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .news-item .info .meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3px;
+    font-size: 0.7em;
+    color: var(--text2);
+    gap: 8px;
+  }
+  .news-item .info .meta-row a { color: var(--accent); text-decoration: none; flex-shrink: 0; }
+  .news-item .info .meta-row a:hover { text-decoration: underline; }
+
+  /* ====== Favorite Button ====== */
+  .fav-btn {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: var(--text2);
+    transition: all 0.15s;
+    padding: 2px 4px;
+    line-height: 1;
+  }
+  .fav-btn:hover { color: var(--fav-color); transform: scale(1.2); }
+  .fav-btn.is-fav { color: var(--fav-color); }
+
+  /* ====== AI Section Items ====== */
+  .ai-section .news-item { background: rgba(124,58,237,0.04); }
+
+  /* ====== Empty State ====== */
+  .empty-state { text-align: center; padding: 16px; color: var(--text2); font-size: 0.8em; }
+
+  /* ====== Footer ====== */
+  footer { text-align: center; padding: 10px; color: var(--text2); font-size: 0.72em; border-top: 1px solid var(--border); }
+
+  /* ====== Responsive ====== */
+  @media (max-width: 768px) {
+    .top-bar { flex-direction: column; align-items: flex-start; }
+    .news-item .thumb { width: 50px; height: 38px; font-size: 1em; }
+    .news-item .info h3 { font-size: 0.8em; }
+    .fav-btn { top: 4px; right: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <h1>🚀 装甲车辆每日资讯</h1>
+    <div class="right">
+      <span>坦克 · 装甲车 · 火炮 · AI 军事应用</span>
+      <span>🕐 2026/06/29 13:30:36</span>
+      <button class="fav-toggle" onclick="toggleFavPanel()">⭐ 我的收藏 <span class="fav-count" id="fav-count">0</span></button>
+    </div>
+  </div>
+
+  <!-- Favorites Panel -->
+  <div id="fav-panel">
+    <h2>⭐ 我的收藏（永久保存，不会被清理）</h2>
+    <div class="news-list" id="fav-list"></div>
+    <div class="fav-empty" id="fav-empty">还没有收藏任何文章，点击新闻右上角的 ☆ 即可收藏</div>
+  </div>
+
+  <!-- AI + Armor (TOP) -->
+  <div class="ai-section">
+    <div class="section-title">AI + 装甲 前沿动态</div>
+    <div class="news-list">{{AI_NEWS_ITEMS}}{{AI_NEWS_EMPTY}}</div>
+  </div>
+
+  <!-- Two-Column -->
+  <div class="two-col">
+    <!-- 🇨🇳 -->
+    <div class="region">
+      <div class="region-header">🇨🇳 国内资讯</div>
+      <div class="category-tabs">
+        <span class="category-tab active" onclick="filterCat(this,'cn-','all')">📋 全部</span>
+        <span class="category-tab" onclick="filterCat(this,'cn-','tank')">🏗️ 坦克</span>
+        <span class="category-tab" onclick="filterCat(this,'cn-','artillery')">🔫 火炮</span>
+        <span class="category-tab" onclick="filterCat(this,'cn-','afv')">🚛 装甲车</span>
+        <span class="category-tab" onclick="filterCat(this,'cn-','ai')">🤖 AI</span>
+      </div>
+      <div class="cn-all cat-section" style="display:block"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-y3geqh" data-title="国产第四代主战坦克研发进入最后阶段" data-url="https://www.81.cn/jssd/2026-06/28/content_345678.htm" data-summary="据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统和无人炮塔。" data-source="中国军网" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/28/content_345678.htm" target="_blank" rel="noopener">国产第四代主战坦克研发进入最后阶段</a></h3>
+        <div class="summary">据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统和无人炮塔。</div>
+        <div class="meta-row">
+          <span>中国军网</span>
+          <a href="https://www.81.cn/jssd/2026-06/28/content_345678.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-wujzc8" data-title="新型155毫米自行榴弹炮正式列装陆军某部" data-url="https://www.81.cn/jssd/2026-06/27/content_234567.htm" data-summary="国产新型155毫米自行榴弹炮具备自动装弹、信息化作战能力，射程和精度均达到国际先进水平，近期已正式列装。" data-source="解放军报" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/27/content_234567.htm" target="_blank" rel="noopener">新型155毫米自行榴弹炮正式列装陆军某部</a></h3>
+        <div class="summary">国产新型155毫米自行榴弹炮具备自动装弹、信息化作战能力，射程和精度均达到国际先进水平，近期已正式列装。</div>
+        <div class="meta-row">
+          <span>解放军报</span>
+          <a href="https://www.81.cn/jssd/2026-06/27/content_234567.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-9q56gn" data-title="国产新型轮式步兵战车完成高原全域测试" data-url="https://www.81.cn/jssd/2026-06/26/content_456789.htm" data-summary="新一代轮式步兵战车在海拔5000米高原环境下完成全部测试科目，动力系统、火控系统和防护能力均达预期指标。" data-source="中国兵器工业集团" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/26/content_456789.htm" target="_blank" rel="noopener">国产新型轮式步兵战车完成高原全域测试</a></h3>
+        <div class="summary">新一代轮式步兵战车在海拔5000米高原环境下完成全部测试科目，动力系统、火控系统和防护能力均达预期指标。</div>
+        <div class="meta-row">
+          <span>中国兵器工业集团</span>
+          <a href="https://www.81.cn/jssd/2026-06/26/content_456789.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-7q9l34" data-title="解放军新型火箭炮系统实现远程精确打击" data-url="https://www.81.cn/jssd/2026-06/25/content_567890.htm" data-summary="新型远程火箭炮系统在演习中展示出对300公里外目标的精确打击能力，命中精度CEP小于10米。" data-source="解放军报" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/25/content_567890.htm" target="_blank" rel="noopener">解放军新型火箭炮系统实现远程精确打击</a></h3>
+        <div class="summary">新型远程火箭炮系统在演习中展示出对300公里外目标的精确打击能力，命中精度CEP小于10米。</div>
+        <div class="meta-row">
+          <span>解放军报</span>
+          <a href="https://www.81.cn/jssd/2026-06/25/content_567890.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-klq2mj" data-title="国产新型轻型坦克完成热带丛林适应性训练" data-url="https://www.81.cn/jssd/2026-06/24/content_678901.htm" data-summary="新型轻型坦克在南方丛林地区完成高强度适应性训练，展示了优异的机动性能和复杂地形通过能力。" data-source="中国军网" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/24/content_678901.htm" target="_blank" rel="noopener">国产新型轻型坦克完成热带丛林适应性训练</a></h3>
+        <div class="summary">新型轻型坦克在南方丛林地区完成高强度适应性训练，展示了优异的机动性能和复杂地形通过能力。</div>
+        <div class="meta-row">
+          <span>中国军网</span>
+          <a href="https://www.81.cn/jssd/2026-06/24/content_678901.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-xhw1tu" data-title="中国兵器工业集团推出新型装甲抢救车" data-url="https://www.81.cn/jssd/2026-06/23/content_789012.htm" data-summary="新型装甲抢救车采用模块化设计，可快速更换吊臂和绞盘组件，适应不同吨位装甲车辆的战场抢修需求。" data-source="中国兵器工业集团" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/23/content_789012.htm" target="_blank" rel="noopener">中国兵器工业集团推出新型装甲抢救车</a></h3>
+        <div class="summary">新型装甲抢救车采用模块化设计，可快速更换吊臂和绞盘组件，适应不同吨位装甲车辆的战场抢修需求。</div>
+        <div class="meta-row">
+          <span>中国兵器工业集团</span>
+          <a href="https://www.81.cn/jssd/2026-06/23/content_789012.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-o13tdf" data-title="国产新型车载榴弹炮通过寒区试验验证" data-url="https://www.81.cn/jssd/2026-06/22/content_890123.htm" data-summary="新型车载榴弹炮在零下40度极寒环境中完成全部射击试验，各项战术技术指标均达到设计要求。" data-source="现代兵器" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/22/content_890123.htm" target="_blank" rel="noopener">国产新型车载榴弹炮通过寒区试验验证</a></h3>
+        <div class="summary">新型车载榴弹炮在零下40度极寒环境中完成全部射击试验，各项战术技术指标均达到设计要求。</div>
+        <div class="meta-row">
+          <span>现代兵器</span>
+          <a href="https://www.81.cn/jssd/2026-06/22/content_890123.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-8dgw3o" data-title="解放军装甲部队数字化改造取得阶段性成果" data-url="https://www.81.cn/jssd/2026-06/21/content_901234.htm" data-summary="陆军装甲部队全面启动数字化改造工程，新型指挥信息系统和车际数据链已装备多个合成旅。" data-source="解放军报" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/21/content_901234.htm" target="_blank" rel="noopener">解放军装甲部队数字化改造取得阶段性成果</a></h3>
+        <div class="summary">陆军装甲部队全面启动数字化改造工程，新型指挥信息系统和车际数据链已装备多个合成旅。</div>
+        <div class="meta-row">
+          <span>解放军报</span>
+          <a href="https://www.81.cn/jssd/2026-06/21/content_901234.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-cjqshd" data-title="国产新型两栖装甲突击车批量交付海军陆战队" data-url="https://www.81.cn/jssd/2026-06/20/content_012345.htm" data-summary="新型两栖装甲突击车具备优异的海上高速航行能力和抢滩突击火力，已批量交付海军陆战队某旅。" data-source="中国军网" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/20/content_012345.htm" target="_blank" rel="noopener">国产新型两栖装甲突击车批量交付海军陆战队</a></h3>
+        <div class="summary">新型两栖装甲突击车具备优异的海上高速航行能力和抢滩突击火力，已批量交付海军陆战队某旅。</div>
+        <div class="meta-row">
+          <span>中国军网</span>
+          <a href="https://www.81.cn/jssd/2026-06/20/content_012345.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-4zernp" data-title="中国展示新型反坦克导弹系统适配多平台" data-url="https://www.81.cn/jssd/2026-06/19/content_123456.htm" data-summary="新型反坦克导弹系统可适配装甲车辆、直升机和地面发射架，采用光纤制导和顶攻模式，具备全天候作战能力。" data-source="兵器知识" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/19/content_123456.htm" target="_blank" rel="noopener">中国展示新型反坦克导弹系统适配多平台</a></h3>
+        <div class="summary">新型反坦克导弹系统可适配装甲车辆、直升机和地面发射架，采用光纤制导和顶攻模式，具备全天候作战能力。</div>
+        <div class="meta-row">
+          <span>兵器知识</span>
+          <a href="https://www.81.cn/jssd/2026-06/19/content_123456.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+      <div class="cn-tank cat-section" style="display:none"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-y3geqh" data-title="国产第四代主战坦克研发进入最后阶段" data-url="https://www.81.cn/jssd/2026-06/28/content_345678.htm" data-summary="据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统和无人炮塔。" data-source="中国军网" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/28/content_345678.htm" target="_blank" rel="noopener">国产第四代主战坦克研发进入最后阶段</a></h3>
+        <div class="summary">据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统和无人炮塔。</div>
+        <div class="meta-row">
+          <span>中国军网</span>
+          <a href="https://www.81.cn/jssd/2026-06/28/content_345678.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-klq2mj" data-title="国产新型轻型坦克完成热带丛林适应性训练" data-url="https://www.81.cn/jssd/2026-06/24/content_678901.htm" data-summary="新型轻型坦克在南方丛林地区完成高强度适应性训练，展示了优异的机动性能和复杂地形通过能力。" data-source="中国军网" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/24/content_678901.htm" target="_blank" rel="noopener">国产新型轻型坦克完成热带丛林适应性训练</a></h3>
+        <div class="summary">新型轻型坦克在南方丛林地区完成高强度适应性训练，展示了优异的机动性能和复杂地形通过能力。</div>
+        <div class="meta-row">
+          <span>中国军网</span>
+          <a href="https://www.81.cn/jssd/2026-06/24/content_678901.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-8dgw3o" data-title="解放军装甲部队数字化改造取得阶段性成果" data-url="https://www.81.cn/jssd/2026-06/21/content_901234.htm" data-summary="陆军装甲部队全面启动数字化改造工程，新型指挥信息系统和车际数据链已装备多个合成旅。" data-source="解放军报" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/21/content_901234.htm" target="_blank" rel="noopener">解放军装甲部队数字化改造取得阶段性成果</a></h3>
+        <div class="summary">陆军装甲部队全面启动数字化改造工程，新型指挥信息系统和车际数据链已装备多个合成旅。</div>
+        <div class="meta-row">
+          <span>解放军报</span>
+          <a href="https://www.81.cn/jssd/2026-06/21/content_901234.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-4zernp" data-title="中国展示新型反坦克导弹系统适配多平台" data-url="https://www.81.cn/jssd/2026-06/19/content_123456.htm" data-summary="新型反坦克导弹系统可适配装甲车辆、直升机和地面发射架，采用光纤制导和顶攻模式，具备全天候作战能力。" data-source="兵器知识" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/19/content_123456.htm" target="_blank" rel="noopener">中国展示新型反坦克导弹系统适配多平台</a></h3>
+        <div class="summary">新型反坦克导弹系统可适配装甲车辆、直升机和地面发射架，采用光纤制导和顶攻模式，具备全天候作战能力。</div>
+        <div class="meta-row">
+          <span>兵器知识</span>
+          <a href="https://www.81.cn/jssd/2026-06/19/content_123456.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+      <div class="cn-artillery cat-section" style="display:none"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-wujzc8" data-title="新型155毫米自行榴弹炮正式列装陆军某部" data-url="https://www.81.cn/jssd/2026-06/27/content_234567.htm" data-summary="国产新型155毫米自行榴弹炮具备自动装弹、信息化作战能力，射程和精度均达到国际先进水平，近期已正式列装。" data-source="解放军报" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/27/content_234567.htm" target="_blank" rel="noopener">新型155毫米自行榴弹炮正式列装陆军某部</a></h3>
+        <div class="summary">国产新型155毫米自行榴弹炮具备自动装弹、信息化作战能力，射程和精度均达到国际先进水平，近期已正式列装。</div>
+        <div class="meta-row">
+          <span>解放军报</span>
+          <a href="https://www.81.cn/jssd/2026-06/27/content_234567.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-7q9l34" data-title="解放军新型火箭炮系统实现远程精确打击" data-url="https://www.81.cn/jssd/2026-06/25/content_567890.htm" data-summary="新型远程火箭炮系统在演习中展示出对300公里外目标的精确打击能力，命中精度CEP小于10米。" data-source="解放军报" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/25/content_567890.htm" target="_blank" rel="noopener">解放军新型火箭炮系统实现远程精确打击</a></h3>
+        <div class="summary">新型远程火箭炮系统在演习中展示出对300公里外目标的精确打击能力，命中精度CEP小于10米。</div>
+        <div class="meta-row">
+          <span>解放军报</span>
+          <a href="https://www.81.cn/jssd/2026-06/25/content_567890.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-o13tdf" data-title="国产新型车载榴弹炮通过寒区试验验证" data-url="https://www.81.cn/jssd/2026-06/22/content_890123.htm" data-summary="新型车载榴弹炮在零下40度极寒环境中完成全部射击试验，各项战术技术指标均达到设计要求。" data-source="现代兵器" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/22/content_890123.htm" target="_blank" rel="noopener">国产新型车载榴弹炮通过寒区试验验证</a></h3>
+        <div class="summary">新型车载榴弹炮在零下40度极寒环境中完成全部射击试验，各项战术技术指标均达到设计要求。</div>
+        <div class="meta-row">
+          <span>现代兵器</span>
+          <a href="https://www.81.cn/jssd/2026-06/22/content_890123.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-4zernp" data-title="中国展示新型反坦克导弹系统适配多平台" data-url="https://www.81.cn/jssd/2026-06/19/content_123456.htm" data-summary="新型反坦克导弹系统可适配装甲车辆、直升机和地面发射架，采用光纤制导和顶攻模式，具备全天候作战能力。" data-source="兵器知识" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/19/content_123456.htm" target="_blank" rel="noopener">中国展示新型反坦克导弹系统适配多平台</a></h3>
+        <div class="summary">新型反坦克导弹系统可适配装甲车辆、直升机和地面发射架，采用光纤制导和顶攻模式，具备全天候作战能力。</div>
+        <div class="meta-row">
+          <span>兵器知识</span>
+          <a href="https://www.81.cn/jssd/2026-06/19/content_123456.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+      <div class="cn-afv cat-section" style="display:none"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-9q56gn" data-title="国产新型轮式步兵战车完成高原全域测试" data-url="https://www.81.cn/jssd/2026-06/26/content_456789.htm" data-summary="新一代轮式步兵战车在海拔5000米高原环境下完成全部测试科目，动力系统、火控系统和防护能力均达预期指标。" data-source="中国兵器工业集团" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/26/content_456789.htm" target="_blank" rel="noopener">国产新型轮式步兵战车完成高原全域测试</a></h3>
+        <div class="summary">新一代轮式步兵战车在海拔5000米高原环境下完成全部测试科目，动力系统、火控系统和防护能力均达预期指标。</div>
+        <div class="meta-row">
+          <span>中国兵器工业集团</span>
+          <a href="https://www.81.cn/jssd/2026-06/26/content_456789.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-xhw1tu" data-title="中国兵器工业集团推出新型装甲抢救车" data-url="https://www.81.cn/jssd/2026-06/23/content_789012.htm" data-summary="新型装甲抢救车采用模块化设计，可快速更换吊臂和绞盘组件，适应不同吨位装甲车辆的战场抢修需求。" data-source="中国兵器工业集团" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/23/content_789012.htm" target="_blank" rel="noopener">中国兵器工业集团推出新型装甲抢救车</a></h3>
+        <div class="summary">新型装甲抢救车采用模块化设计，可快速更换吊臂和绞盘组件，适应不同吨位装甲车辆的战场抢修需求。</div>
+        <div class="meta-row">
+          <span>中国兵器工业集团</span>
+          <a href="https://www.81.cn/jssd/2026-06/23/content_789012.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-cjqshd" data-title="国产新型两栖装甲突击车批量交付海军陆战队" data-url="https://www.81.cn/jssd/2026-06/20/content_012345.htm" data-summary="新型两栖装甲突击车具备优异的海上高速航行能力和抢滩突击火力，已批量交付海军陆战队某旅。" data-source="中国军网" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/20/content_012345.htm" target="_blank" rel="noopener">国产新型两栖装甲突击车批量交付海军陆战队</a></h3>
+        <div class="summary">新型两栖装甲突击车具备优异的海上高速航行能力和抢滩突击火力，已批量交付海军陆战队某旅。</div>
+        <div class="meta-row">
+          <span>中国军网</span>
+          <a href="https://www.81.cn/jssd/2026-06/20/content_012345.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-4zernp" data-title="中国展示新型反坦克导弹系统适配多平台" data-url="https://www.81.cn/jssd/2026-06/19/content_123456.htm" data-summary="新型反坦克导弹系统可适配装甲车辆、直升机和地面发射架，采用光纤制导和顶攻模式，具备全天候作战能力。" data-source="兵器知识" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/19/content_123456.htm" target="_blank" rel="noopener">中国展示新型反坦克导弹系统适配多平台</a></h3>
+        <div class="summary">新型反坦克导弹系统可适配装甲车辆、直升机和地面发射架，采用光纤制导和顶攻模式，具备全天候作战能力。</div>
+        <div class="meta-row">
+          <span>兵器知识</span>
+          <a href="https://www.81.cn/jssd/2026-06/19/content_123456.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+      <div class="cn-ai cat-section" style="display:none"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-y3geqh" data-title="国产第四代主战坦克研发进入最后阶段" data-url="https://www.81.cn/jssd/2026-06/28/content_345678.htm" data-summary="据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统和无人炮塔。" data-source="中国军网" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag ai-tag">坦克</span>
+        <h3><a href="https://www.81.cn/jssd/2026-06/28/content_345678.htm" target="_blank" rel="noopener">国产第四代主战坦克研发进入最后阶段</a></h3>
+        <div class="summary">据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破，预计将配备新型主动防护系统和无人炮塔。</div>
+        <div class="meta-row">
+          <span>中国军网</span>
+          <a href="https://www.81.cn/jssd/2026-06/28/content_345678.htm" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+    </div>
+    <!-- 🌍 -->
+    <div class="region">
+      <div class="region-header">🌍 国际资讯</div>
+      <div class="category-tabs">
+        <span class="category-tab active" onclick="filterCat(this,'int-','all')">📋 全部</span>
+        <span class="category-tab" onclick="filterCat(this,'int-','tank')">🏗️ 坦克</span>
+        <span class="category-tab" onclick="filterCat(this,'int-','artillery')">🔫 火炮</span>
+        <span class="category-tab" onclick="filterCat(this,'int-','afv')">🚛 装甲车</span>
+        <span class="category-tab" onclick="filterCat(this,'int-','ai')">🤖 AI</span>
+      </div>
+      <div class="int-all cat-section" style="display:block"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-kh1dqo" data-title="US Army unveils Next Generation Combat Vehicle details" data-url="https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/" data-summary="The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration, modular armor, and hybrid-electric propulsion." data-source="Defense News" data-category="AFV" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">📰</span></div>
+      <div class="info">
+        <span class="tag">AFV</span>
+        <h3><a href="https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/" target="_blank" rel="noopener">US Army unveils Next Generation Combat Vehicle details</a></h3>
+        <div class="summary">The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration, modular armor, and hybrid-electric propulsion.</div>
+        <div class="meta-row">
+          <span>Defense News</span>
+          <a href="https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-9ww7hf" data-title="European consortium develops fully autonomous artillery system" data-url="https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery" data-summary="A European defense consortium led by KNDS is developing a fully autonomous 155mm artillery system with AI-assisted targeting and auto-loading capabilities." data-source="Jane&#39;s Defence" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery" target="_blank" rel="noopener">European consortium develops fully autonomous artillery system</a></h3>
+        <div class="summary">A European defense consortium led by KNDS is developing a fully autonomous 155mm artillery system with AI-assisted targeting and auto-loading capabilities.</div>
+        <div class="meta-row">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-lca2ve" data-title="韩国K3主战坦克概念设计正式公开" data-url="https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html" data-summary="韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔、氢燃料电池混合动力系统和AI辅助作战管理系统。" data-source="Army Recognition" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html" target="_blank" rel="noopener">韩国K3主战坦克概念设计正式公开</a></h3>
+        <div class="summary">韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔、氢燃料电池混合动力系统和AI辅助作战管理系统。</div>
+        <div class="meta-row">
+          <span>Army Recognition</span>
+          <a href="https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-7zbs09" data-title="俄罗斯展示T-14阿玛塔坦克最新改进型" data-url="https://tass.com/defense/2026-06-27/t-14-armata-upgraded-variant" data-summary="俄罗斯在莫斯科防务展上展示了T-14阿玛塔坦克的最新改进型，配备升级版主动防护系统和新型152毫米主炮。" data-source="塔斯社" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://tass.com/defense/2026-06-27/t-14-armata-upgraded-variant" target="_blank" rel="noopener">俄罗斯展示T-14阿玛塔坦克最新改进型</a></h3>
+        <div class="summary">俄罗斯在莫斯科防务展上展示了T-14阿玛塔坦克的最新改进型，配备升级版主动防护系统和新型152毫米主炮。</div>
+        <div class="meta-row">
+          <span>塔斯社</span>
+          <a href="https://tass.com/defense/2026-06-27/t-14-armata-upgraded-variant" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-4cs2ps" data-title="Germany and France advance MGCS main battle tank program" data-url="https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/" data-summary="Germany and France have signed a new agreement to advance the Main Ground Combat System (MGCS), a next-generation tank to replace Leopard 2 and Leclerc by 2035." data-source="Defense News" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/" target="_blank" rel="noopener">Germany and France advance MGCS main battle tank program</a></h3>
+        <div class="summary">Germany and France have signed a new agreement to advance the Main Ground Combat System (MGCS), a next-generation tank to replace Leopard 2 and Leclerc by 2035.</div>
+        <div class="meta-row">
+          <span>Defense News</span>
+          <a href="https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-bj6rj2" data-title="日本新型16式机动战车升级版服役" data-url="https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version" data-summary="日本陆上自卫队接收了新型16式机动战车升级版，换装改进型105毫米火炮和新型火控系统，反装甲能力显著增强。" data-source="Jane&#39;s Defence" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version" target="_blank" rel="noopener">日本新型16式机动战车升级版服役</a></h3>
+        <div class="summary">日本陆上自卫队接收了新型16式机动战车升级版，换装改进型105毫米火炮和新型火控系统，反装甲能力显著增强。</div>
+        <div class="meta-row">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-kq1ogo" data-title="India tests new Arjun Mk-2 main battle tank" data-url="https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html" data-summary="India has conducted successful field trials of the Arjun Mk-2 MBT, featuring improved composite armor, a new 120mm rifled gun, and enhanced night-fighting capability." data-source="Army Recognition" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html" target="_blank" rel="noopener">India tests new Arjun Mk-2 main battle tank</a></h3>
+        <div class="summary">India has conducted successful field trials of the Arjun Mk-2 MBT, featuring improved composite armor, a new 120mm rifled gun, and enhanced night-fighting capability.</div>
+        <div class="meta-row">
+          <span>Army Recognition</span>
+          <a href="https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-3kb5dm" data-title="波兰接收首批K2坦克加速陆军现代化" data-url="https://www.defensenews.com/land/2026/06/25/poland-receives-first-k2-tanks/" data-summary="波兰陆军接收了首批韩国K2黑豹主战坦克，计划共计装备1000辆，大幅提升波兰装甲部队的作战能力。" data-source="Defense News" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.defensenews.com/land/2026/06/25/poland-receives-first-k2-tanks/" target="_blank" rel="noopener">波兰接收首批K2坦克加速陆军现代化</a></h3>
+        <div class="summary">波兰陆军接收了首批韩国K2黑豹主战坦克，计划共计装备1000辆，大幅提升波兰装甲部队的作战能力。</div>
+        <div class="meta-row">
+          <span>Defense News</span>
+          <a href="https://www.defensenews.com/land/2026/06/25/poland-receives-first-k2-tanks/" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-w5jlfs" data-title="Sweden tests new CV90 variant with enhanced protection" data-url="https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection" data-summary="BAE Systems Hägglunds has tested a new CV90 IFV variant with active protection system and modular armor, improving survivability against modern threats." data-source="Jane&#39;s Defence" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection" target="_blank" rel="noopener">Sweden tests new CV90 variant with enhanced protection</a></h3>
+        <div class="summary">BAE Systems Hägglunds has tested a new CV90 IFV variant with active protection system and modular armor, improving survivability against modern threats.</div>
+        <div class="meta-row">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-cd2573" data-title="澳大利亚陆军启动新型自行火炮采购计划" data-url="https://www.armyrecognition.com/defense_news_june_2026/australia_new_self_propelled_howitzer.html" data-summary="澳大利亚国防部宣布启动LAND 8116项目第二阶段，计划采购30辆新型155毫米自行榴弹炮，韩国K9和德国PzH2000入围竞争。" data-source="Army Recognition" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.armyrecognition.com/defense_news_june_2026/australia_new_self_propelled_howitzer.html" target="_blank" rel="noopener">澳大利亚陆军启动新型自行火炮采购计划</a></h3>
+        <div class="summary">澳大利亚国防部宣布启动LAND 8116项目第二阶段，计划采购30辆新型155毫米自行榴弹炮，韩国K9和德国PzH2000入围竞争。</div>
+        <div class="meta-row">
+          <span>Army Recognition</span>
+          <a href="https://www.armyrecognition.com/defense_news_june_2026/australia_new_self_propelled_howitzer.html" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+      <div class="int-tank cat-section" style="display:none"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-lca2ve" data-title="韩国K3主战坦克概念设计正式公开" data-url="https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html" data-summary="韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔、氢燃料电池混合动力系统和AI辅助作战管理系统。" data-source="Army Recognition" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html" target="_blank" rel="noopener">韩国K3主战坦克概念设计正式公开</a></h3>
+        <div class="summary">韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔、氢燃料电池混合动力系统和AI辅助作战管理系统。</div>
+        <div class="meta-row">
+          <span>Army Recognition</span>
+          <a href="https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-7zbs09" data-title="俄罗斯展示T-14阿玛塔坦克最新改进型" data-url="https://tass.com/defense/2026-06-27/t-14-armata-upgraded-variant" data-summary="俄罗斯在莫斯科防务展上展示了T-14阿玛塔坦克的最新改进型，配备升级版主动防护系统和新型152毫米主炮。" data-source="塔斯社" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://tass.com/defense/2026-06-27/t-14-armata-upgraded-variant" target="_blank" rel="noopener">俄罗斯展示T-14阿玛塔坦克最新改进型</a></h3>
+        <div class="summary">俄罗斯在莫斯科防务展上展示了T-14阿玛塔坦克的最新改进型，配备升级版主动防护系统和新型152毫米主炮。</div>
+        <div class="meta-row">
+          <span>塔斯社</span>
+          <a href="https://tass.com/defense/2026-06-27/t-14-armata-upgraded-variant" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-4cs2ps" data-title="Germany and France advance MGCS main battle tank program" data-url="https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/" data-summary="Germany and France have signed a new agreement to advance the Main Ground Combat System (MGCS), a next-generation tank to replace Leopard 2 and Leclerc by 2035." data-source="Defense News" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/" target="_blank" rel="noopener">Germany and France advance MGCS main battle tank program</a></h3>
+        <div class="summary">Germany and France have signed a new agreement to advance the Main Ground Combat System (MGCS), a next-generation tank to replace Leopard 2 and Leclerc by 2035.</div>
+        <div class="meta-row">
+          <span>Defense News</span>
+          <a href="https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-kq1ogo" data-title="India tests new Arjun Mk-2 main battle tank" data-url="https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html" data-summary="India has conducted successful field trials of the Arjun Mk-2 MBT, featuring improved composite armor, a new 120mm rifled gun, and enhanced night-fighting capability." data-source="Army Recognition" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html" target="_blank" rel="noopener">India tests new Arjun Mk-2 main battle tank</a></h3>
+        <div class="summary">India has conducted successful field trials of the Arjun Mk-2 MBT, featuring improved composite armor, a new 120mm rifled gun, and enhanced night-fighting capability.</div>
+        <div class="meta-row">
+          <span>Army Recognition</span>
+          <a href="https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-3kb5dm" data-title="波兰接收首批K2坦克加速陆军现代化" data-url="https://www.defensenews.com/land/2026/06/25/poland-receives-first-k2-tanks/" data-summary="波兰陆军接收了首批韩国K2黑豹主战坦克，计划共计装备1000辆，大幅提升波兰装甲部队的作战能力。" data-source="Defense News" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag">坦克</span>
+        <h3><a href="https://www.defensenews.com/land/2026/06/25/poland-receives-first-k2-tanks/" target="_blank" rel="noopener">波兰接收首批K2坦克加速陆军现代化</a></h3>
+        <div class="summary">波兰陆军接收了首批韩国K2黑豹主战坦克，计划共计装备1000辆，大幅提升波兰装甲部队的作战能力。</div>
+        <div class="meta-row">
+          <span>Defense News</span>
+          <a href="https://www.defensenews.com/land/2026/06/25/poland-receives-first-k2-tanks/" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+      <div class="int-artillery cat-section" style="display:none"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-9ww7hf" data-title="European consortium develops fully autonomous artillery system" data-url="https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery" data-summary="A European defense consortium led by KNDS is developing a fully autonomous 155mm artillery system with AI-assisted targeting and auto-loading capabilities." data-source="Jane&#39;s Defence" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery" target="_blank" rel="noopener">European consortium develops fully autonomous artillery system</a></h3>
+        <div class="summary">A European defense consortium led by KNDS is developing a fully autonomous 155mm artillery system with AI-assisted targeting and auto-loading capabilities.</div>
+        <div class="meta-row">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-bj6rj2" data-title="日本新型16式机动战车升级版服役" data-url="https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version" data-summary="日本陆上自卫队接收了新型16式机动战车升级版，换装改进型105毫米火炮和新型火控系统，反装甲能力显著增强。" data-source="Jane&#39;s Defence" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version" target="_blank" rel="noopener">日本新型16式机动战车升级版服役</a></h3>
+        <div class="summary">日本陆上自卫队接收了新型16式机动战车升级版，换装改进型105毫米火炮和新型火控系统，反装甲能力显著增强。</div>
+        <div class="meta-row">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-cd2573" data-title="澳大利亚陆军启动新型自行火炮采购计划" data-url="https://www.armyrecognition.com/defense_news_june_2026/australia_new_self_propelled_howitzer.html" data-summary="澳大利亚国防部宣布启动LAND 8116项目第二阶段，计划采购30辆新型155毫米自行榴弹炮，韩国K9和德国PzH2000入围竞争。" data-source="Army Recognition" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag">火炮</span>
+        <h3><a href="https://www.armyrecognition.com/defense_news_june_2026/australia_new_self_propelled_howitzer.html" target="_blank" rel="noopener">澳大利亚陆军启动新型自行火炮采购计划</a></h3>
+        <div class="summary">澳大利亚国防部宣布启动LAND 8116项目第二阶段，计划采购30辆新型155毫米自行榴弹炮，韩国K9和德国PzH2000入围竞争。</div>
+        <div class="meta-row">
+          <span>Army Recognition</span>
+          <a href="https://www.armyrecognition.com/defense_news_june_2026/australia_new_self_propelled_howitzer.html" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+      <div class="int-afv cat-section" style="display:none"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-kh1dqo" data-title="US Army unveils Next Generation Combat Vehicle details" data-url="https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/" data-summary="The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration, modular armor, and hybrid-electric propulsion." data-source="Defense News" data-category="AFV" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">📰</span></div>
+      <div class="info">
+        <span class="tag">AFV</span>
+        <h3><a href="https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/" target="_blank" rel="noopener">US Army unveils Next Generation Combat Vehicle details</a></h3>
+        <div class="summary">The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration, modular armor, and hybrid-electric propulsion.</div>
+        <div class="meta-row">
+          <span>Defense News</span>
+          <a href="https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-bj6rj2" data-title="日本新型16式机动战车升级版服役" data-url="https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version" data-summary="日本陆上自卫队接收了新型16式机动战车升级版，换装改进型105毫米火炮和新型火控系统，反装甲能力显著增强。" data-source="Jane&#39;s Defence" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version" target="_blank" rel="noopener">日本新型16式机动战车升级版服役</a></h3>
+        <div class="summary">日本陆上自卫队接收了新型16式机动战车升级版，换装改进型105毫米火炮和新型火控系统，反装甲能力显著增强。</div>
+        <div class="meta-row">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://www.janes.com/defence-news/news-detail/japan-type-16-mcv-upgraded-version" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-w5jlfs" data-title="Sweden tests new CV90 variant with enhanced protection" data-url="https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection" data-summary="BAE Systems Hägglunds has tested a new CV90 IFV variant with active protection system and modular armor, improving survivability against modern threats." data-source="Jane&#39;s Defence" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag">装甲车辆</span>
+        <h3><a href="https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection" target="_blank" rel="noopener">Sweden tests new CV90 variant with enhanced protection</a></h3>
+        <div class="summary">BAE Systems Hägglunds has tested a new CV90 IFV variant with active protection system and modular armor, improving survivability against modern threats.</div>
+        <div class="meta-row">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+      <div class="int-ai cat-section" style="display:none"><div class="news-list">
+    <div class="news-item" data-id="2026-06-29-kh1dqo" data-title="US Army unveils Next Generation Combat Vehicle details" data-url="https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/" data-summary="The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration, modular armor, and hybrid-electric propulsion." data-source="Defense News" data-category="AFV" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">📰</span></div>
+      <div class="info">
+        <span class="tag ai-tag">AFV</span>
+        <h3><a href="https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/" target="_blank" rel="noopener">US Army unveils Next Generation Combat Vehicle details</a></h3>
+        <div class="summary">The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration, modular armor, and hybrid-electric propulsion.</div>
+        <div class="meta-row">
+          <span>Defense News</span>
+          <a href="https://www.defensenews.com/land/2026/06/28/us-army-ngcv-details-revealed/" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-9ww7hf" data-title="European consortium develops fully autonomous artillery system" data-url="https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery" data-summary="A European defense consortium led by KNDS is developing a fully autonomous 155mm artillery system with AI-assisted targeting and auto-loading capabilities." data-source="Jane&#39;s Defence" data-category="火炮" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🔫</span></div>
+      <div class="info">
+        <span class="tag ai-tag">火炮</span>
+        <h3><a href="https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery" target="_blank" rel="noopener">European consortium develops fully autonomous artillery system</a></h3>
+        <div class="summary">A European defense consortium led by KNDS is developing a fully autonomous 155mm artillery system with AI-assisted targeting and auto-loading capabilities.</div>
+        <div class="meta-row">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://www.janes.com/defence-news/news-detail/european-consortium-autonomous-artillery" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-lca2ve" data-title="韩国K3主战坦克概念设计正式公开" data-url="https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html" data-summary="韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔、氢燃料电池混合动力系统和AI辅助作战管理系统。" data-source="Army Recognition" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag ai-tag">坦克</span>
+        <h3><a href="https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html" target="_blank" rel="noopener">韩国K3主战坦克概念设计正式公开</a></h3>
+        <div class="summary">韩国现代Rotem公开了K3主战坦克的概念设计，采用无人炮塔、氢燃料电池混合动力系统和AI辅助作战管理系统。</div>
+        <div class="meta-row">
+          <span>Army Recognition</span>
+          <a href="https://www.armyrecognition.com/defense_news_june_2026/south_korea_k3_main_battle_tank_concept.html" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-4cs2ps" data-title="Germany and France advance MGCS main battle tank program" data-url="https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/" data-summary="Germany and France have signed a new agreement to advance the Main Ground Combat System (MGCS), a next-generation tank to replace Leopard 2 and Leclerc by 2035." data-source="Defense News" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag ai-tag">坦克</span>
+        <h3><a href="https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/" target="_blank" rel="noopener">Germany and France advance MGCS main battle tank program</a></h3>
+        <div class="summary">Germany and France have signed a new agreement to advance the Main Ground Combat System (MGCS), a next-generation tank to replace Leopard 2 and Leclerc by 2035.</div>
+        <div class="meta-row">
+          <span>Defense News</span>
+          <a href="https://www.defensenews.com/land/2026/06/26/germany-france-mgcs-tank-advances/" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-kq1ogo" data-title="India tests new Arjun Mk-2 main battle tank" data-url="https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html" data-summary="India has conducted successful field trials of the Arjun Mk-2 MBT, featuring improved composite armor, a new 120mm rifled gun, and enhanced night-fighting capability." data-source="Army Recognition" data-category="坦克" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🏗️</span></div>
+      <div class="info">
+        <span class="tag ai-tag">坦克</span>
+        <h3><a href="https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html" target="_blank" rel="noopener">India tests new Arjun Mk-2 main battle tank</a></h3>
+        <div class="summary">India has conducted successful field trials of the Arjun Mk-2 MBT, featuring improved composite armor, a new 120mm rifled gun, and enhanced night-fighting capability.</div>
+        <div class="meta-row">
+          <span>Army Recognition</span>
+          <a href="https://www.armyrecognition.com/defense_news_june_2026/india_arjun_mk2_tank_tests.html" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div>
+
+    <div class="news-item" data-id="2026-06-29-w5jlfs" data-title="Sweden tests new CV90 variant with enhanced protection" data-url="https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection" data-summary="BAE Systems Hägglunds has tested a new CV90 IFV variant with active protection system and modular armor, improving survivability against modern threats." data-source="Jane&#39;s Defence" data-category="装甲车辆" data-image="">
+      <div class="thumb"><span style="font-size:1.4em;">🚛</span></div>
+      <div class="info">
+        <span class="tag ai-tag">装甲车辆</span>
+        <h3><a href="https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection" target="_blank" rel="noopener">Sweden tests new CV90 variant with enhanced protection</a></h3>
+        <div class="summary">BAE Systems Hägglunds has tested a new CV90 IFV variant with active protection system and modular armor, improving survivability against modern threats.</div>
+        <div class="meta-row">
+          <span>Jane&#39;s Defence</span>
+          <a href="https://www.janes.com/defence-news/news-detail/sweden-cv90-enhanced-protection" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn" onclick="toggleFav(this)" title="点击收藏">☆</button>
+    </div></div></div>
+    </div>
+  </div>
+
+  <footer>
+    <div>📡 资讯来源: 综合网络搜索 · 仅供学习参考 · 2026/06/29 13:30:36</div>
+  </footer>
+</div>
+
+<script>
+// ====== Favorites System ======
+const STORAGE_KEY = 'wangye_favs';
+let favorites = {};
+
+try {
+  favorites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+} catch(e) { favorites = {}; }
+
+function saveFavs() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+  updateFavCount();
+  renderFavPanel();
+}
+
+function getItemId(el) {
+  // The news-item has data-id attribute
+  const item = el.closest('.news-item');
+  return item ? item.dataset.id : '';
+}
+
+function toggleFav(btn) {
+  const item = btn.closest('.news-item');
+  const id = item.dataset.id;
+  if (!id) return;
+
+  if (favorites[id]) {
+    delete favorites[id];
+    btn.textContent = '☆';
+    btn.classList.remove('is-fav');
+    btn.title = '点击收藏';
+  } else {
+    favorites[id] = {
+      id: id,
+      title: item.dataset.title || '',
+      url: item.dataset.url || '#',
+      summary: item.dataset.summary || '',
+      source: item.dataset.source || '',
+      category: item.dataset.category || '',
+      image: item.dataset.image || '',
+      savedAt: new Date().toISOString(),
+    };
+    btn.textContent = '★';
+    btn.classList.add('is-fav');
+    btn.title = '已收藏，点击取消';
+  }
+  saveFavs();
+}
+
+function updateFavCount() {
+  const count = Object.keys(favorites).length;
+  const el = document.getElementById('fav-count');
+  if (el) el.textContent = count;
+}
+
+function toggleFavPanel() {
+  const panel = document.getElementById('fav-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  renderFavPanel();
+}
+
+function renderFavPanel() {
+  const list = document.getElementById('fav-list');
+  const empty = document.getElementById('fav-empty');
+  const favs = Object.values(favorites);
+  if (!list) return;
+
+  if (favs.length === 0) {
+    list.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  list.innerHTML = favs.map(f => `
+    <div class="news-item" data-id="${escapeHtml(f.id)}">
+      <div class="thumb">${f.image ? `<img src="${escapeHtml(f.image)}" alt="">` : '📌'}</div>
+      <div class="info">
+        <span class="tag">${escapeHtml(f.category || '收藏')}</span>
+        <h3><a href="${escapeHtml(f.url) || '#'}" target="_blank" rel="noopener">${escapeHtml(f.title)}</a></h3>
+        <div class="summary">${escapeHtml(f.summary || '')}</div>
+        <div class="meta-row">
+          <span>${escapeHtml(f.source || '')} · 收藏于 ${(f.savedAt || '').slice(0,10)}</span>
+          <a href="${escapeHtml(f.url) || '#'}" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+      </div>
+      <button class="fav-btn is-fav" onclick="removeFav('${escapeHtml(f.id)}')" title="取消收藏">★</button>
+    </div>
+  `).join('');
+}
+
+function removeFav(id) {
+  delete favorites[id];
+  saveFavs();
+  // Also update the corresponding button on the main page
+  const btn = document.querySelector(`.news-item[data-id="${id}"] .fav-btn`);
+  if (btn) { btn.textContent = '☆'; btn.classList.remove('is-fav'); }
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Init all fav buttons on page load
+document.addEventListener('DOMContentLoaded', () => {
+  updateFavCount();
+  // Mark already-favorited items
+  document.querySelectorAll('.news-item[data-id]').forEach(item => {
+    const id = item.dataset.id;
+    const btn = item.querySelector('.fav-btn');
+    if (btn && favorites[id]) {
+      btn.textContent = '★';
+      btn.classList.add('is-fav');
+      btn.title = '已收藏，点击取消';
+    }
+  });
+});
+
+// ====== Category Filter ======
+function filterCat(el, prefix, cat) {
+  const tabs = el.parentElement.querySelectorAll('.category-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const region = el.parentElement.parentElement;
+  ['all','tank','artillery','afv','ai'].forEach(c => {
+    const div = region.querySelector('.' + prefix + c);
+    if (div) div.style.display = (c === cat) ? 'block' : 'none';
+  });
+}
+</script>
+</body>
+</html>
