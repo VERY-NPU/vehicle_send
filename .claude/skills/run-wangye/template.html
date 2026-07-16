@@ -14,6 +14,26 @@
     --text2: #9ca3af;
     --border: #1f2937;
     --fav-color: #eab308;
+    --ai-bg: rgba(124,58,237,0.08);
+    --news-item-bg: rgba(255,255,255,0.015);
+    --news-item-hover: var(--border);
+    --region-header-bg: rgba(255,255,255,0.02);
+    --footer-border: var(--border);
+  }
+  [data-theme="light"] {
+    --bg: #f3f4f6;
+    --card-bg: #ffffff;
+    --accent: #d97706;
+    --accent2: #059669;
+    --text: #1f2937;
+    --text2: #6b7280;
+    --border: #e5e7eb;
+    --fav-color: #ca8a04;
+    --ai-bg: rgba(124,58,237,0.04);
+    --news-item-bg: rgba(0,0,0,0.01);
+    --news-item-hover: #d1d5db;
+    --region-header-bg: rgba(0,0,0,0.02);
+    --footer-border: #e5e7eb;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -28,283 +48,325 @@
 
   /* ====== Top Bar ====== */
   .top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 16px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 10px; padding: 12px 16px;
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 10px;
   }
   .top-bar h1 {
-    font-size: 1.15em;
+    font-size: 1.2em;
     background: linear-gradient(135deg, var(--accent), #f97316);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .top-bar .right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.78em;
-    color: var(--text2);
+  .top-bar .right { display: flex; align-items: center; gap: 10px; font-size: 0.78em; color: var(--text2); }
+  .theme-toggle {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 16px;
+    cursor: pointer; font-size: 1em; padding: 3px 8px; line-height: 1; transition: all 0.15s;
   }
+  .theme-toggle:hover { background: rgba(255,255,255,0.12); }
   .top-bar .fav-toggle {
-    padding: 5px 14px;
-    background: rgba(234,179,8,0.12);
-    border: 1px solid rgba(234,179,8,0.3);
-    border-radius: 16px;
-    cursor: pointer;
-    color: var(--fav-color);
-    font-size: 0.85em;
-    transition: all 0.15s;
-    white-space: nowrap;
+    padding: 5px 14px; background: rgba(234,179,8,0.12);
+    border: 1px solid rgba(234,179,8,0.3); border-radius: 16px;
+    cursor: pointer; color: var(--fav-color); font-size: 0.85em; transition: all 0.15s; white-space: nowrap;
   }
   .top-bar .fav-toggle:hover { background: rgba(234,179,8,0.2); }
   .top-bar .fav-count {
-    background: var(--fav-color);
-    color: #000;
-    border-radius: 10px;
-    padding: 1px 7px;
-    font-size: 0.75em;
-    font-weight: 700;
-    margin-left: 2px;
+    background: var(--fav-color); color: #000; border-radius: 10px;
+    padding: 1px 7px; font-size: 0.75em; font-weight: 700; margin-left: 2px;
   }
+
+  /* ====== Search ====== */
+  .search-bar {
+    display: flex; gap: 8px; margin-bottom: 10px;
+    padding: 8px 14px; background: var(--card-bg);
+    border: 1px solid var(--border); border-radius: 10px; align-items: center;
+  }
+  .search-bar input {
+    flex: 1; background: transparent; border: none; color: var(--text);
+    font-size: 0.88em; outline: none; padding: 4px 0;
+  }
+  .search-bar input::placeholder { color: var(--text2); }
+  .search-bar .search-icon { font-size: 1em; color: var(--text2); }
+  .search-bar .search-clear {
+    background: none; border: none; color: var(--text2); cursor: pointer;
+    font-size: 1em; padding: 2px 6px; display: none;
+  }
+  .search-bar .search-info { font-size: 0.72em; color: var(--text2); margin-left: 6px; white-space: nowrap; display: none; }
+
+  /* ====== Stats ====== */
+  .stats-bar {
+    display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;
+    padding: 8px 14px; background: var(--card-bg);
+    border: 1px solid var(--border); border-radius: 10px; font-size: 0.78em; color: var(--text2);
+  }
+  .stats-bar .stat { display: flex; align-items: center; gap: 4px; }
+  .stats-bar .stat-val { color: var(--accent); font-weight: 700; }
 
   /* ====== Favorites Panel ====== */
   #fav-panel {
-    display: none;
-    background: var(--card-bg);
-    border: 2px solid rgba(234,179,8,0.3);
-    border-radius: 10px;
-    padding: 12px 16px;
-    margin-bottom: 12px;
+    display: none; background: var(--card-bg);
+    border: 2px solid rgba(234,179,8,0.3); border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 10px;
   }
   #fav-panel h2 { font-size: 1em; color: var(--fav-color); margin-bottom: 8px; }
-  #fav-panel .fav-empty { color: var(--text2); font-size: 0.8em; text-align: center; padding: 12px; }
+  #fav-panel .fav-actions { display: flex; gap: 6px; margin-bottom: 8px; }
+  #fav-panel .fav-actions button {
+    padding: 3px 10px; font-size: 0.72em; border-radius: 10px; cursor: pointer;
+    background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.25); color: var(--fav-color);
+  }
+  .fav-empty { color: var(--text2); font-size: 0.8em; text-align: center; padding: 16px; }
 
   /* ====== AI Section ====== */
   .ai-section {
     background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(139,92,246,0.04));
-    border: 1px solid rgba(124,58,237,0.3);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 12px;
+    border: 1px solid rgba(124,58,237,0.3); border-radius: 10px;
+    padding: 10px 14px; margin-bottom: 10px;
   }
-  .ai-section .section-title { color: #a78bfa; font-size: 1em; margin-bottom: 8px; }
+  .ai-section .section-title { color: #a78bfa; font-size: 1em; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
   .ai-section .section-title::before { content: '🔥 '; }
+  .ai-section .ai-toggle {
+    font-size: 0.72em; padding: 2px 10px; border-radius: 10px; cursor: pointer;
+    background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: #a78bfa;
+  }
 
   /* ====== Two-Column ====== */
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 
   .region {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
   }
   .region-header {
-    font-size: 0.95em;
-    font-weight: 700;
-    padding: 8px 14px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,0.02);
+    font-size: 0.95em; font-weight: 700; padding: 8px 14px;
+    border-bottom: 1px solid var(--border); background: var(--region-header-bg);
   }
+  .region-body { flex: 1; overflow-y: auto; max-height: 70vh; }
 
   /* ====== Tabs ====== */
   .category-tabs {
-    display: flex;
-    gap: 4px;
-    padding: 6px 10px;
-    flex-wrap: wrap;
-    border-bottom: 1px solid var(--border);
+    display: flex; gap: 2px; padding: 6px 10px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--border); position: sticky; top: 0;
+    background: var(--card-bg); z-index: 2;
   }
   .category-tab {
-    padding: 3px 10px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 14px;
-    cursor: pointer;
-    font-size: 0.75em;
-    color: var(--text2);
-    transition: all 0.15s;
-    white-space: nowrap;
+    padding: 3px 10px; background: transparent; border: 1px solid transparent;
+    border-radius: 14px; cursor: pointer; font-size: 0.75em; color: var(--text2);
+    transition: all 0.15s; white-space: nowrap;
   }
   .category-tab:hover, .category-tab.active {
-    background: rgba(245,158,11,0.12);
-    border-color: rgba(245,158,11,0.3);
-    color: var(--accent);
+    background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.3); color: var(--accent);
   }
 
   /* ====== News List ====== */
-  .cat-section { padding: 8px 12px; }
-  .news-list { display: flex; flex-direction: column; gap: 6px; }
+  .news-list { display: flex; flex-direction: column; gap: 4px; padding: 6px 10px; }
 
   .news-item {
-    display: flex;
-    gap: 10px;
-    padding: 8px;
-    background: rgba(255,255,255,0.015);
-    border: 1px solid transparent;
-    border-radius: 8px;
-    transition: border-color 0.15s;
-    align-items: flex-start;
-    position: relative;
+    display: flex; gap: 10px; padding: 8px; background: var(--news-item-bg);
+    border: 1px solid transparent; border-radius: 8px; transition: border-color 0.15s;
+    align-items: flex-start; position: relative;
   }
-  .news-item:hover { border-color: var(--border); }
+  .news-item:hover { border-color: var(--news-item-hover); }
   .news-item .thumb {
-    width: 70px;
-    height: 50px;
-    border-radius: 5px;
-    background: #1a1f2e;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4em;
-    overflow: hidden;
+    width: 60px; height: 44px; border-radius: 5px; background: #1a1f2e; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 1.2em; overflow: hidden;
   }
   .news-item .thumb img { width: 100%; height: 100%; object-fit: cover; }
   .news-item .info { flex: 1; min-width: 0; }
   .news-item .info .tag {
-    display: inline-block;
-    font-size: 0.65em;
-    padding: 1px 6px;
-    border-radius: 3px;
-    background: rgba(16,185,129,0.12);
-    color: var(--accent2);
-    margin-bottom: 2px;
+    display: inline-block; font-size: 0.62em; padding: 1px 6px; border-radius: 3px;
+    background: rgba(16,185,129,0.12); color: var(--accent2); margin-bottom: 2px;
   }
   .news-item .info .tag.ai-tag { background: rgba(124,58,237,0.12); color: #a78bfa; }
-  .news-item .info h3 { font-size: 0.85em; line-height: 1.35; font-weight: 600; }
+  .news-item .info h3 { font-size: 0.83em; line-height: 1.35; font-weight: 600; }
   .news-item .info h3 a { color: var(--text); text-decoration: none; }
   .news-item .info h3 a:hover { color: var(--accent); }
   .news-item .info .summary {
-    color: var(--text2);
-    font-size: 0.75em;
-    line-height: 1.4;
-    margin-top: 2px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    color: var(--text2); font-size: 0.73em; line-height: 1.4; margin-top: 2px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .news-item .info .meta-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 3px;
-    font-size: 0.7em;
-    color: var(--text2);
-    gap: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 3px; font-size: 0.68em; color: var(--text2); gap: 8px;
   }
   .news-item .info .meta-row a { color: var(--accent); text-decoration: none; flex-shrink: 0; }
   .news-item .info .meta-row a:hover { text-decoration: underline; }
 
+  /* ====== Expand / Analysis ====== */
+  .expand-toggle {
+    cursor: pointer; color: var(--accent); border: none; background: none;
+    font-size: 0.7em; padding: 2px 6px; margin-left: 6px; border-radius: 3px;
+    background: rgba(245,158,11,0.08); white-space: nowrap;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .expand-toggle:hover { background: rgba(245,158,11,0.2); }
+  .analysis-section {
+    display: none; margin-top: 6px; padding: 8px 10px;
+    background: rgba(124,58,237,0.04); border-left: 3px solid rgba(124,58,237,0.4);
+    border-radius: 0 6px 6px 0; font-size: 0.73em; color: #a78bfa; line-height: 1.55;
+  }
+  [data-theme="light"] .analysis-section { color: #6d28d9; }
+  .analysis-section.show { display: block; }
+  .china-insight {
+    margin-top: 4px; padding: 6px 10px;
+    background: rgba(245,158,11,0.04); border-left: 3px solid rgba(245,158,11,0.4);
+    border-radius: 0 6px 6px 0; font-size: 0.71em; color: #fbbf24; line-height: 1.5;
+  }
+  [data-theme="light"] .china-insight { color: #b45309; }
+
+  /* ====== Detail Modal ====== */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center; padding: 16px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    max-width: 720px; width: 100%; max-height: 85vh; overflow-y: auto;
+    padding: 20px 24px; position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .modal-close {
+    position: sticky; top: 0; float: right; z-index: 2;
+    background: var(--border); border: none; color: var(--text);
+    font-size: 1.2em; cursor: pointer; padding: 4px 10px; border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .modal-close:hover { background: var(--text2); color: #000; }
+  .modal-card .modal-tag {
+    display: inline-block; font-size: 0.65em; padding: 2px 8px; border-radius: 4px;
+    background: rgba(16,185,129,0.12); color: var(--accent2); margin-bottom: 6px;
+  }
+  .modal-card .modal-tag.ai-tag { background: rgba(124,58,237,0.12); color: #a78bfa; }
+  .modal-card h2 { font-size: 1.05em; line-height: 1.4; margin: 6px 0 8px; }
+  .modal-card .modal-meta {
+    font-size: 0.72em; color: var(--text2); margin-bottom: 12px;
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .modal-card .modal-source-btn {
+    padding: 3px 10px; font-size: 0.85em; border-radius: 10px;
+    background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
+    color: var(--accent); cursor: pointer; text-decoration: none; white-space: nowrap;
+  }
+  .modal-card .modal-source-btn:hover { background: rgba(245,158,11,0.2); }
+  .modal-card .modal-section {
+    margin-top: 12px; padding: 10px 12px; border-radius: 8px;
+    background: var(--news-item-bg); font-size: 0.82em; line-height: 1.6;
+  }
+  .modal-card .modal-section.analysis {
+    background: rgba(124,58,237,0.06); border-left: 3px solid rgba(124,58,237,0.4); color: #a78bfa;
+  }
+  [data-theme="light"] .modal-card .modal-section.analysis { color: #6d28d9; }
+  .modal-card .modal-section.china {
+    background: rgba(245,158,11,0.06); border-left: 3px solid rgba(245,158,11,0.4); color: #fbbf24;
+  }
+  [data-theme="light"] .modal-card .modal-section.china { color: #b45309; }
+  .modal-card .modal-section-title {
+    font-size: 0.72em; color: var(--accent); font-weight: 600; margin-bottom: 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
   /* ====== Favorite Button ====== */
   .fav-btn {
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1em;
-    color: var(--text2);
-    transition: all 0.15s;
-    padding: 2px 4px;
-    line-height: 1;
+    position: absolute; top: 4px; right: 6px;
+    background: none; border: none; cursor: pointer; font-size: 1.05em;
+    color: var(--text2); transition: all 0.15s; padding: 2px 4px; line-height: 1;
   }
   .fav-btn:hover { color: var(--fav-color); transform: scale(1.2); }
   .fav-btn.is-fav { color: var(--fav-color); }
 
-  /* ====== AI Section Items ====== */
-  .ai-section .news-item { background: rgba(124,58,237,0.04); }
+  /* ====== Highlight search match ====== */
+  .news-item.hidden { display: none !important; }
+  mark.search-hl { background: rgba(245,158,11,0.3); color: var(--text); border-radius: 2px; padding: 0 1px; }
 
-  /* ====== Empty State ====== */
+  /* ====== Empty ====== */
   .empty-state { text-align: center; padding: 16px; color: var(--text2); font-size: 0.8em; }
 
   /* ====== Footer ====== */
-  footer { text-align: center; padding: 10px; color: var(--text2); font-size: 0.72em; border-top: 1px solid var(--border); }
+  footer { text-align: center; padding: 10px; color: var(--text2); font-size: 0.72em; border-top: 1px solid var(--footer-border); }
 
   /* ====== Responsive ====== */
   @media (max-width: 768px) {
     .top-bar { flex-direction: column; align-items: flex-start; }
-    .news-item .thumb { width: 50px; height: 38px; font-size: 1em; }
-    .news-item .info h3 { font-size: 0.8em; }
-    .fav-btn { top: 4px; right: 4px; }
+    .news-item .thumb { width: 44px; height: 34px; font-size: 0.9em; }
+    .news-item .info h3 { font-size: 0.78em; }
+    .fav-btn { top: 2px; right: 2px; }
+    .region-body { max-height: none; }
   }
 </style>
 </head>
 <body>
 <div class="container">
-
   <!-- Top Bar -->
   <div class="top-bar">
     <h1>🚀 装甲车辆每日资讯</h1>
     <div class="right">
       <span>坦克 · 装甲车 · 火炮 · AI 军事应用</span>
+      <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌙</button>
       <span>🕐 {{UPDATE_TIME}}</span>
       <button class="fav-toggle" onclick="toggleFavPanel()">⭐ 我的收藏 <span class="fav-count" id="fav-count">0</span></button>
     </div>
   </div>
 
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="搜索标题、摘要、来源..." oninput="doSearch()">
+    <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+    <span class="search-info" id="search-info"></span>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar" id="stats-bar"></div>
+
   <!-- Favorites Panel -->
   <div id="fav-panel">
-    <h2>⭐ 我的收藏（永久保存，不会被清理）</h2>
+    <h2>⭐ 我的收藏（永久保存）</h2>
+    <div class="fav-actions">
+      <button onclick="exportFavs()">📤 导出收藏</button>
+      <button onclick="importFavs()">📥 导入收藏</button>
+      <input type="file" id="fav-import-input" accept=".json" style="display:none" onchange="handleFavImport(event)">
+    </div>
+    <div class="fav-search">
+      <input type="text" id="fav-search" placeholder="搜索收藏..." oninput="renderFavPanel()" style="width:100%;padding:4px 8px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:0.78em;margin-bottom:8px;">
+    </div>
     <div class="news-list" id="fav-list"></div>
     <div class="fav-empty" id="fav-empty">还没有收藏任何文章，点击新闻右上角的 ☆ 即可收藏</div>
   </div>
 
-  <!-- AI + Armor (TOP) -->
-  <div class="ai-section">
-    <div class="section-title">AI + 装甲 前沿动态</div>
-    <div class="news-list">{{AI_NEWS_ITEMS}}{{AI_NEWS_EMPTY}}</div>
+  <!-- AI Section -->
+  <div class="ai-section" id="ai-section">
+    <div class="section-title">
+      <span>AI + 装甲 前沿动态</span>
+      <button class="ai-toggle" id="ai-toggle-btn" onclick="toggleAiSection()">收起</button>
+    </div>
+    <div class="news-list" id="ai-list"></div>
   </div>
 
   <!-- Two-Column -->
   <div class="two-col">
-    <!-- 🇨🇳 -->
-    <div class="region">
+    <!-- CN Column -->
+    <div class="region" id="cn-region">
       <div class="region-header">🇨🇳 国内资讯</div>
-      <div class="category-tabs">
-        <span class="category-tab active" onclick="filterCat(this,'cn-','all')">📋 全部</span>
-        <span class="category-tab" onclick="filterCat(this,'cn-','tank')">🏗️ 坦克</span>
-        <span class="category-tab" onclick="filterCat(this,'cn-','artillery')">🔫 火炮</span>
-        <span class="category-tab" onclick="filterCat(this,'cn-','afv')">🚛 装甲车</span>
-        <span class="category-tab" onclick="filterCat(this,'cn-','ai')">🤖 AI</span>
+      <div class="category-tabs" id="cn-tabs">
+        <span class="category-tab active" onclick="switchTab('cn','all', this)">📋 全部</span>
+        <span class="category-tab" onclick="switchTab('cn','坦克', this)">🏗️ 坦克</span>
+        <span class="category-tab" onclick="switchTab('cn','火炮', this)">🔫 火炮</span>
+        <span class="category-tab" onclick="switchTab('cn','装甲车辆', this)">🚛 装甲车</span>
       </div>
-      <div class="cn-all cat-section" style="display:block"><div class="news-list">{{CN_ALL_ITEMS}}{{CN_ALL_EMPTY}}</div></div>
-      <div class="cn-tank cat-section" style="display:none"><div class="news-list">{{CN_TANK_ITEMS}}{{CN_TANK_EMPTY}}</div></div>
-      <div class="cn-artillery cat-section" style="display:none"><div class="news-list">{{CN_ARTILLERY_ITEMS}}{{CN_ARTILLERY_EMPTY}}</div></div>
-      <div class="cn-afv cat-section" style="display:none"><div class="news-list">{{CN_AFV_ITEMS}}{{CN_AFV_EMPTY}}</div></div>
-      <div class="cn-ai cat-section" style="display:none"><div class="news-list">{{CN_AI_ITEMS}}{{CN_AI_EMPTY}}</div></div>
+      <div class="region-body"><div class="news-list" id="cn-list"></div></div>
     </div>
-    <!-- 🌍 -->
-    <div class="region">
+    <!-- INT Column -->
+    <div class="region" id="int-region">
       <div class="region-header">🌍 国际资讯</div>
-      <div class="category-tabs">
-        <span class="category-tab active" onclick="filterCat(this,'int-','all')">📋 全部</span>
-        <span class="category-tab" onclick="filterCat(this,'int-','tank')">🏗️ 坦克</span>
-        <span class="category-tab" onclick="filterCat(this,'int-','artillery')">🔫 火炮</span>
-        <span class="category-tab" onclick="filterCat(this,'int-','afv')">🚛 装甲车</span>
-        <span class="category-tab" onclick="filterCat(this,'int-','ai')">🤖 AI</span>
+      <div class="category-tabs" id="int-tabs">
+        <span class="category-tab active" onclick="switchTab('int','all', this)">📋 全部</span>
+        <span class="category-tab" onclick="switchTab('int','坦克', this)">🏗️ 坦克</span>
+        <span class="category-tab" onclick="switchTab('int','火炮', this)">🔫 火炮</span>
+        <span class="category-tab" onclick="switchTab('int','装甲车辆', this)">🚛 装甲车</span>
       </div>
-      <div class="int-all cat-section" style="display:block"><div class="news-list">{{INT_ALL_ITEMS}}{{INT_ALL_EMPTY}}</div></div>
-      <div class="int-tank cat-section" style="display:none"><div class="news-list">{{INT_TANK_ITEMS}}{{INT_TANK_EMPTY}}</div></div>
-      <div class="int-artillery cat-section" style="display:none"><div class="news-list">{{INT_ARTILLERY_ITEMS}}{{INT_ARTILLERY_EMPTY}}</div></div>
-      <div class="int-afv cat-section" style="display:none"><div class="news-list">{{INT_AFV_ITEMS}}{{INT_AFV_EMPTY}}</div></div>
-      <div class="int-ai cat-section" style="display:none"><div class="news-list">{{INT_AI_ITEMS}}{{INT_AI_EMPTY}}</div></div>
+      <div class="region-body"><div class="news-list" id="int-list"></div></div>
     </div>
   </div>
 
@@ -313,25 +375,284 @@
   </footer>
 </div>
 
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detail-modal" onclick="closeDetail(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeDetail()">✕</button>
+    <span class="modal-tag" id="modal-tag"></span>
+    <h2 id="modal-title"></h2>
+    <div class="modal-meta">
+      <span id="modal-source"></span>
+      <a class="modal-source-btn" id="modal-origin-link" href="#" target="_blank" rel="noopener">🔗 阅读原文</a>
+    </div>
+    <div class="modal-section" id="modal-summary"></div>
+    <div class="modal-section analysis" id="modal-analysis"></div>
+    <div class="modal-section china" id="modal-china"></div>
+  </div>
+</div>
+
+<!-- Data -->
 <script>
-// ====== Favorites System ======
+window.__DATA__ = {{RAW_DATA}};
+</script>
+
+<script>
+// ====== DATA & STATE ======
+const DATA = window.__DATA__;
 const STORAGE_KEY = 'wangye_favs';
 let favorites = {};
+let searchTerm = '';
+let cnFilter = 'all';
+let intFilter = 'all';
+let aiCollapsed = false;
+const AI_VISIBLE_DEFAULT = 6;
 
-try {
-  favorites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-} catch(e) { favorites = {}; }
+try { favorites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { favorites = {}; }
 
-function saveFavs() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+// ====== HELPERS ======
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function makeId(item) {
+  let h = 0;
+  const s = item.url || item.title || '';
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
+  return 'id-' + Math.abs(h).toString(36).slice(0, 8);
+}
+
+const CAT_ICONS = { '坦克': '🏗️', '火炮': '🔫', '装甲车辆': '🚛', 'AI': '🤖', 'AFV': '🚛' };
+
+function catIcon(c) { return CAT_ICONS[c] || '📰'; }
+
+function catMatches(item, filter) {
+  if (filter === 'all') return true;
+  const c = item.category || '';
+  return c === filter || c.includes(filter);
+}
+
+function highlightText(text, q) {
+  if (!q || !text) return esc(text);
+  const escaped = esc(text);
+  const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  return escaped.replace(regex, '<mark class="search-hl">$1</mark>');
+}
+
+// ====== RENDER NEWS ITEM ======
+function renderItem(item, showFav) {
+  const id = makeId(item);
+  const isFav = !!favorites[id];
+  const tagClass = (item.category === 'AI') ? 'tag ai-tag' : 'tag';
+  const hasAnalysis = item.expert_analysis && item.expert_analysis.trim();
+  // escape key fields for safe data-attrs
+  const dTitle = escAttr(item.title);
+  const dSummary = escAttr(item.summary || '');
+  const dAnalysis = escAttr(item.expert_analysis || '');
+  const dChina = escAttr(item.china_insight || '');
+  const dSource = escAttr(item.source || '网络');
+  const dCategory = escAttr(item.category || '综合');
+  const dUrl = escAttr(item.url || '#');
+  return `
+    <div class="news-item" data-id="${id}" data-search="${esc((item.title+item.summary+item.source+item.category).toLowerCase())}"
+      data-dtitle="${dTitle}" data-dsummary="${dSummary}" data-danalysis="${dAnalysis}"
+      data-dchina="${dChina}" data-dsource="${dSource}" data-dcategory="${dCategory}" data-durl="${dUrl}">
+      <div class="thumb">${catIcon(item.category)}</div>
+      <div class="info">
+        <span class="${tagClass}">${esc(item.category || '综合')}</span>
+        <h3><a href="javascript:void(0)" onclick="openDetail(this)" style="cursor:pointer;">${esc(item.title)}</a></h3>
+        <div class="summary">${esc(item.summary || '')}</div>
+        <div class="meta-row">
+          <span style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+            <span>${esc(item.source || '网络')}</span>
+            ${hasAnalysis ? '<button class="expand-toggle" onclick="toggleAnalysis(this)" data-expanded="0">📋 军迷深度分析</button>' : ''}
+          </span>
+          <a href="${esc(item.url || '#')}" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+        ${hasAnalysis ? '<div class="analysis-section">' + esc(item.expert_analysis) + '</div>' : ''}
+        ${item.china_insight ? '<div class="analysis-section china-insight" style="display:none">' + esc(item.china_insight) + '</div>' : ''}
+      </div>
+      <button class="fav-btn${isFav ? ' is-fav' : ''}" onclick="toggleFav(this)" title="${isFav ? '已收藏，点击取消' : '点击收藏'}">${isFav ? '★' : '☆'}</button>
+    </div>`;
+}
+
+// ====== DETAIL MODAL ======
+function escAttr(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function openDetail(el) {
+  const item = el.closest('.news-item');
+  const title = item.dataset.dtitle || '';
+  const summary = item.dataset.dsummary || '';
+  const analysis = item.dataset.danalysis || '';
+  const china = item.dataset.dchina || '';
+  const source = item.dataset.dsource || '';
+  const category = item.dataset.dcategory || '';
+  const url = item.dataset.durl || '#';
+
+  document.getElementById('modal-tag').textContent = category;
+  document.getElementById('modal-tag').className = (category === 'AI') ? 'modal-tag ai-tag' : 'modal-tag';
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-source').textContent = '📰 ' + source;
+  document.getElementById('modal-origin-link').href = url;
+  document.getElementById('modal-summary').innerHTML = '<div class="modal-section-title">📝 资讯概要</div>' + esc(summary);
+  document.getElementById('modal-analysis').innerHTML = analysis
+    ? '<div class="modal-section-title">🎯 军迷深度分析</div>' + esc(analysis)
+    : '<div class="modal-section-title">🎯 军迷深度分析</div><span style="color:var(--text2)">暂无分析</span>';
+  document.getElementById('modal-china').innerHTML = china
+    ? '<div class="modal-section-title">🇨🇳 对我国的启示</div>' + esc(china)
+    : '';
+  document.getElementById('detail-modal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('detail-modal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ====== RENDER ALL ======
+function renderAll() {
+  // Stats
+  const aiCount = (DATA.ai || []).length;
+  const cnCount = (DATA.cn || []).length;
+  const intCount = (DATA.int || []).length;
+  document.getElementById('stats-bar').innerHTML =
+    `<div class="stat">🔥 AI专题: <span class="stat-val">${aiCount}</span> 条</div>` +
+    `<div class="stat">🇨🇳 国内: <span class="stat-val">${cnCount}</span> 条</div>` +
+    `<div class="stat">🌍 国际: <span class="stat-val">${intCount}</span> 条</div>` +
+    `<div class="stat">📊 总计: <span class="stat-val">${aiCount+cnCount+intCount}</span> 条</div>`;
+
+  // AI section
+  renderAiSection();
+
+  // CN list
+  document.getElementById('cn-list').innerHTML = renderList(DATA.cn || [], cnFilter);
+  // INT list
+  document.getElementById('int-list').innerHTML = renderList(DATA.int || [], intFilter);
+
+  // Re-apply search
+  if (searchTerm) applySearch();
+
+  // Favs
   updateFavCount();
   renderFavPanel();
 }
 
-function getItemId(el) {
-  // The news-item has data-id attribute
-  const item = el.closest('.news-item');
-  return item ? item.dataset.id : '';
+function renderAiSection() {
+  const items = DATA.ai || [];
+  const visible = aiCollapsed ? Math.min(AI_VISIBLE_DEFAULT, items.length) : items.length;
+  const el = document.getElementById('ai-list');
+  const btn = document.getElementById('ai-toggle-btn');
+
+  if (items.length === 0) {
+    el.innerHTML = '<div class="empty-state">📭 暂无AI相关资讯</div>';
+    btn.style.display = 'none';
+    return;
+  }
+
+  if (items.length > AI_VISIBLE_DEFAULT) {
+    btn.style.display = '';
+    btn.textContent = aiCollapsed ? `展开全部 (${items.length}条)` : '收起';
+  } else {
+    btn.style.display = 'none';
+  }
+
+  el.innerHTML = items.slice(0, visible).map(i => renderItem(i, true)).join('');
+}
+
+function renderList(items, filter) {
+  const filtered = items.filter(i => catMatches(i, filter));
+  if (filtered.length === 0) return '<div class="empty-state">📭 暂无相关资讯</div>';
+  return filtered.map(i => renderItem(i, true)).join('');
+}
+
+// ====== SEARCH ======
+function doSearch() {
+  searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
+  document.getElementById('search-clear').style.display = searchTerm ? 'inline-block' : 'none';
+  applySearch();
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  searchTerm = '';
+  document.getElementById('search-clear').style.display = 'none';
+  document.getElementById('search-info').style.display = 'none';
+  applySearch();
+}
+
+function applySearch() {
+  const allItems = document.querySelectorAll('.news-item');
+  let visible = 0;
+  let total = 0;
+  allItems.forEach(el => {
+    if (el.closest('#fav-panel')) return; // skip fav panel items
+    total++;
+    const dataSearch = el.dataset.search || '';
+    if (!searchTerm || dataSearch.includes(searchTerm)) {
+      el.classList.remove('hidden');
+      visible++;
+    } else {
+      el.classList.add('hidden');
+    }
+  });
+  const info = document.getElementById('search-info');
+  if (searchTerm) {
+    info.style.display = 'inline';
+    info.textContent = `找到 ${visible}/${total} 条`;
+  } else {
+    info.style.display = 'none';
+  }
+}
+
+// ====== TAB SWITCH ======
+function switchTab(region, filter, el) {
+  if (region === 'cn') {
+    cnFilter = filter;
+    document.getElementById('cn-list').innerHTML = renderList(DATA.cn || [], filter);
+    // update tab styles
+    document.querySelectorAll('#cn-tabs .category-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  } else {
+    intFilter = filter;
+    document.getElementById('int-list').innerHTML = renderList(DATA.int || [], filter);
+    document.querySelectorAll('#int-tabs .category-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+  if (searchTerm) applySearch();
+}
+
+// ====== AI COLLAPSE ======
+function toggleAiSection() {
+  aiCollapsed = !aiCollapsed;
+  renderAiSection();
+  if (searchTerm) applySearch();
+}
+
+// ====== FAVORITES ======
+function saveFavs() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+}
+
+// ====== ANALYSIS TOGGLE ======
+function toggleAnalysis(btn) {
+  const expanded = btn.dataset.expanded === '1';
+  const item = btn.closest('.news-item');
+  const sections = item.querySelectorAll('.analysis-section, .china-insight');
+  if (!sections.length) return;
+  if (expanded) {
+    sections.forEach(s => s.classList.remove('show'));
+    btn.dataset.expanded = '0';
+    btn.textContent = '📋 军迷深度分析';
+  } else {
+    sections.forEach(s => s.classList.add('show'));
+    btn.dataset.expanded = '1';
+    btn.textContent = '📋 收起分析';
+  }
 }
 
 function toggleFav(btn) {
@@ -345,14 +666,20 @@ function toggleFav(btn) {
     btn.classList.remove('is-fav');
     btn.title = '点击收藏';
   } else {
+    const anchors = item.querySelectorAll('.info h3 a');
+    const summaryEl = item.querySelector('.summary');
+    const sourceEl = item.querySelector('.meta-row span');
+    const tagEl = item.querySelector('.tag');
+    const analysisEl = item.querySelector('.analysis-section:not(.china-insight)');
+    const chinaEl = item.querySelector('.china-insight');
     favorites[id] = {
-      id: id,
-      title: item.dataset.title || '',
-      url: item.dataset.url || '#',
-      summary: item.dataset.summary || '',
-      source: item.dataset.source || '',
-      category: item.dataset.category || '',
-      image: item.dataset.image || '',
+      id, title: (anchors[0]?.textContent || '').trim(),
+      url: anchors[0]?.href || '#',
+      summary: (summaryEl?.textContent || '').trim(),
+      source: (sourceEl?.textContent || '').trim(),
+      category: (tagEl?.textContent || '').trim(),
+      expert_analysis: (analysisEl?.textContent || '').trim(),
+      china_insight: (chinaEl?.textContent || '').trim(),
       savedAt: new Date().toISOString(),
     };
     btn.textContent = '★';
@@ -360,89 +687,134 @@ function toggleFav(btn) {
     btn.title = '已收藏，点击取消';
   }
   saveFavs();
-}
-
-function updateFavCount() {
-  const count = Object.keys(favorites).length;
-  const el = document.getElementById('fav-count');
-  if (el) el.textContent = count;
-}
-
-function toggleFavPanel() {
-  const panel = document.getElementById('fav-panel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  updateFavCount();
   renderFavPanel();
-}
-
-function renderFavPanel() {
-  const list = document.getElementById('fav-list');
-  const empty = document.getElementById('fav-empty');
-  const favs = Object.values(favorites);
-  if (!list) return;
-
-  if (favs.length === 0) {
-    list.innerHTML = '';
-    if (empty) empty.style.display = 'block';
-    return;
-  }
-  if (empty) empty.style.display = 'none';
-
-  list.innerHTML = favs.map(f => `
-    <div class="news-item" data-id="${escapeHtml(f.id)}">
-      <div class="thumb">${f.image ? `<img src="${escapeHtml(f.image)}" alt="">` : '📌'}</div>
-      <div class="info">
-        <span class="tag">${escapeHtml(f.category || '收藏')}</span>
-        <h3><a href="${escapeHtml(f.url) || '#'}" target="_blank" rel="noopener">${escapeHtml(f.title)}</a></h3>
-        <div class="summary">${escapeHtml(f.summary || '')}</div>
-        <div class="meta-row">
-          <span>${escapeHtml(f.source || '')} · 收藏于 ${(f.savedAt || '').slice(0,10)}</span>
-          <a href="${escapeHtml(f.url) || '#'}" target="_blank" rel="noopener">阅读原文 →</a>
-        </div>
-      </div>
-      <button class="fav-btn is-fav" onclick="removeFav('${escapeHtml(f.id)}')" title="取消收藏">★</button>
-    </div>
-  `).join('');
 }
 
 function removeFav(id) {
   delete favorites[id];
   saveFavs();
-  // Also update the corresponding button on the main page
-  const btn = document.querySelector(`.news-item[data-id="${id}"] .fav-btn`);
-  if (btn) { btn.textContent = '☆'; btn.classList.remove('is-fav'); }
-}
-
-function escapeHtml(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// Init all fav buttons on page load
-document.addEventListener('DOMContentLoaded', () => {
   updateFavCount();
-  // Mark already-favorited items
-  document.querySelectorAll('.news-item[data-id]').forEach(item => {
-    const id = item.dataset.id;
-    const btn = item.querySelector('.fav-btn');
-    if (btn && favorites[id]) {
-      btn.textContent = '★';
-      btn.classList.add('is-fav');
-      btn.title = '已收藏，点击取消';
-    }
-  });
-});
-
-// ====== Category Filter ======
-function filterCat(el, prefix, cat) {
-  const tabs = el.parentElement.querySelectorAll('.category-tab');
-  tabs.forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  const region = el.parentElement.parentElement;
-  ['all','tank','artillery','afv','ai'].forEach(c => {
-    const div = region.querySelector('.' + prefix + c);
-    if (div) div.style.display = (c === cat) ? 'block' : 'none';
-  });
+  renderFavPanel();
+  // Update main page button
+  const el = document.querySelector(`.news-item[data-id="${id}"]`);
+  if (el) {
+    const btn = el.querySelector('.fav-btn');
+    if (btn) { btn.textContent = '☆'; btn.classList.remove('is-fav'); btn.title = '点击收藏'; }
+  }
 }
+
+function updateFavCount() {
+  document.getElementById('fav-count').textContent = Object.keys(favorites).length;
+}
+
+function toggleFavPanel() {
+  const panel = document.getElementById('fav-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  if (panel.style.display === 'block') renderFavPanel();
+}
+
+function renderFavPanel() {
+  const list = document.getElementById('fav-list');
+  const empty = document.getElementById('fav-empty');
+  let favs = Object.values(favorites);
+
+  // Fav search filter
+  const favSearch = (document.getElementById('fav-search')?.value || '').trim().toLowerCase();
+  if (favSearch) {
+    favs = favs.filter(f => (f.title+f.summary+f.source+f.category).toLowerCase().includes(favSearch));
+  }
+
+  if (favs.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  list.innerHTML = favs.map(f => {
+    const dTitle = escAttr(f.title);
+    const dSummary = escAttr(f.summary || '');
+    const dAnalysis = escAttr(f.expert_analysis || '');
+     const dChina = escAttr(f.china_insight || '');
+    const dSource = escAttr(f.source || '');
+    const dCategory = escAttr(f.category || '收藏');
+    const dUrl = escAttr(f.url || '#');
+    return `
+    <div class="news-item" data-id="${esc(f.id)}"
+      data-dtitle="${dTitle}" data-dsummary="${dSummary}" data-danalysis="${dAnalysis}"
+       data-dchina="${dChina}" data-dsource="${dSource}" data-dcategory="${dCategory}" data-durl="${dUrl}">
+      <div class="thumb">${catIcon(f.category)}</div>
+      <div class="info">
+        <span class="tag">${esc(f.category || '收藏')}</span>
+        <h3><a href="javascript:void(0)" onclick="openDetail(this)" style="cursor:pointer;">${esc(f.title)}</a></h3>
+        <div class="summary">${esc(f.summary || '')}</div>
+        <div class="meta-row">
+          <span style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+            <span>${esc(f.source || '')} · ${(f.savedAt || '').slice(0,10)}</span>
+            ${f.expert_analysis ? '<button class="expand-toggle" onclick="toggleAnalysis(this)" data-expanded="0">📋 军迷深度分析</button>' : ''}
+          </span>
+          <a href="${esc(f.url) || '#'}" target="_blank" rel="noopener">阅读原文 →</a>
+        </div>
+        ${f.expert_analysis ? '<div class="analysis-section">' + esc(f.expert_analysis) + '</div>' : ''}
+        ${f.china_insight ? '<div class="analysis-section china-insight" style="display:none">' + esc(f.china_insight) + '</div>' : ''}
+      </div>
+      <button class="fav-btn is-fav" onclick="removeFav('${esc(f.id)}')" title="取消收藏">★</button>
+    </div>
+  `}).join('');
+}
+
+// ====== EXPORT / IMPORT ======
+function exportFavs() {
+  const data = JSON.stringify(favorites, null, 2);
+  const blob = new Blob([data], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `wangye-favorites-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importFavs() { document.getElementById('fav-import-input').click(); }
+
+function handleFavImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      Object.assign(favorites, imported);
+      saveFavs();
+      updateFavCount();
+      renderFavPanel();
+      renderAll();
+      alert(`成功导入 ${Object.keys(imported).length} 条收藏`);
+    } catch(err) { alert('导入失败：文件格式错误'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ====== THEME TOGGLE ======
+function getTheme() {
+  return document.documentElement.getAttribute('data-theme') || 'dark';
+}
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.querySelector('.theme-toggle').textContent = theme === 'light' ? '☀️' : '🌙';
+  localStorage.setItem('wangye_theme', theme);
+}
+function toggleTheme() {
+  applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
+}
+
+// ====== INIT ======
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('wangye_theme') || 'dark';
+  applyTheme(saved);
+  renderAll();
+  document.getElementById('fav-panel').style.display = 'none';
+});
 </script>
 </body>
 </html>
