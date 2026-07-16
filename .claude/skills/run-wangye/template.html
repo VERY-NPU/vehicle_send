@@ -248,13 +248,11 @@
   .news-item .info .meta-row a:hover { text-decoration: underline; }
 
   /* ====== Expand / Analysis ====== */
-  .expand-toggle {
-    cursor: pointer; color: var(--accent); border: none; background: none;
-    font-size: 0.7em; padding: 2px 6px; margin-left: 6px; border-radius: 3px;
-    background: rgba(245,158,11,0.08); white-space: nowrap;
-    transition: all 0.15s; flex-shrink: 0;
-  }
+  .expand-toggle { cursor: pointer; color: var(--accent); border: none; background: none; font-size: 0.7em; padding: 2px 6px; margin-left: 6px; border-radius: 3px; background: rgba(245,158,11,0.08); white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
   .expand-toggle:hover { background: rgba(245,158,11,0.2); }
+  .expand-toggle.china-btn { background: rgba(245,158,11,0.06); color: #fbbf24; }
+  .expand-toggle.china-btn:hover { background: rgba(245,158,11,0.15); }
+  [data-theme="light"] .expand-toggle.china-btn { color: #b45309; }
   .analysis-section {
     display: none; margin-top: 6px; padding: 8px 10px;
     background: rgba(124,58,237,0.04); border-left: 3px solid rgba(124,58,237,0.4);
@@ -619,12 +617,13 @@ function renderItem(item, showFav) {
         <div class="meta-row">
           <span style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
             <span>${esc(item.source || '网络')}</span>
-            ${hasAnalysis ? '<button class="expand-toggle" onclick="toggleAnalysis(this)" data-expanded="0">📋 军迷深度分析</button>' : ''}
+            ${hasAnalysis ? '<button class="expand-toggle" onclick="toggleSection(this,\'.analysis-section\')" data-expanded="0">📋 军迷深度分析</button>' : ''}
+            ${hasAnalysis ? '<button class="expand-toggle china-btn" onclick="toggleSection(this,\'.china-insight\')" data-expanded="0">🇨🇳 对我国的启示</button>' : ''}
           </span>
           <a href="${esc(item.url || '#')}" target="_blank" rel="noopener">阅读原文 →</a>
         </div>
         ${hasAnalysis ? '<div class="analysis-section">' + esc(item.expert_analysis) + '</div>' : ''}
-        ${item.china_insight ? '<div class="analysis-section china-insight" style="display:none">' + esc(item.china_insight) + '</div>' : ''}
+        ${item.china_insight ? '<div class="analysis-section china-insight">' + esc(item.china_insight) + '</div>' : ''}
       </div>
       <button class="fav-btn${isFav ? ' is-fav' : ''}" onclick="toggleFav(this)" title="${isFav ? '已收藏，点击取消' : '点击收藏'}">${isFav ? '★' : '☆'}</button>
     </div>`;
@@ -780,20 +779,20 @@ function toggleAiSection() {
   if (searchTerm) applySearch();
 }
 
-// ====== ANALYSIS TOGGLE ======
-function toggleAnalysis(btn) {
+// ====== SECTION TOGGLE (分析 / 启示) ======
+function toggleSection(btn, selector) {
   const expanded = btn.dataset.expanded === '1';
   const item = btn.closest('.news-item');
-  const sections = item.querySelectorAll('.analysis-section, .china-insight');
-  if (!sections.length) return;
+  const section = item.querySelector(selector);
+  if (!section) return;
   if (expanded) {
-    sections.forEach(s => s.classList.remove('show'));
+    section.classList.remove('show');
     btn.dataset.expanded = '0';
-    btn.textContent = '📋 军迷深度分析';
+    btn.textContent = btn.classList.contains('china-btn') ? '🇨🇳 对我国的启示' : '📋 军迷深度分析';
   } else {
-    sections.forEach(s => s.classList.add('show'));
+    section.classList.add('show');
     btn.dataset.expanded = '1';
-    btn.textContent = '📋 收起分析';
+    btn.textContent = btn.classList.contains('china-btn') ? '🇨🇳 收起启示' : '📋 收起分析';
   }
 }
 
@@ -864,12 +863,13 @@ function renderFavPanel() {
         <div class="meta-row">
           <span style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
             <span>${esc(f.source || '')} · ${(f.savedAt || '').slice(0,10)}</span>
-            ${f.expert_analysis ? '<button class="expand-toggle" onclick="toggleAnalysis(this)" data-expanded="0">📋 军迷深度分析</button>' : ''}
+            ${f.expert_analysis ? '<button class="expand-toggle" onclick="toggleSection(this,\'.analysis-section\')" data-expanded="0">📋 军迷深度分析</button>' : ''}
+            ${f.expert_analysis ? '<button class="expand-toggle china-btn" onclick="toggleSection(this,\'.china-insight\')" data-expanded="0">🇨🇳 对我国的启示</button>' : ''}
           </span>
           <a href="${esc(f.url) || '#'}" target="_blank" rel="noopener">阅读原文 →</a>
         </div>
         ${f.expert_analysis ? '<div class="analysis-section">' + esc(f.expert_analysis) + '</div>' : ''}
-        ${f.china_insight ? '<div class="analysis-section china-insight" style="display:none">' + esc(f.china_insight) + '</div>' : ''}
+        ${f.china_insight ? '<div class="analysis-section china-insight">' + esc(f.china_insight) + '</div>' : ''}
       </div>
       <button class="fav-btn is-fav" onclick="removeFav('${esc(f.id)}')" title="取消收藏">★</button>
     </div>`;
