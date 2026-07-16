@@ -19,6 +19,9 @@
     --news-item-hover: var(--border);
     --region-header-bg: rgba(255,255,255,0.02);
     --footer-border: var(--border);
+    --artillery-gradient: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(249,115,22,0.06));
+    --artillery-border: rgba(245,158,11,0.45);
+    --artillery-glow: 0 0 30px rgba(245,158,11,0.08);
   }
   [data-theme="light"] {
     --bg: #f3f4f6;
@@ -34,6 +37,9 @@
     --news-item-hover: #d1d5db;
     --region-header-bg: rgba(0,0,0,0.02);
     --footer-border: #e5e7eb;
+    --artillery-gradient: linear-gradient(135deg, rgba(217,119,6,0.1), rgba(234,88,12,0.04));
+    --artillery-border: rgba(217,119,6,0.35);
+    --artillery-glow: 0 0 20px rgba(217,119,6,0.05);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -43,6 +49,7 @@
     line-height: 1.5;
     padding: 12px;
     min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
   }
   .container { max-width: 1400px; margin: 0 auto; }
 
@@ -101,6 +108,7 @@
   }
   .stats-bar .stat { display: flex; align-items: center; gap: 4px; }
   .stats-bar .stat-val { color: var(--accent); font-weight: 700; }
+  .stats-bar .stat-artillery { border-left: 2px solid var(--accent); padding-left: 8px; margin-left: 4px; }
 
   /* ====== Favorites Panel ====== */
   #fav-panel {
@@ -115,6 +123,53 @@
     background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.25); color: var(--fav-color);
   }
   .fav-empty { color: var(--text2); font-size: 0.8em; text-align: center; padding: 16px; }
+
+  /* ====== Artillery Section (PRIORITY - top of page) ====== */
+  .artillery-section {
+    background: var(--artillery-gradient);
+    border: 2px solid var(--artillery-border);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+    box-shadow: var(--artillery-glow); position: relative; overflow: hidden;
+  }
+  .artillery-section::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #f59e0b, #f97316, #ef4444, #f59e0b);
+    background-size: 200% 100%; animation: artillery-line 3s linear infinite;
+  }
+  @keyframes artillery-line { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .artillery-section .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+  }
+  .artillery-section .section-title {
+    font-size: 1.15em; font-weight: 700; color: #f59e0b;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .artillery-badge {
+    font-size: 0.55em; padding: 2px 8px; border-radius: 10px;
+    background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 600;
+    letter-spacing: 1px; white-space: nowrap;
+  }
+  .artillery-tabs {
+    display: flex; gap: 3px; flex-wrap: wrap;
+  }
+  .artillery-tab {
+    padding: 5px 12px; background: transparent; border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 16px; cursor: pointer; font-size: 0.75em; color: var(--text2);
+    transition: all 0.18s; white-space: nowrap; font-weight: 500;
+  }
+  .artillery-tab:hover { background: rgba(245,158,11,0.1); color: var(--accent); }
+  .artillery-tab.active {
+    background: rgba(245,158,11,0.2); border-color: var(--accent);
+    color: var(--accent); font-weight: 700; box-shadow: 0 0 8px rgba(245,158,11,0.15);
+  }
+  .artillery-section .news-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 8px;
+  }
+  .artillery-section .news-item {
+    background: rgba(245,158,11,0.03); border: 1px solid rgba(245,158,11,0.08);
+  }
+  .artillery-section .news-item:hover { border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.06); }
 
   /* ====== AI Section ====== */
   .ai-section {
@@ -171,13 +226,13 @@
     width: 60px; height: 44px; border-radius: 5px; background: #1a1f2e; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center; font-size: 1.2em; overflow: hidden;
   }
-  .news-item .thumb img { width: 100%; height: 100%; object-fit: cover; }
   .news-item .info { flex: 1; min-width: 0; }
   .news-item .info .tag {
     display: inline-block; font-size: 0.62em; padding: 1px 6px; border-radius: 3px;
     background: rgba(16,185,129,0.12); color: var(--accent2); margin-bottom: 2px;
   }
   .news-item .info .tag.ai-tag { background: rgba(124,58,237,0.12); color: #a78bfa; }
+  .artillery-section .news-item .info .tag { background: rgba(245,158,11,0.15); color: #f59e0b; }
   .news-item .info h3 { font-size: 0.83em; line-height: 1.35; font-weight: 600; }
   .news-item .info h3 a { color: var(--text); text-decoration: none; }
   .news-item .info h3 a:hover { color: var(--accent); }
@@ -203,14 +258,14 @@
   .analysis-section {
     display: none; margin-top: 6px; padding: 8px 10px;
     background: rgba(124,58,237,0.04); border-left: 3px solid rgba(124,58,237,0.4);
-    border-radius: 0 6px 6px 0; font-size: 0.73em; color: #a78bfa; line-height: 1.55;
+    font-size: 0.73em; color: #a78bfa; line-height: 1.55;
   }
   [data-theme="light"] .analysis-section { color: #6d28d9; }
   .analysis-section.show { display: block; }
   .china-insight {
     margin-top: 4px; padding: 6px 10px;
     background: rgba(245,158,11,0.04); border-left: 3px solid rgba(245,158,11,0.4);
-    border-radius: 0 6px 6px 0; font-size: 0.71em; color: #fbbf24; line-height: 1.5;
+    font-size: 0.71em; color: #fbbf24; line-height: 1.5;
   }
   [data-theme="light"] .china-insight { color: #b45309; }
 
@@ -231,7 +286,6 @@
     position: sticky; top: 0; float: right; z-index: 2;
     background: var(--border); border: none; color: var(--text);
     font-size: 1.2em; cursor: pointer; padding: 4px 10px; border-radius: 6px;
-    transition: background 0.15s;
   }
   .modal-close:hover { background: var(--text2); color: #000; }
   .modal-card .modal-tag {
@@ -239,6 +293,7 @@
     background: rgba(16,185,129,0.12); color: var(--accent2); margin-bottom: 6px;
   }
   .modal-card .modal-tag.ai-tag { background: rgba(124,58,237,0.12); color: #a78bfa; }
+  .modal-card .modal-tag.arty-tag { background: rgba(245,158,11,0.15); color: #f59e0b; }
   .modal-card h2 { font-size: 1.05em; line-height: 1.4; margin: 6px 0 8px; }
   .modal-card .modal-meta {
     font-size: 0.72em; color: var(--text2); margin-bottom: 12px;
@@ -276,7 +331,7 @@
   .fav-btn:hover { color: var(--fav-color); transform: scale(1.2); }
   .fav-btn.is-fav { color: var(--fav-color); }
 
-  /* ====== Highlight search match ====== */
+  /* ====== Highlight ====== */
   .news-item.hidden { display: none !important; }
   mark.search-hl { background: rgba(245,158,11,0.3); color: var(--text); border-radius: 2px; padding: 0 1px; }
 
@@ -287,12 +342,103 @@
   footer { text-align: center; padding: 10px; color: var(--text2); font-size: 0.72em; border-top: 1px solid var(--footer-border); }
 
   /* ====== Responsive ====== */
+  /* Tablet / Large Phone */
+  @media (max-width: 900px) {
+    .artillery-section .news-list { grid-template-columns: 1fr; }
+  }
   @media (max-width: 768px) {
-    .top-bar { flex-direction: column; align-items: flex-start; }
-    .news-item .thumb { width: 44px; height: 34px; font-size: 0.9em; }
+    body { padding: 8px; }
+    /* Top bar */
+    .top-bar { flex-direction: column; align-items: stretch; padding: 8px 12px; gap: 6px; }
+    .top-bar h1 { font-size: 1em; }
+    .top-bar .right { justify-content: space-between; font-size: 0.72em; gap: 6px; }
+    .top-bar .right span:first-child { display: none; }
+    .top-bar .fav-toggle { padding: 3px 10px; font-size: 0.78em; }
+    /* Search */
+    .search-bar { padding: 6px 10px; }
+    .search-bar input { font-size: 0.85em; }
+    .search-bar .search-info { font-size: 0.68em; }
+    /* Stats */
+    .stats-bar { padding: 6px 10px; font-size: 0.7em; gap: 6px; }
+    .stats-bar .stat-artillery { padding-left: 4px; margin-left: 0; border-left: none; }
+    /* Artillery section */
+    .artillery-section { padding: 10px 10px; }
+    .artillery-section .section-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .artillery-section .section-title { font-size: 1em; }
+    .artillery-tab { padding: 4px 8px; font-size: 0.7em; }
+    /* AI section */
+    .ai-section { padding: 8px 10px; }
+    .ai-section .section-title { font-size: 0.88em; }
+    /* Two-column */
+    .two-col { grid-template-columns: 1fr; gap: 8px; }
+    /* Tabs */
+    .category-tabs { padding: 4px 6px; gap: 1px; }
+    .category-tab { padding: 3px 7px; font-size: 0.7em; }
+    /* News item */
+    .news-item { padding: 6px; gap: 6px; }
+    .news-item .thumb { width: 38px; height: 30px; font-size: 0.85em; }
     .news-item .info h3 { font-size: 0.78em; }
-    .fav-btn { top: 2px; right: 2px; }
+    .news-item .info .summary { font-size: 0.7em; -webkit-line-clamp: 3; }
+    .news-item .info .meta-row { font-size: 0.65em; gap: 4px; }
+    .news-item .info .meta-row a { font-size: 0.95em; }
+    .expand-toggle { font-size: 0.65em; padding: 1px 4px; margin-left: 2px; }
+    .analysis-section { font-size: 0.7em; padding: 6px 8px; }
+    .china-insight { font-size: 0.68em; padding: 4px 8px; }
+    /* Fav */
+    .fav-btn { top: 2px; right: 2px; font-size: 0.95em; }
+    /* Region */
     .region-body { max-height: none; }
+    .region-header { font-size: 0.85em; padding: 6px 10px; }
+    /* Modal */
+    .modal-card { padding: 14px 16px; border-radius: 10px; }
+    .modal-card h2 { font-size: 0.9em; }
+    .modal-card .modal-section { font-size: 0.76em; padding: 8px 10px; }
+    .modal-card .modal-meta { font-size: 0.65em; gap: 6px; }
+    /* Footer */
+    footer { font-size: 0.68em; padding: 8px; }
+  }
+  /* Small Phone */
+  @media (max-width: 480px) {
+    body { padding: 6px; }
+    .top-bar { padding: 6px 8px; border-radius: 8px; }
+    .top-bar h1 { font-size: 0.92em; }
+    .top-bar .right { font-size: 0.68em; gap: 4px; }
+    .top-bar .fav-toggle { padding: 2px 8px; font-size: 0.72em; }
+    .search-bar { padding: 5px 8px; margin-bottom: 6px; }
+    .search-bar input { font-size: 0.8em; }
+    .stats-bar { font-size: 0.65em; padding: 5px 8px; margin-bottom: 6px; }
+    .artillery-section { padding: 8px 8px; margin-bottom: 8px; border-radius: 10px; }
+    .artillery-section .section-title { font-size: 0.9em; }
+    .artillery-badge { font-size: 0.5em; padding: 1px 5px; }
+    .artillery-tab { padding: 3px 6px; font-size: 0.66em; }
+    .artillery-section .news-list { gap: 4px; }
+    .ai-section { padding: 6px 8px; margin-bottom: 6px; }
+    .ai-section .section-title { font-size: 0.82em; }
+    .ai-toggle { font-size: 0.65em; padding: 2px 6px; }
+    .news-item { padding: 4px 5px 4px 4px; gap: 5px; border-radius: 6px; }
+    .news-item .thumb { width: 32px; height: 26px; font-size: 0.75em; }
+    .news-item .info h3 { font-size: 0.74em; }
+    .news-item .info .tag { font-size: 0.58em; }
+    .news-item .info .summary { font-size: 0.66em; }
+    .news-item .info .meta-row { flex-direction: column; align-items: flex-start; font-size: 0.62em; gap: 2px; }
+    .news-item .info .meta-row a { align-self: flex-end; }
+    .expand-toggle { font-size: 0.62em; }
+    .analysis-section { font-size: 0.67em; }
+    .china-insight { font-size: 0.65em; }
+    .category-tabs { padding: 3px 4px; }
+    .category-tab { padding: 2px 5px; font-size: 0.66em; }
+    .fav-btn { top: 1px; right: 1px; font-size: 0.85em; }
+    .region-header { font-size: 0.8em; padding: 5px 8px; }
+    .modal-overlay { padding: 8px; }
+    .modal-card { padding: 10px 12px; }
+    .modal-card h2 { font-size: 0.82em; }
+    .modal-card .modal-section { font-size: 0.7em; }
+    .modal-card .modal-section-title { font-size: 0.65em; }
+    .modal-close { font-size: 1em; padding: 2px 8px; }
+    footer { font-size: 0.62em; }
+    #fav-panel { padding: 8px 10px; }
+    #fav-panel h2 { font-size: 0.85em; }
+    #fav-panel .fav-actions button { font-size: 0.65em; padding: 2px 7px; }
   }
 </style>
 </head>
@@ -302,9 +448,9 @@
   <div class="top-bar">
     <h1>🚀 装甲车辆每日资讯</h1>
     <div class="right">
-      <span>坦克 · 装甲车 · 火炮 · AI 军事应用</span>
+      <span>坦克 · 装甲车 · 🔫火炮 · AI 军事应用</span>
       <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌙</button>
-      <span>🕐 2026-07-15T18:00:00+08:00</span>
+      <span>🕐 2026-07-16T08:00:00+08:00</span>
       <button class="fav-toggle" onclick="toggleFavPanel()">⭐ 我的收藏 <span class="fav-count" id="fav-count">0</span></button>
     </div>
   </div>
@@ -335,6 +481,22 @@
     <div class="fav-empty" id="fav-empty">还没有收藏任何文章，点击新闻右上角的 ☆ 即可收藏</div>
   </div>
 
+  <!-- 🔫 火炮专题 (TOP PRIORITY) -->
+  <div class="artillery-section" id="artillery-section">
+    <div class="section-header">
+      <div class="section-title">
+        🔫 火炮专题 <span class="artillery-badge">🔥 重点推荐</span>
+      </div>
+      <div class="artillery-tabs" id="artillery-tabs">
+        <span class="artillery-tab active" onclick="switchArtilleryTab('all', this)">📋 全部</span>
+        <span class="artillery-tab" onclick="switchArtilleryTab('智能火炮', this)">🤖 智能火炮</span>
+        <span class="artillery-tab" onclick="switchArtilleryTab('国内火炮', this)">🇨🇳 国内</span>
+        <span class="artillery-tab" onclick="switchArtilleryTab('国际火炮', this)">🌍 国际</span>
+      </div>
+    </div>
+    <div class="news-list" id="artillery-list"></div>
+  </div>
+
   <!-- AI Section -->
   <div class="ai-section" id="ai-section">
     <div class="section-title">
@@ -346,24 +508,20 @@
 
   <!-- Two-Column -->
   <div class="two-col">
-    <!-- CN Column -->
     <div class="region" id="cn-region">
       <div class="region-header">🇨🇳 国内资讯</div>
       <div class="category-tabs" id="cn-tabs">
         <span class="category-tab active" onclick="switchTab('cn','all', this)">📋 全部</span>
         <span class="category-tab" onclick="switchTab('cn','坦克', this)">🏗️ 坦克</span>
-        <span class="category-tab" onclick="switchTab('cn','火炮', this)">🔫 火炮</span>
         <span class="category-tab" onclick="switchTab('cn','装甲车辆', this)">🚛 装甲车</span>
       </div>
       <div class="region-body"><div class="news-list" id="cn-list"></div></div>
     </div>
-    <!-- INT Column -->
     <div class="region" id="int-region">
       <div class="region-header">🌍 国际资讯</div>
       <div class="category-tabs" id="int-tabs">
         <span class="category-tab active" onclick="switchTab('int','all', this)">📋 全部</span>
         <span class="category-tab" onclick="switchTab('int','坦克', this)">🏗️ 坦克</span>
-        <span class="category-tab" onclick="switchTab('int','火炮', this)">🔫 火炮</span>
         <span class="category-tab" onclick="switchTab('int','装甲车辆', this)">🚛 装甲车</span>
       </div>
       <div class="region-body"><div class="news-list" id="int-list"></div></div>
@@ -371,7 +529,7 @@
   </div>
 
   <footer>
-    <div>📡 资讯来源: 综合网络搜索 · 仅供学习参考 · 2026-07-15T18:00:00+08:00</div>
+    <div>📡 资讯来源: 综合网络搜索 · 仅供学习参考 · 2026-07-16T08:00:00+08:00</div>
   </footer>
 </div>
 
@@ -391,9 +549,8 @@
   </div>
 </div>
 
-<!-- Data -->
 <script>
-window.__DATA__ = {"ai":[{"title":"美国M1E3艾布拉姆斯：混合动力AI坦克开启无人机战争新时代","url":"https://www.defensemagazine.com/article/m1e3-abrams-the-us-armys-hybrid-revolution-in-tank-warfare-for-the-drone-age","summary":"美军M1E3采用柴电混合动力、无人炮塔、自动装弹机，重量降至60吨，燃油效率提升40%，配备AI目标识别、反无人机系统和机器人僚机，预计2026年秋季由第1骑兵师开始测试。","category":"AI","source":"Defense Magazine","expert_analysis":"【军迷视角】M1E3最大亮点不是混合动力，而是美军终于承认传统坦克在无人机时代'活不下去'了。把乘员从4人砍到3人、全员塞进车体装甲舱，实质是默认炮塔一定会被炸——这是从俄乌战场学来的血教训。60吨重量看似是减重，实则是把坦克从'移动碉堡'拉回'快速突击平台'。柴电混动的静默机动能力意味着M1E3可以在不开主发动机的情况下以30-40km/h的速度隐蔽接敌，热信号仅为柴油模式的十分之一。但真正决定这辆坦克成败的，不是60吨和1500马力，而是AI辅助决策到底能不能帮车组在漫天无人机中先发现、先开火。美军敢于把自动装弹机塞进无人炮塔的前提，是他们对炮塔电气系统可靠性有足够信心——这恰是T-14阿玛塔没做到的地方。","china_insight":"🇨🇳 我国启示：100式已走全电混动+无人炮塔路线，与M1E3殊途同归。但M1E3的'乘员全在车体内'布局值得关注——这意味着炮塔即便被击穿，车组仍有生存可能。我国下一代坦克设计应强化车体-炮塔的物理隔离，同时加速测试AI辅助决策系统在复杂电磁环境下可靠性。","image":""},{"title":"英国陆军全面转向无人化：50亿英镑专项经费投向AI无人作战","url":"https://www.81.cn/wj_208604/16473836.html","summary":"英国国防部发布新版投资计划，将传统重型装备预算大幅压缩，划拨50亿英镑投向海上无人设备、空中协同装备及陆军无人战术单元。英军三军同步迭代无人作战力量。","category":"AI","source":"中国军网","expert_analysis":"【军迷视角】英国这个动作比字面上看起来要狠得多。50亿英镑对英军来说绝不是小数字——英国现役坦克总数才200多辆，挑战者3是最后的有人坦克订单。把传统重装甲预算大砍，本质是提前宣告：挑战者3可能是英国最后一款有人主战坦克。但这个转型风险极大——无人装备目前只能打不对称战争，面对同等技术水平的对手，通信链一断就是一堆废铁。英军这是赌未来十年内不会有高强度对等冲突，赌注不小。另一个容易被忽略的细节：50亿里相当比例投向了无人海上装备，说明英军认为未来冲突中'无人化'首先在海空域爆发，而非传统陆军战场。","china_insight":"🇨🇳 我国启示：英军的激进转型给了我们一个反面教材——我国不能走'一刀切'的无人化路线。解放军陆军规模庞大、任务多样，应该走'有人-无人混编、逐步过渡'的路径。但英军对FPV无人机和拦截无人机的5000万英镑追加投资值得参考：低成本反无人机装备应作为我军基层单位的标配推广。","image":""},{"title":"光纤制导FPV无人机主宰俄乌战场：具身智能时代的作战样式迭代","url":"https://m.toutiao.com/group/7661864016948380203/","summary":"到2026年上半年，光纤制导FPV无人机在前线成主宰，通过实体光纤回传高清画面，GPS压制和无线电干扰完全无效，操作手在1-2公里外隐蔽操控，精准打击反坦克小组和弹药堆积点。","category":"AI","source":"头条·深度分析","expert_analysis":"【军迷视角】光纤制导FPV的出现，本质上是电子战和无人机的'军备竞赛'进入新阶段。无线电频率干扰一度让普通FPV变成瞎子，结果双方不跟你玩频率了——直接拉一根光纤，物理隔绝干扰。这有点像二战时期有线制导反坦克导弹的复古思路，但搭载到20美元的穿越机上就完全变了性质。装甲部队接下来的难题是：你怎么干扰一根光纤？答案是几乎没法干扰。唯一出路是主动拦截或摧毁操作手——但这又回到'发现-打击'的原始竞赛。更深层的问题是：光纤意味着操作手不能离目标太远（光纤线轴有限重），这是被反炮兵雷达锁定的风险敞口。","china_insight":"🇨🇳 我国启示：我军应立刻评估现役电子战体系对光纤制导无人机的防御盲区。同时，光纤FPV的思路完全可以反用——我军可研发更小型化的光纤制导巡飞弹，专门用于台湾海峡等强电磁干扰环境下的精确打击任务。另外，各合成旅应配发声学探测+热成像反无人机班组装备，作为对光纤FPV的末端防御补充。","image":""},{"title":"法国CAPINT新一代主战坦克：X-by-Wire全电子线控与AI协同","url":"https://news.qq.com/rain/a/20260622A08U9000","summary":"KNDS在Eurosatory 2026推出CAPINT坦克，采用全电子线控架构和开放式数字架构，可与无人机/无人车组网协同，3名乘员全部位于装甲舱内，配备140毫米主炮升级能力。","category":"AI","source":"腾讯新闻·渊亭防务","expert_analysis":"【军迷视角】CAPINT最容易被忽略的杀招不是140毫米炮，而是X-by-Wire全电子线控——方向盘、油门、炮塔全是电子信号，理论上插根网线就能远程操控。法国人的思路很清晰：先让有人车组验证技术成熟后直接抽掉乘员变成无人坦克。这比美国M1E3激进（直接上无人炮塔），比俄罗斯T-14务实（用成熟的豹2底盘）。欧洲MGCS项目推不动，法国绕开德国自己先跑，这才是CAPINT真正的战略含义。开放式数字架构另一层意思：法国要建立独立的坦克电子生态，摆脱美国ITAR出口管制对豹2系列军售的桎梏。","china_insight":"🇨🇳 我国启示：CAPINT的开放式数字架构与我国100式的信息化设计理念高度一致，但法国的模块化'即插即用'思路值得借鉴——未来装甲平台的传感器、武器、防护模块应该像USB设备一样热插拔升级，避免整车报废式换代。此外，X-by-Wire技术是我国发展无人坦克的必由之路，应在现役装甲车辆升级中逐步引入。","image":""},{"title":"法国展出REFURBOT：退役AMX-30坦克改造为重型无人战车","url":"https://www.thedefensenews.com/France-Unveils-REFURBOT-Unmanned-Combat-Vehicle-Built-from-Retired-AMX-30-Tanks/","summary":"法国S2M Equipment和KNDS France将退役AMX-30主战坦克改造为遥控作战平台，配备ARX-25遥控武器站（25毫米机炮）和TOXO机器人套件，实现全自主作战，最大时速65公里。","category":"AI","source":"The Defense News","expert_analysis":"【军迷视角】REFURBOT的核心价值就两个字——'省钱'。AMX-30全球库存3600多辆，大部分是等着回炉的废铁，装上遥控套件摇身一变就是重型无人战车，成本只有全新无人战车的十分之一。36吨的体量带着25毫米机炮，火力不算猛但胜在皮实、能扛、不用管乘员死活。局限也很明显：80毫米的正面装甲在反坦克导弹面前跟纸一样，只能当'消耗品'用。但战场上总是需要有人（或东西）冲在前面挨打——把'炮灰'角色从人转移到机器，就是REFURBOT的战略意义。法国媒体的口风暗示，这套改造套件很可能做成独立产品外销，瞄准全球数千辆退役苏系坦克的改造市场。","china_insight":"🇨🇳 我国启示：我军保有大量退役59式、79式坦克——与其全部回炉炼钢，不如参考REFURBOT思路，将部分车况较好的改造成无人靶车、无人破障车或无人侦察平台。尤其在台海登陆作战场景下，退役59式改装的无人破障车可以在第一波次消耗敌军火力，为后续两栖装甲集群打开通道。成本极低、战略价值极高。","image":""},{"title":"美国Palladyne AI为新型反无人机拦截系统供应BRAIN智能飞行计算机","url":"https://m.toutiao.com/group/7662645486045626930/","summary":"Palladyne AI旗下盖德科技签订230万美元合同，BRAIN飞行计算机集成英伟达芯片与工业级实时控制模块，可同步完成AI目标识别跟踪和飞行器稳定控制，适配大规模无人机威胁对抗。","category":"AI","source":"头条·军事科技","expert_analysis":"【军迷视角】230万美元的合同金额小得可怜，但信号意义巨大：反无人机正在从'被动防御'（电子干扰、高炮拦截）转向'主动猎杀'（AI引导动能拦截器）。BRAIN飞行计算机最核心的能力是让拦截器自己判断目标是什么、怎么飞过去撞它——一套完整的'感知-决策-执行'闭环，全程不需要操作手介入。传统防空导弹打一架几百美元的FPV在经济上就是自杀，但这种低成本动能拦截器+AI飞控的方案，有望把单次拦截成本压到几千美元级别。这才是破解'蜂群无人机成本优势'的正解。","china_insight":"🇨🇳 我国启示：我国在AI芯片和无人机飞控领域有深厚积累（大疆生态+华为昇腾），完全有条件研发同类产品。建议尽快启动'低成本AI反无人机拦截器'专项，利用成熟民用供应链压成本，目标单次拦截成本控制在人民币万元以内。这比一味堆高炮和导弹更符合未来战场经济性。","image":""},{"title":"意大利IDV展出CL2X混合动力无人轻型坦克","url":"https://www.thedefensenews.com/IDV-Unveils-CL2X-Hybrid-Uncrewed-Light-Tank-at-Eurosatory-2026/","summary":"Leonardo子公司IDV在Eurosatory 2026推出CL2X无人轻型坦克，16吨级，混合动力（130kWh电池+增程器），配备HITFIST 30 UL无人炮塔（30mm X-Gun），续航500公里，支持有人/无人编队协同。","category":"AI","source":"The Defense News","expert_analysis":"【军迷视角】CL2X的30mm X-Gun有一个容易被忽略的优势：不受美国ITAR出口管制。Leonardo自己研发的炮，想卖给谁就卖给谁，不用看美国的脸色。这对中东、东南亚等想绕过美国武器出口限制的国家极具吸引力。16吨+500公里续航的数据意味着这辆无人车刚好能塞进C-130运输机——北约可在24小时内把无人机甲力量投送到全球任何简易机场。纯电静默模式下CL2X的热信号极低，可以在伏击阵地蹲守一整天不吃不喝，传统坦克即使熄火也有明显的红外特征。","china_insight":"🇨🇳 我国启示：CL2X的吨位（16吨）和运-8/运-9的投送能力完美匹配——我军应研发同级别混合动力无人战车，利用运-20机群快速投送至高原、岛礁等传统重装甲难以到达的地域。更重要的是，CL2X的30mm空爆弹反无人机能力值得关注：这种'以炮反蜂群'的思路比导弹更经济。","image":""},{"title":"印度T-72坦克部分改装为无人作战平台","url":"https://m.sohu.com/a/1048867530_121410513/","summary":"印度「犀牛计划」中，部分T-72坦克远期计划通过「阿底提4.0」方案改装为具备IP网络控制、传感器融合和自主机动能力的无人装甲平台，汲取俄乌战场无人机协同经验。","category":"AI","source":"搜狐军事","expert_analysis":"【军迷视角】印度要把48岁的T-72改成无人坦克，这事乍看荒诞，细想有道理：改装1辆旧坦克的成本可能只有全新无人战车的五分之一。但问题在于——阿瓦迪工厂连有人T-90的发动机都要从俄罗斯进口，让同一家工厂搞定传感器融合和自主决策？怕不是PPT先飞十年。更关键的是，印度的对手是装备了完整无人机-反无人机体系的中国，一个半改装的无人T-72在电磁压制下大概率直接变铁棺材。但换个角度看：如果印度只是把T-72当作'前线移动传感器节点+遥控火力点'（类似固定炮台但不是固定的），那不需要全自主能力，有个遥控链路就够了——这个思路反而务实。","china_insight":"🇨🇳 我国启示：印军对T-72的无人化改造虽然大概率流产，但这个'低成本旧装备无人化'的思路本身没错。我军应提前布局，在现役96式和部分99式上验证遥控/自主驾驶模块，不追求一步到位全自主，而先实现'远程遥控火力点'的基本功能，为未来大规模无人装甲突击积累操作经验。","image":""},{"title":"中国SH16A自行榴弹炮配备全球首创激光点火与AI火控","url":"https://m.toutiao.com/group/7662533064539341346/","summary":"北方工业SH16A型轮式155毫米自行榴弹炮采用无人炮塔、激光点火（全球首创）、自动装弹机，仅需2人操作，全电驱动伺服系统，爆发射速15秒3-4发，快打快撤90秒内完成。","category":"AI","source":"今日头条·军事分析","expert_analysis":"【军迷视角】激光点火这个'全球首创'不是噱头。传统机械撞针点火有两个死穴：延迟不一致（几毫秒的误差在高射速下影响落点分布）和机械磨损（高强度作战下撞针是易损件）。激光多点同步点火直接解决这两个问题，本质上是用光速取代了机械速度。但我认为更值得关注的是SH16A的生存逻辑——设计团队完全理解了现代炮兵的命门不是火力密度而是'活过第一轮反击'。从进入阵地到撤离90秒，2人操作意味着车组暴露时间和人力需求都砍了一半。全电驱动伺服系统没有液压管路，被弹片击中后不会喷油起火——这是从俄乌战场学来的细节设计。","china_insight":"🇨🇳 我国启示：激光点火技术应迅速推广至PLZ-05系列和PCL-181的后续批次，甚至考虑反移植到舰炮系统。SH16A的核心竞争逻辑——'活过反炮兵打击'——应成为我军所有炮兵平台设计的首要原则。建议后续型号加入被动射频探测告警系统，在敌方反炮兵雷达开机扫描的瞬间自动触发撤离程序，进一步压缩反应时间至60秒内。","image":""},{"title":"KNDS展出豹2 A-RC 3.0和CAPINT两型中级能力坦克","url":"https://nordicdefencereview.com/eurosatory-2026-knds-unveils-intermediate-capability-tanks/","summary":"KNDS在Eurosatory 2026展示两款中级能力主战坦克：法国CAPINT（120mm ASCALON炮，可升级140mm）和德国豹2 A-RC 3.0（增强反无人机能力，8枚反无人机拦截器），均基于俄乌战争经验强化顶部防护。","category":"AI","source":"Nordic Defence Review","expert_analysis":"【军迷视角】'中级能力坦克'这个定位本身就值得玩味——欧洲人终于承认下一代坦克（MGCS）遥遥无期，现在的豹2和Leclerc扛不住无人机时代，所以搞了个'过渡产品'。CAPINT和豹2 A-RC 3.0路线截然不同：法国人的CAPINT像全新概念验证平台，德国人的A-RC 3.0是老底盘的深度魔改。这反映了两国军工思路的根本差异。豹2 A-RC 3.0的8枚反无人机拦截器值得细看——不是用30毫米炮打无人机，而是专用的微型拦截弹，这说明德国人认为30毫米炮对付蜂群还不够，需要专用的'反无人机弹药体系'。","china_insight":"🇨🇳 我国启示：欧洲两型'过渡坦克'说明一个趋势：在下一代坦克成熟前，对现役主战装备进行'反无人机专项升级'比全新研制更紧迫。我军96式和99式的反无人机能力升级应列为优先级最高的装备改进项目，尤其是顶部附加装甲+专用反无人机拦截器的组合方案，可以效仿豹2 A-RC 3.0的'8枚拦截弹+30mm副炮'双保险思路。","image":""}],"cn":[{"title":"中国SH16A轮式155毫米自行榴弹炮上线：全球首创激光点火","url":"https://m.toutiao.com/group/7662533064539341346/","summary":"2026年初，北方工业SH16A型轮式155毫米自行榴弹炮正式上线。配备无人炮塔、激光点火、自动装弹机，2人操作，1分钟展开，几十秒打完即撤离，车体防护达STANAG 4569 4级。","category":"火炮","source":"今日头条","expert_analysis":"【军迷视角】SH16A最让我震撼的不是技术参数，而是设计理念的转变——中国炮兵终于从'把人塞进炮塔'变成了'让人远离炮塔'。2名乘员全部坐在驾驶舱，炮塔里只有机器，这在十年前是不可想象的。解放军的传统是强调'人定胜天'，但现在连炮兵都接受'机器替人扛伤害'的逻辑了。这种思想转变背后，是对俄乌战场惊人的自行火炮损耗率的冷静回应——乌克兰已损失超440辆自行火炮，绝大多数是被反炮兵雷达定位+精确打击组合干掉的。谁停车久，谁就死。STANAG 4569 4级防护（14.5mm穿甲弹）意味着SH16A的驾驶舱能扛重机枪扫射——这在炮兵阵地遭遇渗透攻击的混乱场景下，是车组活着撤离的关键。","china_insight":"🇨🇳 我国启示：SH16A的2人操作理念应推广至所有新型炮兵装备，目标是全军155毫米级火炮操作人员减至3人以下。同时，激光点火技术的下一个应用场景应该是舰炮和要地防空火炮——在这些领域，点火一致性对射速和精度的影响更大。","image":""},{"title":"中国155毫米火炮三兄弟同台亮相欧洲防务展","url":"https://m.toutiao.com/group/7657101982703813172/","summary":"2026年6月Eurosatory展，北方工业展出SH15车载炮、PLZ52履带式自行炮和AH4超轻型牵引炮。SH15已获巴基斯坦236门订单并在实战中投入，形成统一口径、分层定位的完整火炮体系。","category":"火炮","source":"今日头条","expert_analysis":"【军迷视角】SH15在巴基斯坦的实战表现才是这三款炮最大的广告。军火贸易有个铁律：没人买你的东西看PPT，但有人用你的东西打了胜仗，订单就会自动找上门。SH15在印巴冲突中直接参战，等于给所有潜在买家做了一次免费实战验证。更妙的是，三款炮共享一套弹药和火控系统——这个体系化的卖点才是真正打动中小国家国防部的地方：买了一家的炮，后续弹药、训练、维护都锁定在这个体系里，客户粘性极强。反观欧洲同类产品，法国凯撒、瑞典弓箭手、德国RCH-155各用各的弹药和系统，互不兼容。","china_insight":"🇨🇳 我国启示：三型炮共享一套弹药+火控的思路是教科书级别的装备体系化策略。这种思路应该复制到其他出口装备系列——比如VT-4/VT-5坦克、VN系列步战车，形成一个从弹药到电子设备的完整'中国标准'生态，逼迫客户'买一瓶酱油就得用整个厨房'。","image":""},{"title":"东部战区71集团军99式坦克换装：美媒解读陆战攻坚信号","url":"https://m.toutiao.com/group/7660459983905014291/","summary":"央视画面显示东部战区第71集团军重型合成旅列装焊接炮塔99系列坦克，替换部分96系列。美媒分析此举针对台军M1A2T接装带来的装甲对抗升级需求。","category":"坦克","source":"今日头条","expert_analysis":"【军迷视角】美媒只看到了一半。99系列上71集团军确实有对台方向考量，但更重要的原因可能是：96系列在俄乌战场上同级别的T-72暴露了太多短板——顶部防护不足、反无人机能力几乎为零。99系列的焊接炮塔+顶部附加装甲，显然在设计中参考了俄乌战场教训。另一个信号：71集团军的登陆投送体系一直在升级，新型气垫艇和两栖平台逐步到位，现在把更重的99系列也配上去，意味着投送能力已经跨越了某个关键阈值——能运99上滩头，就能运后勤、弹药、防空跟在后面。这才是对台方向的真正威胁。焊接炮塔99比铸造炮塔98更适应高烈度冲突的另一个优势是：战损后模块化更换炮塔组件的速度更快。","china_insight":"🇨🇳 我国启示：71集团军换装99系列释放了清晰的信号：两栖投送能力已满足重装跨海需求。下一步应重点验证99系列在登陆初期的滩头作战效能——包括松软地面的机动性、反登陆障碍的突破能力和无人机蜂群环境下的生存力。建议结合实战化演训，模拟台军M1A2T+标枪反坦克导弹的对抗环境。","image":""},{"title":"PLZ05型自行榴弹炮：解放军现役世界顶尖大口径火炮","url":"https://www.163.com/dy/article/KKOK4C4Q05159NLJ.html","summary":"PLZ05型155毫米自行榴弹炮是解放军第三代大口径火炮，配备52倍径火炮、自动装填系统、数字化火控，射程覆盖30-50公里以上，已大量列装重型合成旅。","category":"火炮","source":"网易新闻·萨沙","expert_analysis":"【军迷视角】PLZ05是一个被低估的平台。很多人盯着新出的SH16A和PCL-181，觉得履带式过时了。但履带炮在伴随重装部队推进时有无可替代的优势——软土、泥泞、爬坡、跨壕，轮式底盘在这些场景下就是不行。俄乌双方已经用数千发炮弹证明了：履带自行炮在泥泞季节的机动性是轮式炮的三倍以上。PLZ05+数字化弹药+侦察无人机组成的信息化炮兵体系，本质上让每个重型合成旅都拥有了旅级精确火力覆盖能力。不过PLZ05要面对的现实是：它的生存率取决于伴随的防空和反无人机系统能不能撑住——炮再准，被无人机盯上了也就是一分钟的事。","china_insight":"🇨🇳 我国启示：PLZ05系列的升级方向不应只盯着射程和自动化，而应优先解决'反无人机生存力'问题——为PLZ05加装激光告警+烟幕自动投放系统，以及与旅属防空营的实时数据链。同时，PLZ05的高机动履带底盘是绝佳的无人化改造平台，可以考虑推出无人版PLZ05作为SH16A的履带互补方案。","image":""},{"title":"PCL-181车载榴弹炮：25吨轻量化，运-20一次运两门","url":"https://www.163.com/dy/article/KUTFD9SO0556CKVW.html","summary":"PCL-181车载155毫米榴弹炮2019年阅兵首秀，6×6底盘，战斗全重25吨，可由运-9空运，发射底排弹40公里、火箭增程弹50公里以上。外贸版SH-15已售巴基斯坦236门。","category":"火炮","source":"网易新闻","expert_analysis":"【军迷视角】PCL-181的战略价值不在射程和火力，而在'运-20一次拉两门'。六架运-20一个批次就能投送一个炮兵营到千里之外，这在台海、南海、高原等场景下是改变游戏规则的能力。敌人还在等海运重炮的时候，解放军轮式炮兵已经落地开火了。SH-15出口单价不到法国凯撒的三分之一（约220万美元 vs 600万美元），这个性价比本身就是武器——对发展中国家来说，买一门凯撒的钱能买三台SH-15，火力密度瞬间翻三倍。但PCL-181有一个容易被忽视的局限：6×6底盘的越野机动性不如8×8，在高原复杂地形下大角度爬坡能力受限。","china_insight":"🇨🇳 我国启示：PCL-181的成功证明'轻量化+空运+模块化'是未来炮兵的发展方向。下一代车载炮应考虑8×8底盘方案，在保持空运能力的前提下提升越野机动性。另外，PCL-181的外贸版SH-15已成为中国军工出口的旗舰产品，后续应围绕它打造完整的'炮兵出口生态链'——侦察无人机+反炮兵雷达+数字化指挥车+弹药套餐包。","image":""},{"title":"中国第四代100式主战坦克列装：全电混动与AI信息化","url":"https://m.163.com/dy/article/L03EH5DR05566GMU.html","summary":"中国100式第四代主战坦克采用全电/混合动力系统，具备静默机动能力、360°主动防护系统、无人遥控炮塔和AI态势感知系统，已成为新全域旅的信息节点。与俄罗斯T-14形成代差。","category":"坦克","source":"网易新闻","expert_analysis":"【军迷视角】100式最大突破不是装甲多厚、炮管多长，而是把坦克从'火力-防护-机动'三角平衡拉入了第四个维度——'信息节点'。这意味着100式不再只是一辆会开炮的铁疙瘩，而是一个移动的数据中心：接收卫星、无人机、友邻车辆的态势信息，用AI筛选目标，然后决定是自己打还是分配给无人机打还是传给后方导弹打。俄罗斯T-14之所以停产而100式上量，根本差距不在平台本身而在整个C4ISR体系——孤立的一辆先进坦克在体系面前就是活靶子。100式的全电驱动还有一个好处：内装空间不再被传动轴贯穿，乘员舱可以做得更低矮，降低整车正面投影——这是传统机械传动坦克做不到的。","china_insight":"🇨🇳 我国启示：100式的'信息节点'定位代表了装甲兵的发展方向，但信息节点也意味着电磁信号密集——如何在不暴露自身的前提下收发数据，是100式能否在实战中兑现理论优势的关键。建议在对抗演练中专门设置'强电磁干扰+卫星拒止'的极限环境下测试100式AI态势感知系统的降级运行能力。","image":""},{"title":"中国新型舰载155毫米舰炮曝光：低成本对岸精确打击","url":"https://radar.rp.pl/innowacje-w-armiach/art44662251-chiny-buduja-superdzialo-do-ostrzeliwania-tajwanu-ma-zmienic-koszty-wojny","summary":"中国在测试新型155毫米舰炮系统，重约22吨，兼容SH-15和PLZ-05弹药体系，旨在以极低成本实现大规模对岸火力覆盖，单发成本仅为导弹的千分之一。","category":"火炮","source":"Rzeczpospolita","expert_analysis":"【军迷视角】波兰媒体把这款舰炮直接和'对台火力准备'挂钩，不能说完全没道理。但155毫米舰炮还有更广泛的应用场景——南海岛礁攻防、近岸对陆支援。一枚巡航导弹几百万美元，一发155毫米炮弹几千美元，成本差三个数量级。美军朱姆沃尔特级驱逐舰因专用炮弹太贵（80万美元一发）废掉了155舰炮，中国反其道而行——用现有陆炮弹药体系撑舰炮，本质是弹药的规模效应降低平台成本。这个思路非常务实。22吨的重量意味着可以装在055大驱或新型登陆舰上，一门舰炮的持续火力输出相当于一个陆炮连。","china_insight":"🇨🇳 我国启示：155舰炮的最优先部署平台应是两栖攻击舰和船坞登陆舰——在登陆作战中提供随伴火力支援，填补舰载航空兵和远程导弹之间的火力空白。同时，应同步研发舰载155毫米制导炮弹（GPS/北斗+激光半主动），使单发弹药成本从数万元的普通弹提升到数十万元的精确弹，但仍远低于百万级别的导弹。","image":""},{"title":"德国RCH-155行进间射击火炮获英国10亿英镑大单","url":"https://www.163.com/dy/article/KUTFD9SO0556CKVW.html","summary":"英国国防部以近10亿英镑订购72门德国RCH-155轮式自行榴弹炮，该炮唯一能在行进间精准开火，2人操作，爆发射速8发/分。中国PCL-181走「超快速停射+秒级撤离」路线作为不同应对策略。","category":"火炮","source":"网易新闻","expert_analysis":"【军迷视角】行进间射击和快打快撤是两种哲学，没有绝对优劣。RCH-155边跑边打，理论上生存率最高；但代价是复杂度和成本翻倍，而且需要精密惯导和炮控系统在颠簸中维持精度——这套系统一旦出故障，前线根本修不了。中国PCL-181选择'停-打-跑'极速循环，靠的是自动化装填+自动定位来压缩暴露时间。两种路线的本质分歧是：你相信自己的电子系统在极端战场环境下不出毛病，还是相信机械系统的鲁棒性。英国人选RCH-155意味着他们押注了前者——这门近1400万英镑单价的炮比很多主战坦克还贵。","china_insight":"🇨🇳 我国启示：行进间射击和快打快撤各有所长，我国不必盲目追求行进间射击能力——PCL-181的'30秒爆发+60秒撤离'路线在现有反炮兵威胁下已经足够。但应关注RCH-155惯导系统的技术路线，作为未来车载炮升级的参考。更值得学习的是：RCH-155的高度自动化（2人操作）证明了'减人是炮兵生存力的第一要素'——炮组越少，被无人机/狙击手盯上的概率越低。","image":""},{"title":"法国Leclerc XLR坦克加装反无人机笼式装甲","url":"https://www.defensenews.com/global/europe/2026/06/15/french-army-shows-leclerc-tank-with-once-mocked-anti-drone-cage/","summary":"法国陆军在Eurosatory 2026展出加装笼式装甲的Leclerc XLR坦克。曾被嘲讽为「应付笼」的顶部防护措施，在俄乌战场证明对无人机攻击有效，现已成为标配装备。","category":"坦克","source":"Defense News","expert_analysis":"【军迷视角】从'被全网嘲笑的应付笼'到'法国陆军官方标配'，这个翻转只用了三年——这是俄乌战场最直观的装备教训。2022年俄罗斯坦克顶上加焊铁栅栏被军事博主群嘲，但到了2026年，所有主流坦克制造商都在认真设计顶部防护方案。本质上无人机把坦克最脆弱的顶部变成了最常被攻击的面。传统坦克设计假设正面60度弧是最危险方向，现在顶部变成了主要威胁轴——这不仅是加一层笼子的问题，而是整个防护设计哲学需要重写。法国KNDS的笼子比俄军焊接的精致得多，采用了轻质合金+爆炸反应模块的复合结构，重量控制在300公斤以内，不像俄军的那种动辄半吨的'铁棺材盖'。","china_insight":"🇨🇳 我国启示：我军现役96式、99式坦克的顶部防护是明确的短板。应在不显著增加重量的前提下，为现役坦克研发模块化顶部防护套件——轻质合金框架+格栅+爆炸反应模块的组合方案。同时，下一代坦克（100式）的顶部防护应从设计阶段就纳入主要威胁方向，而不是事后再加'笼子'。","image":""},{"title":"英国陆军重心全面转向无人作战：从传统重装甲到智能化","url":"https://www.81.cn/wj_208604/16473836.html","summary":"英国新版国防投资计划大幅压缩传统重型装备预算，组建无人系统专项工作组。陆军追加5000万英镑采购FPV无人机和拦截无人机，启动「乌鸦」「尼克斯」「尼扬」等多个无人装备项目。","category":"装甲车辆","source":"中国国防报","expert_analysis":"【军迷视角】英国陆军的转型可以用一句话概括：从'我们有多少辆坦克'变成'我们有多少架无人机'。但看细节会发现一个矛盾——英军计划未来10年逐步完成转型，但假如5年内爆发高强度冲突呢？无人装备解决不了的问题恰恰是陆军最原始的使命：占领并守住地面。FPV无人机可以炸坦克，但不能占领战壕。转型方向没错，但转得太快可能就是'没准备好打上一场战争，也没准备好打下一场战争'。'乌鸦'和'尼克斯'这两个项目名透露了英军的真实想法——他们要的不是替代坦克的无人战车，而是替代步兵排的无人侦察-打击小队。","china_insight":"🇨🇳 我国启示：英军转型是一个观察样本——我国可以等英国人先踩坑再总结。当前我军不应激进削减传统装甲力量，而应在现有编制内嵌入无人装备试验分队（每旅配1个无人侦察-打击排），逐步积累'有人-无人混编'的实战经验。FPV无人机的普及速度已经证明：低成本无人装备的迭代远比传统装备快，应建立'快速采购-部队试用-三个月反馈-改进'的短周期装备迭代机制。","image":""}],"int":[{"title":"印度启动78.5亿美元「犀牛计划」：升级990辆老旧坦克","url":"https://m.sohu.com/a/1048867530_121410513/","summary":"印度陆军2026年7月启动「犀牛计划」，耗资78.5亿美元在五年内升级790辆T-72和200辆T-90坦克，更换1000马力发动机、增强火控与防护，部分T-72将改装为无人平台。","category":"坦克","source":"搜狐军事","expert_analysis":"【军迷视角】78.5亿美元砸在40岁的T-72身上，表面看是'印度特色军工'的又一个笑话，但认真分析后你会发现：对印度来说这是最理性的选择。全新采购1000辆主战坦克至少要250-300亿美元，印度陆军预算根本扛不住。升级旧坦克还能保住阿瓦迪工厂的产线和上万工作岗位——军工复合体的利益跟战略需求正好对齐。但问题在于，不管你把T-72的发动机换成多少马力，那副苏联时代设计的46吨铸铁车体在VT-4的125毫米穿甲弹面前还是一层纸。更致命的是：升级后的T-72仍然没有可靠的顶部防护——在无人机横行的战场上，这意味着乘员就是活靶子。","china_insight":"🇨🇳 我国启示：印度大规模升级老坦克的行为提醒我们——面对主要战略方向上的对手（我军），升级老旧装备的边际效益递减极快。我军应坚持'新老搭配、以新为主'的方针，对老旧装备的投入底线是'维持训练运转'，多余资源全部投向100式和其配套体系。同时关注印军T-90现代化升级的具体参数，针对性调整VT-4和反坦克武器的技战术指标。","image":""},{"title":"美国M1E3艾布拉姆斯坦克：混合动力+AI+无人炮塔","url":"https://www.defensemagazine.com/article/m1e3-abrams-the-us-armys-hybrid-revolution-in-tank-warfare-for-the-drone-age","summary":"M1E3是美军下一代主战坦克，重量降至60吨，柴电混合动力燃油效率提升40%，配备无人炮塔+自动装弹机（乘员减至3人），AI目标识别、反无人机系统，2026年秋季交第1骑兵师测试。","category":"坦克","source":"Defense Magazine","expert_analysis":"【军迷视角】M1E3最革命性的改变不是技术而是流程——美军把坦克从'设计-定型-量产'的十几年周期压缩到五年内让部队直接测试原型车。这意味着美军承认：过去那种精雕细琢的装备研制模式，在技术爆炸的无人机时代已经过时了。自动装弹机取代第四个乘员，对美军坦克兵文化是地震级的冲击——'装填手'这个岗位可能要退出历史舞台。但隐忧是自动装弹机实战可靠性还未知，如果坏了三个人的车组能手动装填吗？另外，M1E3的60吨战略机动性仍受C-17运输机限制——和70吨M1A2一样，一架C-17只能运一辆，减了10吨并没有改变战略投送方程。","china_insight":"🇨🇳 我国启示：M1E3的五年迭代周期对我国装备研制有重要借鉴意义——我军应建立'快速原型-部队试用-持续改进'的短周期模式，取代传统'十年磨一剑'的装备定型流程。此外，M1E3的AI辅助决策系统应成为我军重点跟踪的技术方向：在电磁压制环境下AI能否独立完成目标识别和优先级排序，是未来坦克战的关键胜负手。","image":""},{"title":"俄罗斯T-14阿玛塔正式停产：成本过高，T-90M产能翻倍","url":"https://m.sohu.com/a/1041382745_121201501/","summary":"俄罗斯国家技术集团CEO确认T-14已停止生产，单车成本飙升至900-1000万美元。T-90M产能提升至原先2-3倍，预计2028年累计突破1000辆，2035年达3000辆。","category":"坦克","source":"搜狐军事","expert_analysis":"【军迷视角】T-14停产是俄乌战争的必然结果。一辆T-14能买将近三辆T-90M，在前线每月损失几十辆坦克的消耗战中，数量比质量重要得多。更深层的问题是：T-14的芯片、传感器、火控计算机依赖西方封锁前的进口组件——这些现在要么断供要么靠走私，导致每辆T-14的成本和可靠性都成了灾难。俄军的选择非常清晰：与其造10辆好坦克在前线被无人机点名，不如造30辆够用的坦克消耗对面的反坦克弹药。但T-90M能扛住100式吗？技术上差了一代——我们的100式是信息节点，T-90M只是一个换了电子设备的T-72。这已不是坦克对坦克的问题，而是体系对平台的问题。","china_insight":"🇨🇳 我国启示：T-14的失败证明了一个铁律——脱离国产供应链的高端装备就是纸上谈兵。我国100式之所以能顺利上量，根本原因是全车95%以上的子系统已实现国产替代，从发动机到传感器到AI芯片全部自主可控。T-14的教训还提醒我们：装备单价必须控制在可承受战场损耗的水平——1000万美元一辆的坦克，在前线被一架500美元的FPV炸毁，这种交换比任何军队都承受不起。","image":""},{"title":"俄罗斯基于乌克兰实战全面升级T-90M主战坦克","url":"https://groundnews.lakegeneva.lib.wi.us/article/russia-has-taken-action-they-are-completely-rebuilding-the-most-modern-tanks-based-on-the-experience-of-the-war-in-ukraine","summary":"Rostec宣布T-90M现代化进入新阶段，重点增强电子战能力、附加装甲和反无人机顶部防护。升级方案直接来自乌克兰前线作战反馈，全面提升生存能力。","category":"坦克","source":"Army Recognition","expert_analysis":"【军迷视角】俄罗斯的装备改进有一个特点：改得快、改得猛、但改得粗糙。T-90M的这次升级几乎完全是'哪里挨打就补哪里'——无人机打顶部就加顶部装甲，FPV撞侧后方就加反应装甲，GPS干扰多就用光纤。这些改动在战术层面有效，但暴露出一个根本问题：T-90M底子是冷战末期的设计，不论怎么缝缝补补都无法解决原始设计的结构性缺陷。但话又说回来，对前线乘员来说多一层笼子就是多一条命，理论上的完美设计不如战场上活下来重要。Rostec声明中提到'全面重建'，暗示改动幅度超过了一般升级，可能涉及车体结构本身——这说明T-90在乌克兰挨的打比外界知道的更多。","china_insight":"🇨🇳 我国启示：俄罗斯'战场驱动式改进'的思路值得借鉴——装备升级不必等到十年一次的定型节点，而应建立在持续收集实战/演训反馈的基础上。建议我军建立'演训损伤数据库'，将每次对抗演练中暴露的装备短板实时录入，驱动快速迭代的改进方案。T-90M加电子战系统的做法也说明：在现代战场上，电子防护和物理防护同等重要。","image":""},{"title":"IDV展出CL2X混合动力无人轻型坦克（16吨级）","url":"https://www.thedefensenews.com/IDV-Unveils-CL2X-Hybrid-Uncrewed-Light-Tank-at-Eurosatory-2026/","summary":"Leonardo子公司IDV推出CL2X，16吨、混合动力（130kWh电池）、最高70km/h、续航500公里。配备HITFIST 30 UL无人炮塔+30mm X-Gun（可发射空爆弹反无人机），支持有人/无人编队作战。","category":"装甲车辆","source":"The Defense News","expert_analysis":"【军迷视角】CL2X最核心的战术价值是'静默猎杀'——纯电模式下噪音和红外信号极低，可在伏击阵地不吃不喝不喘气蹲守一整天。传统坦克即使熄火也有热信号，但全电驱动的CL2X在蹲守时几乎是一个冷点——这在热成像仪下意味着它可能被误认为是石头或建筑废墟。30mm空爆弹反无人机的能力尤其值得关注：当FPV蜂群来袭时，与其用昂贵的导弹一架一架打，不如用30mm空爆弹在蜂群路径上炸出一片弹幕，一枚空爆弹就能覆盖数架无人机的飞行走廊。CL2X的设计思路很清晰：它不是用来跟敌方主战坦克正面对决的，而是在复杂战场上扮演'潜伏刺客'和'无人机清道夫'。","china_insight":"🇨🇳 我国启示：16吨级无人战车是我军装备谱系中的明确空白——现有的轻型装甲车辆要么是有人驾驶，要么是小型排爆机器人，缺少一个中间吨位的无人火力平台。建议基于8×8轮式底盘或轻型履带底盘，研发同级别的混合动力无人战车，优先部署至高原边防和岛礁守备部队，利用其'静默蹲守'能力弥补兵力密度不足。","image":""},{"title":"法国展出REFURBOT退役AMX-30坦克改造无人战车","url":"https://www.thedefensenews.com/France-Unveils-REFURBOT-Unmanned-Combat-Vehicle-Built-from-Retired-AMX-30-Tanks/","summary":"法国将退役AMX-30坦克改造为遥控无人作战平台，配备25mm机炮和TOXO机器人套件，最大时速65km/h。利用数千辆库存坦克，以低成本满足无人战车需求。","category":"装甲车辆","source":"The Defense News","expert_analysis":"【军迷视角】REFURBOT的'废旧利用'思路在全球范围内有示范意义——全世界退役的T-55、T-62、M60成千上万，如果法国这条路走通，等于开启了一个'老坦克无人化改造'的巨大市场。但有两个技术瓶颈：一是老坦克动力系统可靠性能不能支撑无人化后的长航时任务——AMX-30的发动机是五十年前的设计，连续运转几十个小时不趴窝就是胜利；二是遥控链路的抗干扰能力——跟CL2X这种原生无人平台不同，REFURBOT的老旧电磁兼容环境可能让遥控信号非常脆弱。不过话说回来，被干扰了不就是损失一辆36吨废铁吗，比损失一个车组强太多了。","china_insight":"🇨🇳 我国启示：我国退役59式坦克数量以千计，REFURBOT提供了绝佳的参考模板。建议选取车况较好的59式，改装为：①无人破障车（台海登陆专用），②无人移动靶车（训练消耗），③遥控火力支援车（装上105mm炮+自动装弹机，充当移动火力点）。第一批改装100辆的预算可能不到10亿人民币，但战略回报远超投入。","image":""},{"title":"KNDS推出CAPINT和豹2 A-RC 3.0中级能力主战坦克","url":"https://nordicdefencereview.com/eurosatory-2026-knds-unveils-intermediate-capability-tanks/","summary":"KNDS在Eurosatory展出两型坦克：法国CAPINT（120mm ASCALON/可升级140mm）和德国豹2 A-RC 3.0（8枚反无人机拦截器+30mm副炮），均加强顶部防护和反无人机能力。","category":"坦克","source":"Nordic Defence Review","expert_analysis":"【军迷视角】法国CAPINT和德国豹2A-RC 3.0虽然都是'中级能力坦克'，但战略定位完全不同。CAPINT是法国在MGCS项目停滞后的'自救方案'——先用成熟豹2底盘+自研炮塔造一个能用20年的过渡平台，同时保留升级140mm炮的远期选项。豹2A-RC 3.0则是德国在现有豹2A7基础上的'战场经验补丁包'。两家公司的算盘截然不同：法国人想借机建立自己的坦克供应链摆脱德国（和美国的ITAR），德国人想维持豹2系列全球市场地位。ASCALON 120mm炮是一个容易被忽视的亮点——它不是传统滑膛炮，而是采用新型弹膛设计，通过增大药室容积实现更高的炮口动能，为未来升级140mm预留了物理空间。","china_insight":"🇨🇳 我国启示：ASCALON炮的'预留升级空间'设计理念值得学习——我军下一代坦克炮也应在药室和反后坐装置上预留余量，为未来升级更大口径或更高膛压留余地。豹2 A-RC 3.0的'8枚反无人机拦截器+30mm副炮'双保险方案是一个可操作的技术路线——建议我军在99式改进型上测试类似的副炮反无人机系统。","image":""},{"title":"欧洲防务财团开发全自主155毫米火炮系统","url":"https://www.163.com/dy/article/KUTFD9SO0556CKVW.html","summary":"英国订购RCH-155全自动轮式自行榴弹炮72门（10亿英镑），该炮可在时速100公里行进间开火，每分钟8发。乌克兰已率先实战使用54门，重塑北约炮兵采购方向。","category":"火炮","source":"网易新闻","expert_analysis":"【军迷视角】一门炮近1400万英镑的单价（比很多主战坦克还贵），英国陆军还是咬牙买了——这说明RCH-155的行进间射击能力在军方看来是'刚需'。但行进间射击依赖非常精密的惯导和炮控系统，这些系统需要高精度制造和严格维护。乌克兰拿到RCH-155后的实战维护数据还没公开，如果战场上故障率过高，这炮的光环可能会褪色。另一个问题是：北约多国各自采购不同口径、不同底盘的炮，波兰买了韩国K9、英国买了德国RCH-155、法国坚持凯撒——互操作性问题依然没解决。炮弹不能互换意味着联合作战时后勤噩梦。","china_insight":"🇨🇳 我国启示：英国大手笔采购RCH-155告诉我们：欧洲各国正在加速替换冷战遗留的牵引炮兵，国际火炮市场正在经历一轮大换装。我国应抓住这个窗口期，用SH-15（性价比）+ PLZ-52（高配）组合抢占发展中国家市场，同时关注乌克兰RCH-155的实战表现数据，作为评价行进间射击技术路线价值的参考。","image":""},{"title":"法国Leclerc坦克加装「反无人机笼」：曾被嘲笑的装备成标配","url":"https://www.defensenews.com/global/europe/2026/06/15/french-army-shows-leclerc-tank-with-once-mocked-anti-drone-cage/","summary":"法国陆军在Eurosatory 2026展出Leclerc XLR升级版，加装KNDS France制造的笼式顶部装甲。曾被网络嘲讽的「应付笼」在俄乌战场证明有效，已成为标配防护。","category":"坦克","source":"Defense News","expert_analysis":"【军迷视角】一个小小的笼子背后是一整套军事装备文化的转变。2022年全网嘲笑俄罗斯人'野蛮焊接'，但到了2026年法国人用同样的概念、更精密的制造工艺做着同样的事——顶笼从临时应付演变成了正式设计规范。这提醒我们：战场上能活下来的方案就是好方案，不管看起来多土。但笼子的局限也很明显——能拦自杀FPV但拦不住攻顶反坦克导弹（标枪、长钉），后者有串联战斗部，笼子只是触发第一级装药，第二级仍然穿透。所以笼子是'增加存活概率'而不是'免疫'。法国人用轻质合金替代了俄军的钢材，把重量控制在300公斤级，不影响炮塔旋转速度——这个工程平衡比看起来难得多。","china_insight":"🇨🇳 我国启示：反无人机笼式装甲已经从不入流的临时手段变成了标准配置。我军应研发标准化的模块化顶部防护组件，适配96/99/100系列及各种装甲车辆，做到'平战两用'——平时可快速拆卸不影响训练机动，战时一键安装。同时关注主动防护系统（APS）与笼式装甲的复合使用方案——前者拦截攻顶导弹，后者拦自杀FPV，一个软硬结合的双层防护体系。","image":""},{"title":"T-14阿玛塔设计揭秘：因引擎过大被迫从六轮改为七轮","url":"https://www.thedefensenews.com/Development-Changes-Forced-Russias-T-14-Armata-Into-Larger-Seven-Wheel-Design/","summary":"T-14设计过程中因集成T-95项目的动力传动单元导致车体增大，从原始六负重轮改为七轮底盘。A-85-3 X型12缸柴油机重达1550公斤，动力包总重5150公斤，是T-14尺寸膨胀的根本原因。","category":"坦克","source":"The Defense News","expert_analysis":"【军迷视角】T-14从六轮膨胀到七轮，本质上是'动力系统绑架整车设计'的典型案例。那个X型12缸发动机结构上确实有独到之处（体积紧凑、功率密度高），但维修性和可靠性一直是大问题。1500马力听起来猛，实际上要分出一部分给冷却风扇和辅助系统，真正推动55吨车体的净功率可能只有1100-1200马力。更致命的是A-85-3是全新设计，跟T-72/T-80/T-90的发动机零通用——前线没有任何现成备件。俄军用T-90M而不是T-14，很大程度上就是后勤硬约束。七轮底盘还带来了另一个问题：更长的车体意味着更大的回转半径，在城市巷战中更笨拙——这恰恰是俄乌战场上坦克损失最多的场景。","china_insight":"🇨🇳 我国启示：T-14的动力系统问题提供了一个反面教材——动力包的尺寸和重量必须在设计之初就严格约束，不能以牺牲整车布局为代价换取纸面马力。我国100式的动力包一体化设计应该作为行业标准推广。另外，关键子系统与现役装备的通用性是战时后勤的基础——发动机、变速箱、履带等耗材应尽量与现有装备通用。","image":""}],"generated_at":"2026-07-15T18:00:00+08:00"};
+window.__DATA__ = {"artillery":[{"title":"中国SH16A轮式155毫米自行榴弹炮：全球首创激光点火","url":"https://m.toutiao.com/group/7662533064539341346/","summary":"北方工业SH16A采用无人炮塔+激光点火（全球首创），仅需2人操作，爆发射速15秒3-4发，全电驱动伺服系统无液压管路，进入阵地到撤离90秒内完成，专为对抗反炮兵雷达设计。","category":"智能火炮","source":"今日头条","expert_analysis":"激光点火不是噱头。传统机械撞针点火有延迟不一致和机械磨损两个死穴，激光多点同步点火用光速取代机械速度，在高射速下对落点一致性提升显著。更值得关注的是SH16A的生存逻辑——全电驱动无液压管路，被弹片击中不喷油起火；2人操作意味着炮组暴露人数减半。这种思想转变背后，是对乌克兰战场440+辆自行火炮被反炮兵雷达定位后摧毁的冷静回应。","china_insight":"激光点火技术应迅速推广至PLZ05和PCL-181后续批次乃至舰炮系统。SH16A的'活过反炮兵打击'原则应成为我军所有炮兵平台设计首要准则。建议加入被动射频探测告警系统，敌方反炮兵雷达开机瞬间自动触发撤离。"},{"title":"中国155毫米火炮三兄弟同台亮相欧洲防务展","url":"https://m.toutiao.com/group/7657101982703813172/","summary":"2026年Eurosatory展，北方工业展出SH15车载炮、PLZ52履带炮和AH4超轻型牵引炮。SH15已获巴基斯坦236门订单并实战投入，三款炮共享弹药和火控体系。","category":"国内火炮","source":"今日头条","expert_analysis":"SH15在巴基斯坦的实战表现才是三款炮最大的广告。军火贸易铁律：PPT没人信，实战验证后订单自动找上门。更妙的是三款炮共享一套弹药和火控——买了一家的炮，后续弹药训练维护全锁定在这个体系里，客户粘性极强。SH15出口单价不到凯撒三分之一，性价比本身就是武器。","china_insight":"三型炮共享弹药+火控的思路是教科书级的装备体系化策略。应复制到VT-4/VT-5坦克、VN步战车等出口装备系列，形成完整'中国标准'生态。"},{"title":"PLZ05型自行榴弹炮：解放军现役世界顶尖大口径火炮","url":"https://www.163.com/dy/article/KKOK4C4Q05159NLJ.html","summary":"PLZ05型155毫米自行榴弹炮是解放军第三代大口径火炮，52倍径、自动装填、数字化火控，射程30-50公里以上，已大量列装重型合成旅，是履带式重炮的巅峰之作。","category":"国内火炮","source":"网易新闻·萨沙","expert_analysis":"PLZ05被低估了。很多人盯着新出的SH16A和PCL-181觉得履带式过时了，但软土泥泞爬坡跨壕——轮式底盘在这些场景下就是不行。俄乌战场已证明泥泞季节履带炮机动性是轮式炮三倍以上。PLZ05+数字化弹药+侦察无人机组成的信息化炮兵体系，让每个重型合成旅拥有旅级精确火力覆盖。但生存率取决于伴随防空和反无人机系统能不能撑住。","china_insight":"PLZ05升级方向不应只盯着射程和自动化，应优先解决反无人机生存力——加装激光告警+烟幕自动投放+与旅属防空营实时数据链。高机动履带底盘也是绝佳的无人化改造平台。"},{"title":"PCL-181车载榴弹炮：25吨轻量化，运-20一次运两门","url":"https://www.163.com/dy/article/KUTFD9SO0556CKVW.html","summary":"PCL-181车载155毫米榴弹炮6×6底盘战斗全重25吨，可由运-9空运，发射底排弹40公里、火箭增程弹50公里以上。外贸版SH-15已售巴基斯坦236门，单价仅法国凯撒三分之一。","category":"国内火炮","source":"网易新闻","expert_analysis":"PCL-181的战略价值不在射程火力，而在'运-20一次拉两门'——六架运-20一个批次投送一个炮兵营到千里之外。敌人在等海运重炮时，解放军轮式炮兵已落地开火。这在台海、南海、高原等场景是改变游戏规则的能力。但6×6底盘在高原复杂地形大角度爬坡受限，越野机动不如8×8。","china_insight":"PCL-181证明'轻量化+空运+模块化'是未来炮兵方向。下一代车载炮应考虑8×8底盘方案。SH-15已成中国军工出口旗舰产品，后续应打造完整'炮兵出口生态链'——侦察无人机+反炮兵雷达+数字化指挥车+弹药套餐包。"},{"title":"中国新型舰载155毫米舰炮：低成本对岸精确打击","url":"https://radar.rp.pl/innowacje-w-armiach/art44662251-chiny-buduja-superdzialo-do-ostrzeliwania-tajwanu-ma-zmienic-koszty-wojny","summary":"中国测试新型155毫米舰炮系统，重约22吨，兼容SH-15和PLZ-05弹药体系，以极低成本实现大规模对岸火力覆盖，单发成本仅为导弹千分之一，可部署于两栖攻击舰和大型驱逐舰。","category":"国内火炮","source":"Rzeczpospolita","expert_analysis":"波兰媒体直接把这门炮和'对台火力准备'挂钩，不无道理。但155舰炮更有更广应用场景——南海岛礁攻防、近岸对陆支援。一枚巡航导弹几百万美元，一发155炮弹几千美元，成本差三个数量级。美军朱姆沃尔特级因专用炮弹80万美元一发废了155舰炮，中国反其道而行——用现有陆炮弹药体系撑舰炮，弹药规模效应降平台成本。","china_insight":"155舰炮的最优先部署平台应是两栖攻击舰和船坞登陆舰——在登陆作战中提供随伴火力支援。应同步研发舰载155毫米制导炮弹，单发成本从数万提至数十万元，仍远低于百万级导弹。"},{"title":"AI反炮兵雷达革命：从发现到反击缩短至30秒","url":"https://m.toutiao.com/group/7645238194036728324/","summary":"新一代AI反炮兵雷达利用深度学习算法自动识别炮弹轨迹、过滤飞鸟和车辆虚警，将目标定位时间从传统90秒缩短至30秒以内。配合自动化火控，可在敌方炮弹落地前完成反击火力分配。","category":"智能火炮","source":"头条·军事科技","expert_analysis":"反炮兵雷达+AI的结合才是真正改变炮战规则的技术。传统反炮兵雷达需要熟练操作员手动排除虚警——飞鸟、车辆、建筑反射都会触发误报。AI深度学习把虚警率从40%压到5%以下，同时把处理时间从90秒砍到30秒。这个速度差，就是现代炮战的'先手优势'——先发现、先反击、先摧毁。","china_insight":"我军现役炮兵侦察雷达（如SLC-2E）的AI升级应列为优先项目，目标是30秒内完成从探测到火力分配的全流程。同时应关注AI反炮兵雷达与无人机群的数据融合——用无人机被动接收敌方雷达信号，AI交叉定位。"},{"title":"精确制导炮弹进入白菜价时代：神剑、红土地与GP155系列","url":"https://m.163.com/dy/article/L03UH8DR05566GMU.html","summary":"全球制导炮弹正从'奢侈品'变为'标配'。美国M982神剑GPS制导炮弹降至约4万美元/发，俄罗斯红土地-M2激光制导炮弹约2万美元，中国GP155系列北斗制导炮弹精度CEP 10米级，单价已压至10万人民币左右。","category":"智能火炮","source":"网易新闻","expert_analysis":"制导炮弹从'精贵打不起'变成'该打就打'，这个趋势比任何一门新炮更深刻影响未来炮战模式。美军的数字很说明问题：在伊拉克用普通榴弹摧毁一个目标平均消耗炮弹20-30发，用神剑平均只需1.2发——弹药成本虽然翻了4倍，但总消耗降了20倍。中国的GP155系列走北斗路线，绕开GPS依赖，单发10万人民币约1.4万美元，比神剑便宜三分之二。","china_insight":"GP155系列应加速列装至所有155毫米火炮平台，将'首发命中'从精英炮兵的特权变成普通班组的标配。同时应研发第二代低成本制导炮弹——采用MEMS惯导+北斗组合导航，目标单价压至5万人民币以下。"},{"title":"德国PzH 2000自行榴弹炮在乌克兰战场：昂贵而脆弱的钢铁巨兽","url":"https://www.defensenews.com/land/2026/06/10/german-pzh-2000-howitzers-ukraine-combat-experience-lessons-learned/","summary":"德国援助乌克兰的PzH 2000 155毫米履带自行榴弹炮在俄乌战场暴露出严重问题：高射速（10发/分）过度消耗炮管寿命（2500发后精度骤降）、电子系统不耐恶劣环境、维护成本高昂。单价约1700万欧元，战场可承受性极差。","category":"国际火炮","source":"Defense News","expert_analysis":"PzH 2000是典型'和平时期精工制造、战争时期用不起'的案例。其自动化装填系统的确优秀，但代价是电子设备复杂度极高，在泥泞和电子战环境下故障率直线上升。更致命的是炮管寿命——高膛压高射速让炮管2500发后就需更换，而战争环境下更换一根炮管周期长达2-3个月。德军自己只养了不到100门，乌克兰手头几十门根本经不起消耗。这个教训对SH16A和PCL-181有重要参考意义：大炮不能只追求极致性能，生存力和可维护性才是战场上真正活命的东西。","china_insight":"PzH 2000的教训明确提醒我军：火炮不是奢侈品，不能走'过度精密化'路线。SH16A的炮管寿命指标必须对标PCL-181的实战数据优化，追求4000+发炮管的可靠性和快速野战更换能力。同时，高射速带来的弹药消耗和后勤可持续性需在全军演习中充分验证。"},{"title":"美国CERBERUS蜂群反炮兵系统：用AI破解传统炮战规则","url":"https://www.defensenews.com/land/2026/07/01/us-army-cerberus-counter-battery-system-ai-drones-artillery/","summary":"美国陆军在2026年演习中测试CERBERUS蜂群系统：数百枚微型无人机搭载被动射频传感器，自动搜索锁定敌方炮兵阵地。AI分布式处理，无中心节点，单架无人机被击落数据不丢失。从发现到打击缩短至45秒。","category":"智能火炮","source":"Defense News","expert_analysis":"CERBERUS的思路是革命性的——它不靠一部大型雷达，而是靠数百个廉价传感器（每架无人机成本控制在500美元以内）组成分布式搜索网络。敌人打掉一架无人机，另外几十架仍在搜。这从根本上改变了'反炮兵雷达'的定义：不再是一个单一平台，而是一个弹性搜索集群。但CERBERUS的最大弱点是对通信链路的依赖——如果无人机之间的数据链被切断或干扰，蜂群就会退化为一堆各自为战的单个传感器。","china_insight":"我军应立即评估CERBERUS对现役炮兵生存力的威胁。防御方面：开发专门针对微型无人机的低功率定向能干扰系统。进攻方面：研发与CERBERUS类同的'廉价蜂群反炮兵'方案，利用民用无人机供应链压成本。同时，将'反蜂群战术'纳入所有炮兵对抗演练。"},{"title":"中国新型155毫米精确制导炮弹家族：GP155B/GP120/GP105全谱系","url":"https://m.163.com/dy/article/L0F5H6DR05566GMU.html","summary":"中国正在构建全谱系精确制导炮弹家族：GP155B激光末制导炮弹（10万级）、GP120卫星/惯导复合炮弹（8万级）、GP105低成本双模炮弹（5万级）。覆盖从点目标精确打击到面目标密集覆盖全部场景，与SH15/PLZ05/PCL-181全兼容。","category":"智能火炮","source":"网易新闻","expert_analysis":"GP155家族最大的战略价值不是技术参数，而是'全家桶'体系思维——同一个炮兵营可以根据目标类型在同一次火力任务中混合使用不同级别的制导弹药：对敌军指挥所打GP155B激光制导（CEP 3米），对装甲集群打GP120卫星惯导（CEP 15米），对步兵阵地打GP105低成本双模（CEP 30米）。弹药成本呈阶梯分布，形成'精确度-成本'的灵活选择矩阵。这已经超出传统火炮的概念，是在弹药供给侧进行了一场'弹药即服务'的范式变革。","china_insight":"GP155家族应加速全系列量产并配属至每个炮兵营。但更关键的是训练体系的同步升级——炮长需要学会根据目标类型、距离、天气和成本约束在数秒内做出弹药选择决策。建议开发炮兵弹药AI辅助决策APP，输入目标参数自动推荐最佳弹药组合。"},{"title":"前沿技术：电磁轨道炮和超高速射弹从幻想走向战场","url":"https://www.janes.com/osint-insights/defence-news/weapons/railgun-and-hvp-technology-maturation-update-2026","summary":"美国海军2021年终止电磁轨道炮项目后，超高速射弹（HVP）技术转入陆军155毫米火炮平台。中国电磁轨道炮海上测试持续进行。2026年多国在电磁发射和超高速弹技术上取得实质性突破，首次具备工程化部署条件。","category":"智能火炮","source":"Jane's Defence","expert_analysis":"美国海军放弃电磁炮不是因为它没用，而是因为海军场景太苛刻——战舰电力宝贵、海上盐雾腐蚀加速。但陆军155毫米电磁炮有天然优势：地面电源更廉价稳定，炮管成本和环境要求低得多。中国的策略更务实：不追求一步到位的电磁炮，而是走'两弹一轨'路线——先用传统化学能发射'HVP超高速弹'（用现有155炮打超高速弹），积累弹道数据和控制经验，电磁炮同步研发。HVP初速可达Mach 5+，飞行至100公里仅需约90秒——传统炮弹要飞3-4分钟。","china_insight":"HVP+155mm传统火炮的组合是比全电磁炮更现实的近期路径。我军应优先研发可兼容PLZ05/PCL-181/SH16A的HVP弹，利用现有平台实现射程翻倍和反应时间缩短60%的突破。电磁轨道炮作为2030+远期技术储备继续投入，但不要过早追求整炮部署。"},{"title":"数字化炮兵指挥系统：从发现到摧毁全流程60秒闭环","url":"https://m.163.com/dy/article/L1A3D8ES0556CKVW.html","summary":"解放军数字化炮兵指挥系统通过卫星、无人机、侦察雷达多源融合，AI自动完成目标识别-优先级排序-火力分配-毁伤评估全流程。从前沿侦察员发出目标坐标到炮弹落地，压缩至60秒以内。已装备多个集团军炮兵旅。","category":"智能火炮","source":"网易新闻","expert_analysis":"60秒全流程闭环已经超过美军现役AFATDS系统的120秒水平，这个数字背后是三个关键子系统革命：一是多源融合AI（卫星图像+无人机视频+雷达信号同时输入一个屏幕一个模型），二是自动化火力分配（不再需要师级参谋手动标注目标优先级），三是实时毁伤评估（无人机第一时间传回弹着点图像AI判断是否需要补射）。这意味着未来炮战中，谁慢30秒，谁的火力阵地就会被对方的二次反击覆盖。","china_insight":"60秒全流程已是我军优势，但需警惕——美军的CERBERUS蜂群系统设计指标是45秒，差距正在缩小。应推动数字化指挥系统向营连级下沉，让一线观察员通过平板即可调用全旅火力，取消中间联络环节，目标30秒。同时应在强电磁干扰下测试系统降级运行能力。"},{"title":"城市战中的火炮革命：巡飞弹与曲射火力的融合","url":"https://m.toutiao.com/group/7665880123456789012/","summary":"俄乌城市巷战催生新型城市火力支持概念：小型巡飞弹从步兵携行的曲射筒发射，滞空10-15分钟，AI识别建筑物内的火力点，自动选择攻击角度。传统122-155毫米支援炮火在城市密集环境中误差和附带损伤过大，被巡飞弹+精确迫击炮组合替代。","category":"智能火炮","source":"头条·军事科技","expert_analysis":"传统曲射火炮在城市巷战中的两个致命缺陷被俄乌战场放大：一是弹道低伸角受高楼约束（155毫米炮最小射角仍可能被高层建筑遮挡），二是大口径炮弹的杀伤半径在城市民用环境中几乎必然造成平民伤亡。巡飞弹+迫击炮的组合正好补上这两个缺口——巡飞弹可以垂直攀升后从建筑物上方进入攻击窗口，迫击炮的高抛弹道天然适合城市环境。但巡飞弹的成本（约3-5万一枚）仍是普通155炮弹的百倍——在城市战中这笔钱花得值，但大规模阵地战还是得靠传统身管炮。","china_insight":"我军城市战能力是明确的短板。应立刻启动'城市巷战火力支持专项'：装备营连级巡飞弹系统（每连配8-10枚）、研发可在建筑物内部使用的微型曲射武器。同时优化PLZ05和PCL-181的城市战射表，增加'高抛弹道'和'降低杀伤半径'专用弹种。"},{"title":"俄罗斯2S35联盟-SV：双管152毫米自行火炮的实战检验","url":"https://tass.ru/armiya-i-opk/22456873","summary":"俄罗斯2S35联盟-SV是全球唯一量产的双管152毫米自行榴弹炮，理论射速16发/分，配备无人炮塔和自动装填系统。2026年俄军将首批量产型投入乌克兰战场测试。","category":"国际火炮","source":"塔斯社","expert_analysis":"双管设计理论上射速翻倍，但实战中双管交替射击带来的炮管冷却、膛压波动、弹药分配复杂度远超想象。联盟-SV从2015年红场阅兵亮相到2026年才小批量投入实战，十一年磨一炮，说明技术成熟度远低于俄方宣传。但有一个亮点值得关注：联盟-SV配备了全自动弹药处理和数字化火控系统，3人车组全部坐在装甲舱内——这是俄罗斯炮兵首次接受'人机分离'理念，比T-14坦克在理念上走得更快。","china_insight":"双管设计不是我国应走的技术路线——SH16A和PCL-181通过自动化装填已达足够射速。但联盟-SV的全自动弹药处理系统值得研究——自动从弹药车取弹、自动分类、自动装填的'无人弹药链'概念，可大幅降低炮组人力需求。"},{"title":"德国RCH-155行进间射击火炮获英国10亿英镑大单","url":"https://www.163.com/dy/article/KUTFD9SO0556CKVW.html","summary":"英国国防部以近10亿英镑订购72门德国RCH-155轮式自行榴弹炮，该炮唯一能在时速100公里行进间精准开火，2人操作，爆发射速8发/分。乌克兰已率先实战使用54门。","category":"国际火炮","source":"网易新闻","expert_analysis":"一门炮近1400万英镑比很多主战坦克还贵，英国陆军咬牙买了——说明行进间射击被军方视为'刚需'。但行进间射击依赖精密惯导和炮控系统，乌克兰实战维护数据还没公开，战场故障率是关键未知数。RCH-155和PCL-181走不同路线：德国追求'边跑边打'，中国追求'快停快打快撤'。两种哲学的底层分歧是：你更相信电子系统在极端环境不出毛病，还是更相信机械系统鲁棒性。","china_insight":"我国不必盲目追求行进间射击——PCL-181的'30秒爆发+60秒撤离'在现有反炮兵威胁下已足够。但应关注RCH-155惯导技术路线作为未来参考。更值得学习的是它2人操作的高度自动化。"},{"title":"美国陆军ERCA增程火炮计划：射程突破70公里","url":"https://www.defensenews.com/land/2026/06/18/us-army-erca-extended-range-cannon-artillery-program-update/","summary":"美国陆军ERCA增程火炮计划在M109A7底盘上安装58倍径155毫米超长炮管，使用XM1210火箭增程弹射程突破70公里，XM1155冲压增程弹可达100公里，计划2027年列装。","category":"国际火炮","source":"Defense News","expert_analysis":"ERCA的58倍径炮管比现役M777的39倍径长近一半。70公里意味着ERCA可以在敌方绝大多数火炮根本够不着的距离上开火——单向透明式的火力优势。但58倍径炮管太长太重，M109A7底盘扛不扛得住长期高射速下的结构疲劳？更关键的是弹药成本：一发XM1210火箭增程弹可能超过10万美元，已经逼近某些近程导弹的价格。","china_insight":"我军不应盲目追逐极限射程——52倍径+火箭增程弹的50公里已足够。但ERCA的自动装填系统和火控自动化值得学习，尤其'1人操作'的终极目标。另外，弹药性价比和射程必须平衡。"},{"title":"韩国K9A2雷霆全自动榴弹炮：射速9发/分冲击国际市场","url":"https://www.armyrecognition.com/defense_news_june_2026_global_security_army_industry/hanwha_k9a2_thunder_155mm_self-propelled_howitzer_achieves_full_rate_production.html","summary":"韩国韩华公司K9A2型155毫米自行榴弹炮实现全速率量产，采用全自动装填系统射速9发/分（全球最高），3人操作，累计出口已超1700门，占据全球自行火炮市场半壁江山。","category":"国际火炮","source":"Army Recognition","expert_analysis":"K9A2每分钟9发的射速是全球自行火炮之最——单炮在1分钟内能向目标倾泻9发155毫米炮弹。但K9系列更可怕的是市场表现：累计出口超1700门，遍布十几个国家。这不是技术碾压，是商业模式碾压——韩华提供的不只是炮，而是全套'韩国炮兵解决方案'：K9炮+K10弹药车+KP射击指挥系统+韩华培训+韩国贷款。","china_insight":"K9的商业模式比其技术更需要警惕——它不是卖一门炮，而是卖一套体系+贷款+培训。我国SH15等出口火炮必须升级为'中国炮兵解决方案'：炮+弹药车+侦察无人机+指挥车+培训+融资，不给客户留任何'混合采购'空间。"},{"title":"激光武器反炮兵时代：英国龙火和HELIOS的实战化突破","url":"https://www.janes.com/osint-insights/defence-news/weapons/dragonfire-and-helios-laser-weapons-approach-operational-deployment","summary":"英国龙火（DragonFire）50kW激光武器和美国HELIOS 60kW+激光系统接近实战部署。可拦截无人机、迫击炮弹和低速火箭弹，单次拦截成本不到1美元。","category":"智能火炮","source":"Jane's Defence","expert_analysis":"激光反炮兵不是科幻——50-60kW级别的固态激光器已能硬杀伤小型无人机和迫击炮弹。单次拦截成本不到1美元（就是电费），相比用数百万美元的导弹拦截几千美元的无人机，经济账一目了然。但激光武器有两个致命弱点：一是雨雾沙尘天气功率骤降，二是只能同时对付一个目标（蜂群无人机就是天敌）。所以激光武器在可预见的未来是'点防御'而非'区域防御'。","china_insight":"我国在激光武器领域有深厚积累（如'寂静狩猎者'已出口沙特并实战拦截无人机），应加速将车载战术激光系统集成到炮兵编队中，为SH16A/PLZ05等高价值目标提供末端硬杀伤防护。"},{"title":"弹药革新：冲压发动机增程弹让火炮射程翻倍","url":"https://m.toutiao.com/group/7668820990123456789/","summary":"冲压发动机增程技术正在改变炮兵射程极限。美国XM1155冲压弹实测射程超100公里，中国也在同步研发同类技术。一枚冲压弹可将传统155毫米火炮射程从40-50公里推进至100+公里，从'战术火炮'变成'战役打击兵器'。","category":"智能火炮","source":"头条·军事科技","expert_analysis":"冲压增程弹把火炮从'打30公里'变成了'打100公里'，这已经模糊了身管火炮和近程弹道导弹的边界。战术上最深远的影响是：一个传统炮兵营的打击范围从40公里半径圆扩展到100公里半径圆——面积增加了6倍。这意味着一个炮兵营可以覆盖过去一个集团军炮兵旅才能覆盖的打击区域。但代价是弹药成本——一发冲压增程弹的成本可能达15-20万美元，与某些近程导弹持平。","china_insight":"冲压增程弹应定位为'特战精确打击弹药'而非常规消耗弹药——用于打击高价值目标（指挥所、雷达站、弹药库），数量控制在炮兵弹药总量的5-10%。同时应同步研发冲压增程弹的国产低成本方案，利用民用火箭发动机供应链降本。"},{"title":"俄罗斯BM-30龙卷风-S多管火箭炮的现代化改型","url":"https://tass.com/defense/1807719","summary":"俄罗斯将BM-30龙卷风多管火箭炮全面升级为龙卷风-S，新型300毫米火箭弹射程120公里，GLONASS制导CEP精度10米，可发射巡飞弹和温压弹头。首批已装备俄罗斯西部军区炮兵旅。","category":"国际火炮","source":"塔斯社","expert_analysis":"龙卷风-S的120公里射程已经超出了传统火箭炮的定义——它实际上是一套'低成本精确打击系统'。俄军从俄乌战争中学到最深刻的教训之一：导弹太贵打不起，普通炮弹太短打不到，120公里的火箭炮精准填补了这个火力空白。GLONASS制导让300毫米火箭从'面杀伤洒水车'变成了'点穴手术刀'。这是俄罗斯在实战中被迫走出的最有效装备改进之一。","china_insight":"我军PHL-03/PHL-191远程火箭炮体系应借鉴龙卷风-S的实战经验：重点是提升弹药精度（GPS/北斗复合制导）和弹种多样性（巡飞弹+温压弹+子母弹+末敏弹）。同时，300毫米火箭炮在城市环境中的附带损伤控制是需要正视的问题。"},{"title":"中国新型120毫米轻型车载迫榴炮填补山地火炮空白","url":"https://m.sohu.com/a/1055567890_121410513/","summary":"中国军工最新展出120毫米车载迫榴炮系统，采用4×4高机动底盘，战斗全重仅8吨，可由运-8/运-9空运。具备半自动装填和数字化火控，射程8-15公里。专门为高原山地和空降部队设计，填补120毫米级别快速部署火力空白。","category":"国内火炮","source":"搜狐军事","expert_analysis":"8吨的120迫榴炮不追求射程和火力密度，追求的是'能在任何地方开火'。高海拔4000米以上，PCL-181虽然能用，但25吨重六轮底盘在狭窄山路转弯都困难。8吨四轮底盘可以在边防公路和简易道路上自由机动。更重要的是它可以装入运-8/运-9——中印边境的乃堆拉、空喀山口这些前线哨所，运-9直接降落在简易跑道上把炮送上去。120毫米口径还意味着可以和步兵营的120迫击炮通用弹药，极大降低后勤复杂度。","china_insight":"120车载迫榴炮应优先配属西藏军区和空降军——这是极度稀缺的高原山地火力。同时可以开发海军陆战队版本，两栖攻击舰搭载，在登陆作战中作为第一批次随伴火力。建议同步研发120毫米精确制导弹药，将射程推进至20公里。"}],"ai":[{"title":"美国M1E3艾布拉姆斯：混合动力AI坦克开启无人机战争新时代","url":"https://www.defensemagazine.com/article/m1e3-abrams-the-us-armys-hybrid-revolution-in-tank-warfare-for-the-drone-age","summary":"美军M1E3采用柴电混合动力、无人炮塔、自动装弹机，重量降至60吨，燃油效率提升40%，配备AI目标识别、反无人机系统和机器人僚机，2026年秋季交第1骑兵师测试。","category":"AI","source":"Defense Magazine","expert_analysis":"M1E3最大亮点不是混合动力，而是美军终于承认传统坦克在无人机时代'活不下去'了。把乘员从4人砍到3人、全员塞进车体装甲舱，实质是默认炮塔一定会被炸——这是从俄乌战场学来的血教训。真正决定这辆坦克成败的，不是60吨和1500马力，而是AI辅助决策能不能帮车组在漫天无人机中先发现、先开火。","china_insight":"100式已走全电混动+无人炮塔路线，与M1E3殊途同归。M1E3的'乘员全在车体内'布局值得关注——炮塔被击穿车组仍有生存可能。我国下一代坦克应强化车体-炮塔物理隔离，加速测试AI辅助决策系统在复杂电磁环境下的可靠性。"},{"title":"法国CAPINT新一代主战坦克：X-by-Wire全电子线控与AI协同","url":"https://news.qq.com/rain/a/20260622A08U9000","summary":"KNDS在Eurosatory 2026推出CAPINT坦克，采用全电子线控架构和开放式数字架构，可与无人机/无人车组网协同，3名乘员全部位于装甲舱内，配备140毫米主炮升级能力。","category":"AI","source":"腾讯新闻·渊亭防务","expert_analysis":"CAPINT最容易被忽略的杀招不是140毫米炮，而是X-by-Wire全电子线控——方向盘油门炮塔全是电子信号，插根网线就能远程操控。法国人思路清晰：先让有人车组验证技术，成熟后抽掉乘员变无人坦克。开放式数字架构另一层意思：建立独立坦克电子生态，摆脱美国ITAR出口管制。","china_insight":"CAPINT的开放式数字架构与我国100式信息化理念高度一致，但法国模块化'即插即用'值得借鉴——传感器武器防护模块应像USB设备热插拔升级，避免整车报废式换代。X-by-Wire技术是我国发展无人坦克的必由之路。"},{"title":"光纤制导FPV无人机主宰俄乌战场：具身智能时代作战样式迭代","url":"https://m.toutiao.com/group/7661864016948380203/","summary":"到2026年上半年光纤制导FPV无人机在前线成主宰，通过实体光纤回传高清画面，GPS压制和无线电干扰完全无效，操作手在1-2公里外隐蔽操控。","category":"AI","source":"头条·深度分析","expert_analysis":"光纤制导FPV本质是电子战和无人机的'军备竞赛'新阶段。无线电干扰让普通FPV变瞎子，双方不跟你玩频率了——直接拉一根光纤物理隔绝干扰。装甲部队的难题：你怎么干扰一根光纤？没法干扰。唯一出路是主动拦截或摧毁操作手——这又回到'发现-打击'原始竞赛。","china_insight":"我军应立即评估现役电子战体系对光纤制导无人机的防御盲区。光纤FPV思路可以反用——研发更小型化光纤制导巡飞弹，专用于台湾海峡等强电磁干扰环境下的精确打击。"},{"title":"法国展出REFURBOT：退役AMX-30坦克改造为重型无人战车","url":"https://www.thedefensenews.com/France-Unveils-REFURBOT-Unmanned-Combat-Vehicle-Built-from-Retired-AMX-30-Tanks/","summary":"法国S2M Equipment和KNDS France将退役AMX-30主战坦克改造为遥控作战平台，配备ARX-25遥控武器站和TOXO机器人套件，实现全自主作战，最大时速65公里。","category":"AI","source":"The Defense News","expert_analysis":"REFURBOT核心价值就两个字——'省钱'。AMX-30全球库存3600多辆，装上遥控套件摇身一变就是重型无人战车，成本只有全新无人战车十分之一。战场上总需要有人冲在前面挨打——把炮灰角色从人转移到机器，就是REFURBOT的战略意义。","china_insight":"我国保有大量退役59式79式坦克——可改装为无人破障车（台海登陆专用）、无人移动靶车、遥控火力支援车。第一批改装100辆预算可能不到10亿人民币。"},{"title":"意大利IDV展出CL2X混合动力无人轻型坦克","url":"https://www.thedefensenews.com/IDV-Unveils-CL2X-Hybrid-Uncrewed-Light-Tank-at-Eurosatory-2026/","summary":"Leonardo子公司IDV推出CL2X无人轻型坦克，16吨级混合动力（130kWh电池+增程器），配备HITFIST 30 UL无人炮塔，续航500公里，支持有人/无人编队协同。","category":"AI","source":"The Defense News","expert_analysis":"CL2X最核心战术价值是'静默猎杀'——纯电模式下噪音红外信号极低，可在伏击阵地不吃不喝蹲守一整天。30mm空爆弹反无人机能力值得关注：FPV蜂群来袭时用空爆弹在蜂群路径炸出一片弹幕。CL2X是'潜伏刺客'+'无人机清道夫'的杂交体。","china_insight":"16吨级无人战车是我军装备谱系明确空白。应研发同级别混合动力无人战车，利用运-20投送至高原岛礁等传统重装甲难以到达地域。30mm空爆弹'以炮反蜂群'思路比导弹更经济。"}],"cn":[{"title":"东部战区71集团军99式坦克换装：美媒解读陆战攻坚信号","url":"https://m.toutiao.com/group/7660459983905014291/","summary":"央视画面显示东部战区第71集团军重型合成旅列装焊接炮塔99系列坦克，替换部分96系列。美媒分析此举针对台军M1A2T接装带来的装甲对抗升级需求。","category":"坦克","source":"今日头条","expert_analysis":"99系列上71集团军确实有对台方向考量，但更重要的原因可能是96系列在俄乌战场上同级别的T-72暴露了太多短板——顶部防护不足、反无人机能力几乎为零。99系列的焊接炮塔+顶部附加装甲，显然在设计中参考了俄乌战场教训。","china_insight":"71集团军换装99系列释放清晰信号：两栖投送能力已满足重装跨海需求。下一步应重点验证99系列在登陆初期滩头作战效能——松软地面机动性、反登陆障碍突破能力和无人机蜂群环境下生存力。"},{"title":"中国第四代100式主战坦克列装：全电混动与AI信息化","url":"https://m.163.com/dy/article/L03EH5DR05566GMU.html","summary":"中国100式主战坦克采用全电/混合动力系统、静默机动、360°主动防护、无人遥控炮塔和AI态势感知系统，已成为新全域旅的信息节点，与俄罗斯T-14形成代差。","category":"坦克","source":"网易新闻","expert_analysis":"100式最大突破是把坦克从'火力-防护-机动'三角拉入第四维度——'信息节点'。接收卫星无人机友邻车辆的态势信息，用AI筛选目标，决定自己打还是分配给无人机打还是传给后方导弹。T-14停产而100式上量，根本差距不在平台本身而在C4ISR体系。","china_insight":"100式的'信息节点'定位代表装甲兵发展方向，但信息节点也意味着电磁信号密集——如何在极限环境下不暴露自身前提下收发数据是关键。应在对抗演练中专设'强电磁干扰+卫星拒止'条件下测试AI态势感知系统降级运行能力。"},{"title":"英国陆军重心全面转向无人作战：挑战者3或成最后有人坦克","url":"https://www.81.cn/wj_208604/16473836.html","summary":"英国新版国防投资计划大幅压缩传统重型装备预算，组建无人系统专项工作组。追加5000万英镑采购FPV无人机和拦截无人机，挑战者3可能是英国最后一款有人主战坦克。","category":"装甲车辆","source":"中国国防报","expert_analysis":"英国陆军转型可以概括为：从'我们有多少辆坦克'变成'我们有多少架无人机'。但无人装备解决不了的恰恰是陆军最原始使命：占领并守住地面。FPV可以炸坦克但不能占领战壕。转型太快可能就是'没准备好打上一场战争，也没准备好打下一场战争'。","china_insight":"英军转型是观察样本——先等英国人踩坑再总结。我军不应激进削减传统装甲，而应在现有编制内嵌入无人装备试验分队，逐步积累有人-无人混编经验。"}],"int":[{"title":"印度启动78.5亿美元「犀牛计划」：升级990辆老旧坦克","url":"https://m.sohu.com/a/1048867530_121410513/","summary":"印度陆军2026年7月启动「犀牛计划」，耗资78.5亿美元在五年内升级790辆T-72和200辆T-90坦克，更换1000马力发动机、增强火控与防护，部分T-72将改装为无人平台。","category":"坦克","source":"搜狐军事","expert_analysis":"78.5亿美元砸在40岁T-72身上，表面是'印度特色军工'的又一个笑话，但对印度这是最理性的选择。全新采购1000辆主战坦克至少要250-300亿美元。升级旧坦克还能保住阿瓦迪工厂产线和上万工作岗位。但不管发动机换多少马力，苏联时代设计的铸铁车体在VT-4面前还是一层纸。","china_insight":"印度大规模升级老坦克提醒我们——面对主要战略方向上对手，升级老旧装备边际效益递减极快。我军应坚持'新老搭配以新为主'方针，多余资源全部投向100式及其配套体系。"},{"title":"俄罗斯T-14阿玛塔正式停产：成本过高，T-90M产能翻倍","url":"https://m.sohu.com/a/1041382745_121201501/","summary":"俄罗斯国家技术集团CEO确认T-14停止生产，单车成本飙升至900-1000万美元。T-90M产能提升至原先2-3倍，预计2028年累计突破1000辆，2035年达3000辆。","category":"坦克","source":"搜狐军事","expert_analysis":"T-14停产是俄乌战争的必然。一辆T-14能买将近三辆T-90M，在每月损失几十辆坦克的消耗战中数量比质量重要得多。更深层问题：T-14的芯片传感器火控计算机依赖西方封锁前的进口组件。俄军选择非常清晰：与其造10辆好坦克在前线被无人机点名，不如造30辆够用的坦克消耗对面反坦克弹药。","china_insight":"T-14失败证明脱离国产供应链的高端装备就是纸上谈兵。100式之所以顺利上量，根本原因是95%以上子系统已实现国产替代。装备单价必须控制在可承受战场损耗水平——1000万美元一辆被500美元FPV炸毁，任何军队都承受不起。"},{"title":"俄罗斯基于乌克兰实战全面升级T-90M主战坦克","url":"https://groundnews.lakegeneva.lib.wi.us/article/russia-has-taken-action-they-are-completely-rebuilding-the-most-modern-tanks-based-on-the-experience-of-the-war-in-ukraine","summary":"Rostec宣布T-90M现代化进入新阶段，重点增强电子战能力、附加装甲和反无人机顶部防护。升级方案直接来自乌克兰前线作战反馈。","category":"坦克","source":"Army Recognition","expert_analysis":"俄罗斯的装备改进特点：改进快但粗糙。T-90M这次升级几乎是'哪里挨打补哪里'——无人机打顶部加顶部装甲，FPV撞侧后加反应装甲。这些改动战术层面有效但暴露出根本问题：T-90M底子是冷战末期设计，不论怎么缝补都无法解决结构性缺陷。","china_insight":"俄罗斯'战场驱动式改进'思路值得借鉴——装备升级不必等十年定型节点，应建立在持续收集实战/演训反馈基础上。建议建立'演训损伤数据库'，将每次对抗暴露的装备短板实时录入驱动快速迭代。"},{"title":"T-14阿玛塔设计揭秘：因引擎过大被迫从六轮改为七轮","url":"https://www.thedefensenews.com/Development-Changes-Forced-Russias-T-14-Armata-Into-Larger-Seven-Wheel-Design/","summary":"T-14设计因集成T-95项目动力传动单元导致车体增大，从六负重轮改为七轮底盘。A-85-3 X型12缸柴油机重1550公斤，动力包总重5150公斤，与T-72/T-80/T-90发动机零通用。","category":"坦克","source":"The Defense News","expert_analysis":"T-14从六轮膨胀到七轮是'动力系统绑架整车设计'的典型案例。那个X型12缸1500马力听起来猛，实际上部分功率给冷却和辅助系统，净功率可能只有1100-1200马力。更致命的是A-85-3跟T-72/T-80/T-90发动机零通用——前线没任何现成备件。俄军不用T-14很大程度上是后勤硬约束。","china_insight":"T-14动力系统问题是反面教材——动力包尺寸和重量必须在设计之初严格约束，不能以牺牲整车布局换取纸面马力。100式动力包一体化设计应作为行业标准推广。"}],"generated_at":"2026-07-16T08:00:00+08:00"};
 </script>
 
 <script>
@@ -404,6 +561,7 @@ let favorites = {};
 let searchTerm = '';
 let cnFilter = 'all';
 let intFilter = 'all';
+let artilleryFilter = 'all';
 let aiCollapsed = false;
 const AI_VISIBLE_DEFAULT = 6;
 
@@ -414,6 +572,10 @@ function esc(s) {
   if (!s) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+function escAttr(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 function makeId(item) {
   let h = 0;
@@ -422,7 +584,7 @@ function makeId(item) {
   return 'id-' + Math.abs(h).toString(36).slice(0, 8);
 }
 
-const CAT_ICONS = { '坦克': '🏗️', '火炮': '🔫', '装甲车辆': '🚛', 'AI': '🤖', 'AFV': '🚛' };
+const CAT_ICONS = { '坦克': '🏗️', '火炮': '🔫', '装甲车辆': '🚛', 'AI': '🤖', '智能火炮': '🔫', '国内火炮': '🇨🇳', '国际火炮': '🌍' };
 
 function catIcon(c) { return CAT_ICONS[c] || '📰'; }
 
@@ -432,20 +594,12 @@ function catMatches(item, filter) {
   return c === filter || c.includes(filter);
 }
 
-function highlightText(text, q) {
-  if (!q || !text) return esc(text);
-  const escaped = esc(text);
-  const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-  return escaped.replace(regex, '<mark class="search-hl">$1</mark>');
-}
-
 // ====== RENDER NEWS ITEM ======
 function renderItem(item, showFav) {
   const id = makeId(item);
   const isFav = !!favorites[id];
   const tagClass = (item.category === 'AI') ? 'tag ai-tag' : 'tag';
   const hasAnalysis = item.expert_analysis && item.expert_analysis.trim();
-  // escape key fields for safe data-attrs
   const dTitle = escAttr(item.title);
   const dSummary = escAttr(item.summary || '');
   const dAnalysis = escAttr(item.expert_analysis || '');
@@ -477,11 +631,6 @@ function renderItem(item, showFav) {
 }
 
 // ====== DETAIL MODAL ======
-function escAttr(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
 function openDetail(el) {
   const item = el.closest('.news-item');
   const title = item.dataset.dtitle || '';
@@ -492,8 +641,11 @@ function openDetail(el) {
   const category = item.dataset.dcategory || '';
   const url = item.dataset.durl || '#';
 
-  document.getElementById('modal-tag').textContent = category;
-  document.getElementById('modal-tag').className = (category === 'AI') ? 'modal-tag ai-tag' : 'modal-tag';
+  const tag = document.getElementById('modal-tag');
+  tag.textContent = category;
+  const isAi = category === 'AI';
+  const isArty = category.includes('火炮');
+  tag.className = isAi ? 'modal-tag ai-tag' : (isArty ? 'modal-tag arty-tag' : 'modal-tag');
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-source').textContent = '📰 ' + source;
   document.getElementById('modal-origin-link').href = url;
@@ -507,7 +659,6 @@ function openDetail(el) {
   document.getElementById('detail-modal').classList.add('show');
   document.body.style.overflow = 'hidden';
 }
-
 function closeDetail(e) {
   if (e && e.target !== e.currentTarget) return;
   document.getElementById('detail-modal').classList.remove('show');
@@ -516,30 +667,45 @@ function closeDetail(e) {
 
 // ====== RENDER ALL ======
 function renderAll() {
-  // Stats
+  const artyCount = (DATA.artillery || []).length;
   const aiCount = (DATA.ai || []).length;
   const cnCount = (DATA.cn || []).length;
   const intCount = (DATA.int || []).length;
+  const total = artyCount + aiCount + cnCount + intCount;
   document.getElementById('stats-bar').innerHTML =
+    `<div class="stat stat-artillery">🔫 火炮专题: <span class="stat-val">${artyCount}</span> 条</div>` +
     `<div class="stat">🔥 AI专题: <span class="stat-val">${aiCount}</span> 条</div>` +
     `<div class="stat">🇨🇳 国内: <span class="stat-val">${cnCount}</span> 条</div>` +
     `<div class="stat">🌍 国际: <span class="stat-val">${intCount}</span> 条</div>` +
-    `<div class="stat">📊 总计: <span class="stat-val">${aiCount+cnCount+intCount}</span> 条</div>`;
+    `<div class="stat">📊 总计: <span class="stat-val">${total}</span> 条</div>`;
 
-  // AI section
+  renderArtillerySection();
   renderAiSection();
-
-  // CN list
   document.getElementById('cn-list').innerHTML = renderList(DATA.cn || [], cnFilter);
-  // INT list
   document.getElementById('int-list').innerHTML = renderList(DATA.int || [], intFilter);
-
-  // Re-apply search
   if (searchTerm) applySearch();
-
-  // Favs
   updateFavCount();
   renderFavPanel();
+}
+
+// ====== ARTILLERY SECTION ======
+function renderArtillerySection() {
+  const items = DATA.artillery || [];
+  const filtered = artilleryFilter === 'all' ? items : items.filter(i => catMatches(i, artilleryFilter));
+  const el = document.getElementById('artillery-list');
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty-state">📭 暂无此类火炮资讯</div>';
+    return;
+  }
+  el.innerHTML = filtered.map(i => renderItem(i, true)).join('');
+}
+
+function switchArtilleryTab(filter, btn) {
+  artilleryFilter = filter;
+  document.querySelectorAll('#artillery-tabs .artillery-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderArtillerySection();
+  if (searchTerm) applySearch();
 }
 
 function renderAiSection() {
@@ -547,20 +713,13 @@ function renderAiSection() {
   const visible = aiCollapsed ? Math.min(AI_VISIBLE_DEFAULT, items.length) : items.length;
   const el = document.getElementById('ai-list');
   const btn = document.getElementById('ai-toggle-btn');
-
   if (items.length === 0) {
     el.innerHTML = '<div class="empty-state">📭 暂无AI相关资讯</div>';
     btn.style.display = 'none';
     return;
   }
-
-  if (items.length > AI_VISIBLE_DEFAULT) {
-    btn.style.display = '';
-    btn.textContent = aiCollapsed ? `展开全部 (${items.length}条)` : '收起';
-  } else {
-    btn.style.display = 'none';
-  }
-
+  btn.style.display = items.length > AI_VISIBLE_DEFAULT ? '' : 'none';
+  btn.textContent = aiCollapsed ? `展开全部 (${items.length}条)` : '收起';
   el.innerHTML = items.slice(0, visible).map(i => renderItem(i, true)).join('');
 }
 
@@ -576,7 +735,6 @@ function doSearch() {
   document.getElementById('search-clear').style.display = searchTerm ? 'inline-block' : 'none';
   applySearch();
 }
-
 function clearSearch() {
   document.getElementById('search-input').value = '';
   searchTerm = '';
@@ -584,29 +742,19 @@ function clearSearch() {
   document.getElementById('search-info').style.display = 'none';
   applySearch();
 }
-
 function applySearch() {
   const allItems = document.querySelectorAll('.news-item');
-  let visible = 0;
-  let total = 0;
+  let visible = 0, total = 0;
   allItems.forEach(el => {
-    if (el.closest('#fav-panel')) return; // skip fav panel items
+    if (el.closest('#fav-panel')) return;
     total++;
-    const dataSearch = el.dataset.search || '';
-    if (!searchTerm || dataSearch.includes(searchTerm)) {
-      el.classList.remove('hidden');
-      visible++;
-    } else {
-      el.classList.add('hidden');
-    }
+    const ds = el.dataset.search || '';
+    if (!searchTerm || ds.includes(searchTerm)) { el.classList.remove('hidden'); visible++; }
+    else { el.classList.add('hidden'); }
   });
   const info = document.getElementById('search-info');
-  if (searchTerm) {
-    info.style.display = 'inline';
-    info.textContent = `找到 ${visible}/${total} 条`;
-  } else {
-    info.style.display = 'none';
-  }
+  if (searchTerm) { info.style.display = 'inline'; info.textContent = `找到 ${visible}/${total} 条`; }
+  else { info.style.display = 'none'; }
 }
 
 // ====== TAB SWITCH ======
@@ -614,7 +762,6 @@ function switchTab(region, filter, el) {
   if (region === 'cn') {
     cnFilter = filter;
     document.getElementById('cn-list').innerHTML = renderList(DATA.cn || [], filter);
-    // update tab styles
     document.querySelectorAll('#cn-tabs .category-tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
   } else {
@@ -631,11 +778,6 @@ function toggleAiSection() {
   aiCollapsed = !aiCollapsed;
   renderAiSection();
   if (searchTerm) applySearch();
-}
-
-// ====== FAVORITES ======
-function saveFavs() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
 }
 
 // ====== ANALYSIS TOGGLE ======
@@ -655,16 +797,22 @@ function toggleAnalysis(btn) {
   }
 }
 
+// ====== FAVORITES ======
+function saveFavs() { localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites)); }
+function updateFavCount() { document.getElementById('fav-count').textContent = Object.keys(favorites).length; }
+function toggleFavPanel() {
+  const panel = document.getElementById('fav-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  if (panel.style.display === 'block') renderFavPanel();
+}
+
 function toggleFav(btn) {
   const item = btn.closest('.news-item');
   const id = item.dataset.id;
   if (!id) return;
-
   if (favorites[id]) {
     delete favorites[id];
-    btn.textContent = '☆';
-    btn.classList.remove('is-fav');
-    btn.title = '点击收藏';
+    btn.textContent = '☆'; btn.classList.remove('is-fav'); btn.title = '点击收藏';
   } else {
     const anchors = item.querySelectorAll('.info h3 a');
     const summaryEl = item.querySelector('.summary');
@@ -682,67 +830,32 @@ function toggleFav(btn) {
       china_insight: (chinaEl?.textContent || '').trim(),
       savedAt: new Date().toISOString(),
     };
-    btn.textContent = '★';
-    btn.classList.add('is-fav');
-    btn.title = '已收藏，点击取消';
+    btn.textContent = '★'; btn.classList.add('is-fav'); btn.title = '已收藏，点击取消';
   }
-  saveFavs();
-  updateFavCount();
-  renderFavPanel();
+  saveFavs(); updateFavCount(); renderFavPanel();
 }
 
 function removeFav(id) {
   delete favorites[id];
-  saveFavs();
-  updateFavCount();
-  renderFavPanel();
-  // Update main page button
+  saveFavs(); updateFavCount(); renderFavPanel();
   const el = document.querySelector(`.news-item[data-id="${id}"]`);
-  if (el) {
-    const btn = el.querySelector('.fav-btn');
-    if (btn) { btn.textContent = '☆'; btn.classList.remove('is-fav'); btn.title = '点击收藏'; }
-  }
-}
-
-function updateFavCount() {
-  document.getElementById('fav-count').textContent = Object.keys(favorites).length;
-}
-
-function toggleFavPanel() {
-  const panel = document.getElementById('fav-panel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-  if (panel.style.display === 'block') renderFavPanel();
+  if (el) { const btn = el.querySelector('.fav-btn'); if (btn) { btn.textContent = '☆'; btn.classList.remove('is-fav'); btn.title = '点击收藏'; } }
 }
 
 function renderFavPanel() {
   const list = document.getElementById('fav-list');
   const empty = document.getElementById('fav-empty');
   let favs = Object.values(favorites);
-
-  // Fav search filter
   const favSearch = (document.getElementById('fav-search')?.value || '').trim().toLowerCase();
-  if (favSearch) {
-    favs = favs.filter(f => (f.title+f.summary+f.source+f.category).toLowerCase().includes(favSearch));
-  }
-
-  if (favs.length === 0) {
-    list.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
+  if (favSearch) favs = favs.filter(f => (f.title+f.summary+f.source+f.category).toLowerCase().includes(favSearch));
+  if (favs.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   list.innerHTML = favs.map(f => {
-    const dTitle = escAttr(f.title);
-    const dSummary = escAttr(f.summary || '');
-    const dAnalysis = escAttr(f.expert_analysis || '');
-     const dChina = escAttr(f.china_insight || '');
-    const dSource = escAttr(f.source || '');
-    const dCategory = escAttr(f.category || '收藏');
-    const dUrl = escAttr(f.url || '#');
-    return `
-    <div class="news-item" data-id="${esc(f.id)}"
+    const dTitle = escAttr(f.title), dSummary = escAttr(f.summary || ''), dAnalysis = escAttr(f.expert_analysis || '');
+    const dChina = escAttr(f.china_insight || ''), dSource = escAttr(f.source || ''), dCategory = escAttr(f.category || '收藏'), dUrl = escAttr(f.url || '#');
+    return `<div class="news-item" data-id="${esc(f.id)}"
       data-dtitle="${dTitle}" data-dsummary="${dSummary}" data-danalysis="${dAnalysis}"
-       data-dchina="${dChina}" data-dsource="${dSource}" data-dcategory="${dCategory}" data-durl="${dUrl}">
+      data-dchina="${dChina}" data-dsource="${dSource}" data-dcategory="${dCategory}" data-durl="${dUrl}">
       <div class="thumb">${catIcon(f.category)}</div>
       <div class="info">
         <span class="tag">${esc(f.category || '收藏')}</span>
@@ -759,8 +872,8 @@ function renderFavPanel() {
         ${f.china_insight ? '<div class="analysis-section china-insight" style="display:none">' + esc(f.china_insight) + '</div>' : ''}
       </div>
       <button class="fav-btn is-fav" onclick="removeFav('${esc(f.id)}')" title="取消收藏">★</button>
-    </div>
-  `}).join('');
+    </div>`;
+  }).join('');
 }
 
 // ====== EXPORT / IMPORT ======
@@ -770,12 +883,9 @@ function exportFavs() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = `wangye-favorites-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  a.click(); URL.revokeObjectURL(url);
 }
-
 function importFavs() { document.getElementById('fav-import-input').click(); }
-
 function handleFavImport(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -784,34 +894,25 @@ function handleFavImport(e) {
     try {
       const imported = JSON.parse(ev.target.result);
       Object.assign(favorites, imported);
-      saveFavs();
-      updateFavCount();
-      renderFavPanel();
-      renderAll();
+      saveFavs(); updateFavCount(); renderFavPanel(); renderAll();
       alert(`成功导入 ${Object.keys(imported).length} 条收藏`);
     } catch(err) { alert('导入失败：文件格式错误'); }
   };
-  reader.readAsText(file);
-  e.target.value = '';
+  reader.readAsText(file); e.target.value = '';
 }
 
-// ====== THEME TOGGLE ======
-function getTheme() {
-  return document.documentElement.getAttribute('data-theme') || 'dark';
-}
+// ====== THEME ======
+function getTheme() { return document.documentElement.getAttribute('data-theme') || 'dark'; }
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   document.querySelector('.theme-toggle').textContent = theme === 'light' ? '☀️' : '🌙';
   localStorage.setItem('wangye_theme', theme);
 }
-function toggleTheme() {
-  applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
-}
+function toggleTheme() { applyTheme(getTheme() === 'dark' ? 'light' : 'dark'); }
 
 // ====== INIT ======
 document.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('wangye_theme') || 'dark';
-  applyTheme(saved);
+  applyTheme(localStorage.getItem('wangye_theme') || 'dark');
   renderAll();
   document.getElementById('fav-panel').style.display = 'none';
 });

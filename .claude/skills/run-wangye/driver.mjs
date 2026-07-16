@@ -36,7 +36,7 @@ import { execSync } from 'node:child_process';
 
 // ---------- Paths ----------
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 const DOCS = path.join(ROOT, 'docs');
 const ARCHIVE = path.join(DOCS, 'archive');
 const INDEX_HTML = path.join(DOCS, 'index.html');
