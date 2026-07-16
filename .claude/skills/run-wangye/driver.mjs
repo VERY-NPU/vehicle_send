@@ -139,14 +139,16 @@ function deploy() {
 }
 
 // ---------- Push (ServerChan) ----------
-function push(titleSuffix) {
+function push(titleSuffix, url, description) {
   const serverChanKey = process.env.SERVER_CHAN_KEY;
   if (!serverChanKey) {
     console.error('SERVER_CHAN_KEY env var not set. Skipping push.');
     return;
   }
-  const title = encodeURIComponent('🚀 装甲车辆每日资讯更新 ' + (titleSuffix || ''));
-  const desp = encodeURIComponent('最新装甲车辆资讯已更新，点击查看。');
+  const title = encodeURIComponent('🚀 装甲车辆每日资讯更新' + (titleSuffix ? ' - ' + titleSuffix : ''));
+  const pageUrl = url || 'https://VERY-NPU.github.io/vehicle_send/';
+  const desc = description || '最新装甲车辆资讯已更新，点击查看。';
+  const desp = encodeURIComponent(`## ${desc}\n\n👉 [点击查看完整资讯](${pageUrl})`);
   try {
     sh(`curl -s "https://sctapi.ftqq.com/${serverChanKey}.send?title=${title}&desp=${desp}"`);
   } catch (e) {

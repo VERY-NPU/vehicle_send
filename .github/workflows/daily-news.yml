@@ -19,60 +19,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Create placeholder data
-        run: |
-          cat > data.json << 'DATAEOF'
-          {
-            "ai": [
-              {
-                "title": "AI驱动火控系统在新型主战坦克上开始测试",
-                "url": "https://example.com/ai-tank-fcs",
-                "summary": "新一代AI火控系统可在毫秒级完成多目标威胁评估，自动推荐最优射击方案。",
-                "category": "AI",
-                "source": "国防科技信息网",
-                "image": ""
-              }
-            ],
-            "cn": [
-              {
-                "title": "国产第四代主战坦克研发进展顺利",
-                "url": "https://example.com/cn-tank",
-                "summary": "据官方消息，第四代主战坦克在火力、防护和机动性方面均有重大突破。",
-                "category": "坦克",
-                "source": "兵器知识",
-                "image": ""
-              },
-              {
-                "title": "新型155毫米自行榴弹炮列装部队",
-                "url": "https://example.com/cn-artillery",
-                "summary": "国产新型155毫米自行榴弹炮具备自动装弹、信息化作战能力，近期已正式列装。",
-                "category": "火炮",
-                "source": "解放军报",
-                "image": ""
-              }
-            ],
-            "int": [
-              {
-                "title": "US Army unveils next-generation combat vehicle program",
-                "url": "https://example.com/us-army-ngcv",
-                "summary": "The US Army has revealed details of its Next Generation Combat Vehicle program, emphasizing AI integration and modular armor.",
-                "category": "AFV",
-                "source": "Defense News",
-                "image": ""
-              },
-              {
-                "title": "European consortium develops autonomous artillery system",
-                "url": "https://example.com/eu-auto-artillery",
-                "summary": "A European defense consortium is developing a fully autonomous artillery system with AI-assisted targeting.",
-                "category": "火炮",
-                "source": "Jane's Defence",
-                "image": ""
-              }
-            ],
-            "generated_at": "placeholder"
-          }
-          DATAEOF
-
       - name: Generate HTML
         run: cat data.json | node .claude/skills/run-wangye/driver.mjs generate
 
@@ -85,11 +31,10 @@ jobs:
           force_orphan: true
 
       - name: Send Push Notification
-        if: env.SERVER_CHAN_KEY != ''
         env:
-          SERVER_CHAN_KEY: ${{ secrets.SERVER_CHAN_KEY }}
+          SERVER_CHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
         run: |
           node .claude/skills/run-wangye/driver.mjs push \
-            "🚀 装甲车辆每日资讯已更新" \
-            "https://${{ github.repository_owner }}.github.io/wangye/" \
-            "今日资讯已生成，点击查看国内外装甲车辆最新动态"
+            "每日更新" \
+            "https://${{ github.repository_owner }}.github.io/vehicle_send/" \
+            "今日装甲车辆资讯已更新，点击查看国内外坦克、装甲车、火炮及AI军事应用最新动态"
