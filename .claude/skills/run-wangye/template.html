@@ -19,6 +19,9 @@
     --news-item-hover: var(--border);
     --region-header-bg: rgba(255,255,255,0.02);
     --footer-border: var(--border);
+    --artillery-gradient: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(249,115,22,0.06));
+    --artillery-border: rgba(245,158,11,0.45);
+    --artillery-glow: 0 0 30px rgba(245,158,11,0.08);
   }
   [data-theme="light"] {
     --bg: #f3f4f6;
@@ -34,6 +37,9 @@
     --news-item-hover: #d1d5db;
     --region-header-bg: rgba(0,0,0,0.02);
     --footer-border: #e5e7eb;
+    --artillery-gradient: linear-gradient(135deg, rgba(217,119,6,0.1), rgba(234,88,12,0.04));
+    --artillery-border: rgba(217,119,6,0.35);
+    --artillery-glow: 0 0 20px rgba(217,119,6,0.05);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -101,6 +107,7 @@
   }
   .stats-bar .stat { display: flex; align-items: center; gap: 4px; }
   .stats-bar .stat-val { color: var(--accent); font-weight: 700; }
+  .stats-bar .stat-artillery { border-left: 2px solid var(--accent); padding-left: 8px; margin-left: 4px; }
 
   /* ====== Favorites Panel ====== */
   #fav-panel {
@@ -115,6 +122,56 @@
     background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.25); color: var(--fav-color);
   }
   .fav-empty { color: var(--text2); font-size: 0.8em; text-align: center; padding: 16px; }
+
+  /* ====== Artillery Section (PRIORITY - top of page) ====== */
+  .artillery-section {
+    background: var(--artillery-gradient);
+    border: 2px solid var(--artillery-border);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+    box-shadow: var(--artillery-glow); position: relative; overflow: hidden;
+  }
+  .artillery-section::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #f59e0b, #f97316, #ef4444, #f59e0b);
+    background-size: 200% 100%; animation: artillery-line 3s linear infinite;
+  }
+  @keyframes artillery-line { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .artillery-section .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+  }
+  .artillery-section .section-title {
+    font-size: 1.15em; font-weight: 700; color: #f59e0b;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .artillery-badge {
+    font-size: 0.55em; padding: 2px 8px; border-radius: 10px;
+    background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 600;
+    letter-spacing: 1px; white-space: nowrap;
+  }
+  .artillery-tabs {
+    display: flex; gap: 3px; flex-wrap: wrap;
+  }
+  .artillery-tab {
+    padding: 5px 12px; background: transparent; border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 16px; cursor: pointer; font-size: 0.75em; color: var(--text2);
+    transition: all 0.18s; white-space: nowrap; font-weight: 500;
+  }
+  .artillery-tab:hover { background: rgba(245,158,11,0.1); color: var(--accent); }
+  .artillery-tab.active {
+    background: rgba(245,158,11,0.2); border-color: var(--accent);
+    color: var(--accent); font-weight: 700; box-shadow: 0 0 8px rgba(245,158,11,0.15);
+  }
+  .artillery-section .news-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 8px;
+  }
+  @media (max-width: 850px) {
+    .artillery-section .news-list { grid-template-columns: 1fr; }
+  }
+  .artillery-section .news-item {
+    background: rgba(245,158,11,0.03); border: 1px solid rgba(245,158,11,0.08);
+  }
+  .artillery-section .news-item:hover { border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.06); }
 
   /* ====== AI Section ====== */
   .ai-section {
@@ -171,13 +228,13 @@
     width: 60px; height: 44px; border-radius: 5px; background: #1a1f2e; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center; font-size: 1.2em; overflow: hidden;
   }
-  .news-item .thumb img { width: 100%; height: 100%; object-fit: cover; }
   .news-item .info { flex: 1; min-width: 0; }
   .news-item .info .tag {
     display: inline-block; font-size: 0.62em; padding: 1px 6px; border-radius: 3px;
     background: rgba(16,185,129,0.12); color: var(--accent2); margin-bottom: 2px;
   }
   .news-item .info .tag.ai-tag { background: rgba(124,58,237,0.12); color: #a78bfa; }
+  .artillery-section .news-item .info .tag { background: rgba(245,158,11,0.15); color: #f59e0b; }
   .news-item .info h3 { font-size: 0.83em; line-height: 1.35; font-weight: 600; }
   .news-item .info h3 a { color: var(--text); text-decoration: none; }
   .news-item .info h3 a:hover { color: var(--accent); }
@@ -203,14 +260,14 @@
   .analysis-section {
     display: none; margin-top: 6px; padding: 8px 10px;
     background: rgba(124,58,237,0.04); border-left: 3px solid rgba(124,58,237,0.4);
-    border-radius: 0 6px 6px 0; font-size: 0.73em; color: #a78bfa; line-height: 1.55;
+    font-size: 0.73em; color: #a78bfa; line-height: 1.55;
   }
   [data-theme="light"] .analysis-section { color: #6d28d9; }
   .analysis-section.show { display: block; }
   .china-insight {
     margin-top: 4px; padding: 6px 10px;
     background: rgba(245,158,11,0.04); border-left: 3px solid rgba(245,158,11,0.4);
-    border-radius: 0 6px 6px 0; font-size: 0.71em; color: #fbbf24; line-height: 1.5;
+    font-size: 0.71em; color: #fbbf24; line-height: 1.5;
   }
   [data-theme="light"] .china-insight { color: #b45309; }
 
@@ -231,7 +288,6 @@
     position: sticky; top: 0; float: right; z-index: 2;
     background: var(--border); border: none; color: var(--text);
     font-size: 1.2em; cursor: pointer; padding: 4px 10px; border-radius: 6px;
-    transition: background 0.15s;
   }
   .modal-close:hover { background: var(--text2); color: #000; }
   .modal-card .modal-tag {
@@ -239,6 +295,7 @@
     background: rgba(16,185,129,0.12); color: var(--accent2); margin-bottom: 6px;
   }
   .modal-card .modal-tag.ai-tag { background: rgba(124,58,237,0.12); color: #a78bfa; }
+  .modal-card .modal-tag.arty-tag { background: rgba(245,158,11,0.15); color: #f59e0b; }
   .modal-card h2 { font-size: 1.05em; line-height: 1.4; margin: 6px 0 8px; }
   .modal-card .modal-meta {
     font-size: 0.72em; color: var(--text2); margin-bottom: 12px;
@@ -276,7 +333,7 @@
   .fav-btn:hover { color: var(--fav-color); transform: scale(1.2); }
   .fav-btn.is-fav { color: var(--fav-color); }
 
-  /* ====== Highlight search match ====== */
+  /* ====== Highlight ====== */
   .news-item.hidden { display: none !important; }
   mark.search-hl { background: rgba(245,158,11,0.3); color: var(--text); border-radius: 2px; padding: 0 1px; }
 
@@ -302,7 +359,7 @@
   <div class="top-bar">
     <h1>🚀 装甲车辆每日资讯</h1>
     <div class="right">
-      <span>坦克 · 装甲车 · 火炮 · AI 军事应用</span>
+      <span>坦克 · 装甲车 · 🔫火炮 · AI 军事应用</span>
       <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌙</button>
       <span>🕐 {{UPDATE_TIME}}</span>
       <button class="fav-toggle" onclick="toggleFavPanel()">⭐ 我的收藏 <span class="fav-count" id="fav-count">0</span></button>
@@ -335,6 +392,22 @@
     <div class="fav-empty" id="fav-empty">还没有收藏任何文章，点击新闻右上角的 ☆ 即可收藏</div>
   </div>
 
+  <!-- 🔫 火炮专题 (TOP PRIORITY) -->
+  <div class="artillery-section" id="artillery-section">
+    <div class="section-header">
+      <div class="section-title">
+        🔫 火炮专题 <span class="artillery-badge">🔥 重点推荐</span>
+      </div>
+      <div class="artillery-tabs" id="artillery-tabs">
+        <span class="artillery-tab active" onclick="switchArtilleryTab('all', this)">📋 全部</span>
+        <span class="artillery-tab" onclick="switchArtilleryTab('智能火炮', this)">🤖 智能火炮</span>
+        <span class="artillery-tab" onclick="switchArtilleryTab('国内火炮', this)">🇨🇳 国内</span>
+        <span class="artillery-tab" onclick="switchArtilleryTab('国际火炮', this)">🌍 国际</span>
+      </div>
+    </div>
+    <div class="news-list" id="artillery-list"></div>
+  </div>
+
   <!-- AI Section -->
   <div class="ai-section" id="ai-section">
     <div class="section-title">
@@ -346,24 +419,20 @@
 
   <!-- Two-Column -->
   <div class="two-col">
-    <!-- CN Column -->
     <div class="region" id="cn-region">
       <div class="region-header">🇨🇳 国内资讯</div>
       <div class="category-tabs" id="cn-tabs">
         <span class="category-tab active" onclick="switchTab('cn','all', this)">📋 全部</span>
         <span class="category-tab" onclick="switchTab('cn','坦克', this)">🏗️ 坦克</span>
-        <span class="category-tab" onclick="switchTab('cn','火炮', this)">🔫 火炮</span>
         <span class="category-tab" onclick="switchTab('cn','装甲车辆', this)">🚛 装甲车</span>
       </div>
       <div class="region-body"><div class="news-list" id="cn-list"></div></div>
     </div>
-    <!-- INT Column -->
     <div class="region" id="int-region">
       <div class="region-header">🌍 国际资讯</div>
       <div class="category-tabs" id="int-tabs">
         <span class="category-tab active" onclick="switchTab('int','all', this)">📋 全部</span>
         <span class="category-tab" onclick="switchTab('int','坦克', this)">🏗️ 坦克</span>
-        <span class="category-tab" onclick="switchTab('int','火炮', this)">🔫 火炮</span>
         <span class="category-tab" onclick="switchTab('int','装甲车辆', this)">🚛 装甲车</span>
       </div>
       <div class="region-body"><div class="news-list" id="int-list"></div></div>
@@ -391,7 +460,6 @@
   </div>
 </div>
 
-<!-- Data -->
 <script>
 window.__DATA__ = {{RAW_DATA}};
 </script>
@@ -404,6 +472,7 @@ let favorites = {};
 let searchTerm = '';
 let cnFilter = 'all';
 let intFilter = 'all';
+let artilleryFilter = 'all';
 let aiCollapsed = false;
 const AI_VISIBLE_DEFAULT = 6;
 
@@ -414,6 +483,10 @@ function esc(s) {
   if (!s) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+function escAttr(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 function makeId(item) {
   let h = 0;
@@ -422,7 +495,7 @@ function makeId(item) {
   return 'id-' + Math.abs(h).toString(36).slice(0, 8);
 }
 
-const CAT_ICONS = { '坦克': '🏗️', '火炮': '🔫', '装甲车辆': '🚛', 'AI': '🤖', 'AFV': '🚛' };
+const CAT_ICONS = { '坦克': '🏗️', '火炮': '🔫', '装甲车辆': '🚛', 'AI': '🤖', '智能火炮': '🔫', '国内火炮': '🇨🇳', '国际火炮': '🌍' };
 
 function catIcon(c) { return CAT_ICONS[c] || '📰'; }
 
@@ -432,20 +505,12 @@ function catMatches(item, filter) {
   return c === filter || c.includes(filter);
 }
 
-function highlightText(text, q) {
-  if (!q || !text) return esc(text);
-  const escaped = esc(text);
-  const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-  return escaped.replace(regex, '<mark class="search-hl">$1</mark>');
-}
-
 // ====== RENDER NEWS ITEM ======
 function renderItem(item, showFav) {
   const id = makeId(item);
   const isFav = !!favorites[id];
   const tagClass = (item.category === 'AI') ? 'tag ai-tag' : 'tag';
   const hasAnalysis = item.expert_analysis && item.expert_analysis.trim();
-  // escape key fields for safe data-attrs
   const dTitle = escAttr(item.title);
   const dSummary = escAttr(item.summary || '');
   const dAnalysis = escAttr(item.expert_analysis || '');
@@ -477,11 +542,6 @@ function renderItem(item, showFav) {
 }
 
 // ====== DETAIL MODAL ======
-function escAttr(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
 function openDetail(el) {
   const item = el.closest('.news-item');
   const title = item.dataset.dtitle || '';
@@ -492,8 +552,11 @@ function openDetail(el) {
   const category = item.dataset.dcategory || '';
   const url = item.dataset.durl || '#';
 
-  document.getElementById('modal-tag').textContent = category;
-  document.getElementById('modal-tag').className = (category === 'AI') ? 'modal-tag ai-tag' : 'modal-tag';
+  const tag = document.getElementById('modal-tag');
+  tag.textContent = category;
+  const isAi = category === 'AI';
+  const isArty = category.includes('火炮');
+  tag.className = isAi ? 'modal-tag ai-tag' : (isArty ? 'modal-tag arty-tag' : 'modal-tag');
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-source').textContent = '📰 ' + source;
   document.getElementById('modal-origin-link').href = url;
@@ -507,7 +570,6 @@ function openDetail(el) {
   document.getElementById('detail-modal').classList.add('show');
   document.body.style.overflow = 'hidden';
 }
-
 function closeDetail(e) {
   if (e && e.target !== e.currentTarget) return;
   document.getElementById('detail-modal').classList.remove('show');
@@ -516,30 +578,45 @@ function closeDetail(e) {
 
 // ====== RENDER ALL ======
 function renderAll() {
-  // Stats
+  const artyCount = (DATA.artillery || []).length;
   const aiCount = (DATA.ai || []).length;
   const cnCount = (DATA.cn || []).length;
   const intCount = (DATA.int || []).length;
+  const total = artyCount + aiCount + cnCount + intCount;
   document.getElementById('stats-bar').innerHTML =
+    `<div class="stat stat-artillery">🔫 火炮专题: <span class="stat-val">${artyCount}</span> 条</div>` +
     `<div class="stat">🔥 AI专题: <span class="stat-val">${aiCount}</span> 条</div>` +
     `<div class="stat">🇨🇳 国内: <span class="stat-val">${cnCount}</span> 条</div>` +
     `<div class="stat">🌍 国际: <span class="stat-val">${intCount}</span> 条</div>` +
-    `<div class="stat">📊 总计: <span class="stat-val">${aiCount+cnCount+intCount}</span> 条</div>`;
+    `<div class="stat">📊 总计: <span class="stat-val">${total}</span> 条</div>`;
 
-  // AI section
+  renderArtillerySection();
   renderAiSection();
-
-  // CN list
   document.getElementById('cn-list').innerHTML = renderList(DATA.cn || [], cnFilter);
-  // INT list
   document.getElementById('int-list').innerHTML = renderList(DATA.int || [], intFilter);
-
-  // Re-apply search
   if (searchTerm) applySearch();
-
-  // Favs
   updateFavCount();
   renderFavPanel();
+}
+
+// ====== ARTILLERY SECTION ======
+function renderArtillerySection() {
+  const items = DATA.artillery || [];
+  const filtered = artilleryFilter === 'all' ? items : items.filter(i => catMatches(i, artilleryFilter));
+  const el = document.getElementById('artillery-list');
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty-state">📭 暂无此类火炮资讯</div>';
+    return;
+  }
+  el.innerHTML = filtered.map(i => renderItem(i, true)).join('');
+}
+
+function switchArtilleryTab(filter, btn) {
+  artilleryFilter = filter;
+  document.querySelectorAll('#artillery-tabs .artillery-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderArtillerySection();
+  if (searchTerm) applySearch();
 }
 
 function renderAiSection() {
@@ -547,20 +624,13 @@ function renderAiSection() {
   const visible = aiCollapsed ? Math.min(AI_VISIBLE_DEFAULT, items.length) : items.length;
   const el = document.getElementById('ai-list');
   const btn = document.getElementById('ai-toggle-btn');
-
   if (items.length === 0) {
     el.innerHTML = '<div class="empty-state">📭 暂无AI相关资讯</div>';
     btn.style.display = 'none';
     return;
   }
-
-  if (items.length > AI_VISIBLE_DEFAULT) {
-    btn.style.display = '';
-    btn.textContent = aiCollapsed ? `展开全部 (${items.length}条)` : '收起';
-  } else {
-    btn.style.display = 'none';
-  }
-
+  btn.style.display = items.length > AI_VISIBLE_DEFAULT ? '' : 'none';
+  btn.textContent = aiCollapsed ? `展开全部 (${items.length}条)` : '收起';
   el.innerHTML = items.slice(0, visible).map(i => renderItem(i, true)).join('');
 }
 
@@ -576,7 +646,6 @@ function doSearch() {
   document.getElementById('search-clear').style.display = searchTerm ? 'inline-block' : 'none';
   applySearch();
 }
-
 function clearSearch() {
   document.getElementById('search-input').value = '';
   searchTerm = '';
@@ -584,29 +653,19 @@ function clearSearch() {
   document.getElementById('search-info').style.display = 'none';
   applySearch();
 }
-
 function applySearch() {
   const allItems = document.querySelectorAll('.news-item');
-  let visible = 0;
-  let total = 0;
+  let visible = 0, total = 0;
   allItems.forEach(el => {
-    if (el.closest('#fav-panel')) return; // skip fav panel items
+    if (el.closest('#fav-panel')) return;
     total++;
-    const dataSearch = el.dataset.search || '';
-    if (!searchTerm || dataSearch.includes(searchTerm)) {
-      el.classList.remove('hidden');
-      visible++;
-    } else {
-      el.classList.add('hidden');
-    }
+    const ds = el.dataset.search || '';
+    if (!searchTerm || ds.includes(searchTerm)) { el.classList.remove('hidden'); visible++; }
+    else { el.classList.add('hidden'); }
   });
   const info = document.getElementById('search-info');
-  if (searchTerm) {
-    info.style.display = 'inline';
-    info.textContent = `找到 ${visible}/${total} 条`;
-  } else {
-    info.style.display = 'none';
-  }
+  if (searchTerm) { info.style.display = 'inline'; info.textContent = `找到 ${visible}/${total} 条`; }
+  else { info.style.display = 'none'; }
 }
 
 // ====== TAB SWITCH ======
@@ -614,7 +673,6 @@ function switchTab(region, filter, el) {
   if (region === 'cn') {
     cnFilter = filter;
     document.getElementById('cn-list').innerHTML = renderList(DATA.cn || [], filter);
-    // update tab styles
     document.querySelectorAll('#cn-tabs .category-tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
   } else {
@@ -631,11 +689,6 @@ function toggleAiSection() {
   aiCollapsed = !aiCollapsed;
   renderAiSection();
   if (searchTerm) applySearch();
-}
-
-// ====== FAVORITES ======
-function saveFavs() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
 }
 
 // ====== ANALYSIS TOGGLE ======
@@ -655,16 +708,22 @@ function toggleAnalysis(btn) {
   }
 }
 
+// ====== FAVORITES ======
+function saveFavs() { localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites)); }
+function updateFavCount() { document.getElementById('fav-count').textContent = Object.keys(favorites).length; }
+function toggleFavPanel() {
+  const panel = document.getElementById('fav-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  if (panel.style.display === 'block') renderFavPanel();
+}
+
 function toggleFav(btn) {
   const item = btn.closest('.news-item');
   const id = item.dataset.id;
   if (!id) return;
-
   if (favorites[id]) {
     delete favorites[id];
-    btn.textContent = '☆';
-    btn.classList.remove('is-fav');
-    btn.title = '点击收藏';
+    btn.textContent = '☆'; btn.classList.remove('is-fav'); btn.title = '点击收藏';
   } else {
     const anchors = item.querySelectorAll('.info h3 a');
     const summaryEl = item.querySelector('.summary');
@@ -682,67 +741,32 @@ function toggleFav(btn) {
       china_insight: (chinaEl?.textContent || '').trim(),
       savedAt: new Date().toISOString(),
     };
-    btn.textContent = '★';
-    btn.classList.add('is-fav');
-    btn.title = '已收藏，点击取消';
+    btn.textContent = '★'; btn.classList.add('is-fav'); btn.title = '已收藏，点击取消';
   }
-  saveFavs();
-  updateFavCount();
-  renderFavPanel();
+  saveFavs(); updateFavCount(); renderFavPanel();
 }
 
 function removeFav(id) {
   delete favorites[id];
-  saveFavs();
-  updateFavCount();
-  renderFavPanel();
-  // Update main page button
+  saveFavs(); updateFavCount(); renderFavPanel();
   const el = document.querySelector(`.news-item[data-id="${id}"]`);
-  if (el) {
-    const btn = el.querySelector('.fav-btn');
-    if (btn) { btn.textContent = '☆'; btn.classList.remove('is-fav'); btn.title = '点击收藏'; }
-  }
-}
-
-function updateFavCount() {
-  document.getElementById('fav-count').textContent = Object.keys(favorites).length;
-}
-
-function toggleFavPanel() {
-  const panel = document.getElementById('fav-panel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-  if (panel.style.display === 'block') renderFavPanel();
+  if (el) { const btn = el.querySelector('.fav-btn'); if (btn) { btn.textContent = '☆'; btn.classList.remove('is-fav'); btn.title = '点击收藏'; } }
 }
 
 function renderFavPanel() {
   const list = document.getElementById('fav-list');
   const empty = document.getElementById('fav-empty');
   let favs = Object.values(favorites);
-
-  // Fav search filter
   const favSearch = (document.getElementById('fav-search')?.value || '').trim().toLowerCase();
-  if (favSearch) {
-    favs = favs.filter(f => (f.title+f.summary+f.source+f.category).toLowerCase().includes(favSearch));
-  }
-
-  if (favs.length === 0) {
-    list.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
+  if (favSearch) favs = favs.filter(f => (f.title+f.summary+f.source+f.category).toLowerCase().includes(favSearch));
+  if (favs.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   list.innerHTML = favs.map(f => {
-    const dTitle = escAttr(f.title);
-    const dSummary = escAttr(f.summary || '');
-    const dAnalysis = escAttr(f.expert_analysis || '');
-     const dChina = escAttr(f.china_insight || '');
-    const dSource = escAttr(f.source || '');
-    const dCategory = escAttr(f.category || '收藏');
-    const dUrl = escAttr(f.url || '#');
-    return `
-    <div class="news-item" data-id="${esc(f.id)}"
+    const dTitle = escAttr(f.title), dSummary = escAttr(f.summary || ''), dAnalysis = escAttr(f.expert_analysis || '');
+    const dChina = escAttr(f.china_insight || ''), dSource = escAttr(f.source || ''), dCategory = escAttr(f.category || '收藏'), dUrl = escAttr(f.url || '#');
+    return `<div class="news-item" data-id="${esc(f.id)}"
       data-dtitle="${dTitle}" data-dsummary="${dSummary}" data-danalysis="${dAnalysis}"
-       data-dchina="${dChina}" data-dsource="${dSource}" data-dcategory="${dCategory}" data-durl="${dUrl}">
+      data-dchina="${dChina}" data-dsource="${dSource}" data-dcategory="${dCategory}" data-durl="${dUrl}">
       <div class="thumb">${catIcon(f.category)}</div>
       <div class="info">
         <span class="tag">${esc(f.category || '收藏')}</span>
@@ -759,8 +783,8 @@ function renderFavPanel() {
         ${f.china_insight ? '<div class="analysis-section china-insight" style="display:none">' + esc(f.china_insight) + '</div>' : ''}
       </div>
       <button class="fav-btn is-fav" onclick="removeFav('${esc(f.id)}')" title="取消收藏">★</button>
-    </div>
-  `}).join('');
+    </div>`;
+  }).join('');
 }
 
 // ====== EXPORT / IMPORT ======
@@ -770,12 +794,9 @@ function exportFavs() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = `wangye-favorites-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  a.click(); URL.revokeObjectURL(url);
 }
-
 function importFavs() { document.getElementById('fav-import-input').click(); }
-
 function handleFavImport(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -784,34 +805,25 @@ function handleFavImport(e) {
     try {
       const imported = JSON.parse(ev.target.result);
       Object.assign(favorites, imported);
-      saveFavs();
-      updateFavCount();
-      renderFavPanel();
-      renderAll();
+      saveFavs(); updateFavCount(); renderFavPanel(); renderAll();
       alert(`成功导入 ${Object.keys(imported).length} 条收藏`);
     } catch(err) { alert('导入失败：文件格式错误'); }
   };
-  reader.readAsText(file);
-  e.target.value = '';
+  reader.readAsText(file); e.target.value = '';
 }
 
-// ====== THEME TOGGLE ======
-function getTheme() {
-  return document.documentElement.getAttribute('data-theme') || 'dark';
-}
+// ====== THEME ======
+function getTheme() { return document.documentElement.getAttribute('data-theme') || 'dark'; }
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   document.querySelector('.theme-toggle').textContent = theme === 'light' ? '☀️' : '🌙';
   localStorage.setItem('wangye_theme', theme);
 }
-function toggleTheme() {
-  applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
-}
+function toggleTheme() { applyTheme(getTheme() === 'dark' ? 'light' : 'dark'); }
 
 // ====== INIT ======
 document.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('wangye_theme') || 'dark';
-  applyTheme(saved);
+  applyTheme(localStorage.getItem('wangye_theme') || 'dark');
   renderAll();
   document.getElementById('fav-panel').style.display = 'none';
 });
