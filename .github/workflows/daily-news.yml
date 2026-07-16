@@ -33,6 +33,7 @@ jobs:
       - name: Send Push Notification
         env:
           SERVER_CHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
+          SERVER_CHAN_KEY_2: ${{ secrets.SERVERCHAN_KEY1 }}
         run: |
           node .claude/skills/run-wangye/driver.mjs push \
             "每日更新" \

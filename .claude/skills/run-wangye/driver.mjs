@@ -140,21 +140,29 @@ function deploy() {
 
 // ---------- Push (ServerChan) ----------
 function push(titleSuffix, url, description) {
-  const serverChanKey = process.env.SERVER_CHAN_KEY;
-  if (!serverChanKey) {
-    console.error('SERVER_CHAN_KEY env var not set. Skipping push.');
+  // Support multiple ServerChan keys: SERVER_CHAN_KEY, SERVER_CHAN_KEY_2, SERVER_CHAN_KEY_3, ...
+  const keys = [];
+  for (const [key, val] of Object.entries(process.env)) {
+    if (key.match(/^SERVER_CHAN_KEY(?:_\d+)?$/i) && val) {
+      keys.push({ name: key, value: val });
+    }
+  }
+  if (keys.length === 0) {
+    console.error('No SERVER_CHAN_KEY env var set. Skipping push.');
     return;
   }
   const title = encodeURIComponent('🚀 装甲车辆每日资讯更新' + (titleSuffix ? ' - ' + titleSuffix : ''));
   const pageUrl = url || 'https://VERY-NPU.github.io/vehicle_send/';
   const desc = description || '最新装甲车辆资讯已更新，点击查看。';
   const desp = encodeURIComponent(`## ${desc}\n\n👉 [点击查看完整资讯](${pageUrl})`);
-  try {
-    sh(`curl -s "https://sctapi.ftqq.com/${serverChanKey}.send?title=${title}&desp=${desp}"`);
-  } catch (e) {
-    console.error('Push failed:', e.message);
+  for (const k of keys) {
+    try {
+      sh(`curl -s "https://sctapi.ftqq.com/${k.value}.send?title=${title}&desp=${desp}"`);
+      console.log(`📲 Push sent → ${k.name}`);
+    } catch (e) {
+      console.error(`Push failed for ${k.name}:`, e.message);
+    }
   }
-  console.log('📲 Push sent (ServerChan)');
 }
 
 // ---------- Daily ----------
