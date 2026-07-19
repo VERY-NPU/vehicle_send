@@ -833,18 +833,26 @@ function toggleAiSection() {
   if (searchTerm) applySearch();
 }
 
-// ====== SECTION TOGGLE (分析 / 启示) ======
+// ====== SECTION TOGGLE (手风琴：点击一个自动关闭另一个) ======
 function toggleSection(btn, selector) {
-  const expanded = btn.dataset.expanded === '1';
   const item = btn.closest('.news-item');
-  const section = item.querySelector(selector);
-  if (!section) return;
-  if (expanded) {
-    section.classList.remove('show');
-    btn.dataset.expanded = '0';
-    btn.textContent = btn.classList.contains('china-btn') ? '对我国的启示' : '📋 军迷深度分析';
-  } else {
-    section.classList.add('show');
+  const targetSection = item.querySelector(selector);
+  if (!targetSection) return;
+
+  const isOpening = btn.dataset.expanded !== '1';
+
+  // 先关闭同一 news-item 内的另一个展开区
+  const allSections = item.querySelectorAll('.analysis-section.show');
+  const allBtns = item.querySelectorAll('.expand-toggle[data-expanded="1"]');
+  allSections.forEach(s => s.classList.remove('show'));
+  allBtns.forEach(b => {
+    b.dataset.expanded = '0';
+    b.textContent = b.classList.contains('china-btn') ? '对我国的启示' : '📋 军迷深度分析';
+  });
+
+  if (isOpening) {
+    // 打开目标
+    targetSection.classList.add('show');
     btn.dataset.expanded = '1';
     btn.textContent = btn.classList.contains('china-btn') ? '收起' : '📋 收起';
   }
