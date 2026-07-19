@@ -22,6 +22,8 @@ jobs:
       # ── 步骤1: 搜索新资讯 ──
       - name: Search News
         id: search
+        env:
+          NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
         run: |
           node .claude/skills/run-wangye/search_news.mjs > /tmp/search_result.json
           COUNT=$(node -e "

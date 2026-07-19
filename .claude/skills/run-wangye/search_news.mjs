@@ -1,6 +1,8 @@
 /*!
  * search_news.mjs — 装甲车辆新闻采集
- * 策略: Bing News RSS (微软→Azure GH Actions 无阻) + 防务网站 RSS 兜底
+ * 策略: NewsAPI (免费 500次/天) + 防务网站 RSS 兜底
+ *
+ * 需要 GitHub Secret: NEWSAPI_KEY (从 https://newsapi.org 免费注册)
  */
 
 import { readFileSync } from 'node:fs';
@@ -10,25 +12,12 @@ import path from 'node:path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const DATA_FILE = path.join(ROOT, 'data.json');
-const MAX_AGE_HOURS = 168; // 放宽到 7 天（RSS 更新不一定及时）
+const MAX_AGE_HOURS = 168;
+const NEWSAPI_KEY = process.env.NEWSAPI_KEY || '';
 
-// ─── 关键词（宽松匹配，确保不漏新闻） ───────────
-const ARMOR_KEYWORDS = /坦克|装甲|步兵战车|自行炮|榴弹炮|火炮|火箭炮|迫击炮|战车|主战坦克|tank|armored|howitzer|artillery|MLRS|IFV|APC|self-propelled|mortar|AFV|MBT|Leopard|Abrams|T-90|T-14|K2|Challenger|Bradley|Stryker|BMP|Boxer|Patria|Puma|Lynx|CV90|Ajax|Redback/i;
-const EXCLUDE_KEYWORDS = /股票|股市|基金|比特币|加密货币|娱乐|明星|综艺|足球|篮球|电竞|赛事|旅游|美食|穿搭|护肤|减肥|星座|生肖|运势|养生|房地产|房价|天气|彩票/i;
-
-// ─── RSS 源（Bing News 优先） ─────────────────────
-const RSS_SOURCES = [
-  // Bing News RSS — 微软自有，Azure 零延迟
-  { name: 'Bing News-装甲火炮',  url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('坦克 OR 装甲车 OR 自行火炮 OR 榴弹炮') + '&format=rss', defaultCat: '智能火炮' },
-  { name: 'Bing News-军事AI',    url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('人工智能 军事 OR 无人战车 OR AI 军事') + '&format=rss', defaultCat: 'AI+军事' },
-  { name: 'Bing News-EN tanks',  url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('tank OR armored vehicle OR self-propelled howitzer OR artillery military') + '&format=rss', defaultCat: '国际动态' },
-  { name: 'Bing News-EN AI',     url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('AI military OR autonomous combat vehicle OR drone defense') + '&format=rss', defaultCat: 'AI+军事' },
-  // 直连防务 RSS 兜底
-  { name: 'Defense News',        url: 'https://www.defensenews.com/arc/outboundfeeds/v2/category/land/?outputType=xml', defaultCat: '国际动态' },
-  { name: 'Breaking Defense',    url: 'https://breakingdefense.com/category/land/feed/', defaultCat: '国际动态' },
-  { name: 'Army Technology',     url: 'https://www.army-technology.com/feed/', defaultCat: '国际动态' },
-  { name: 'Military.com',        url: 'https://www.military.com/rss/equipment.xml', defaultCat: '国际动态' },
-];
+// ─── 关键词 ──────────────────────────────────────
+const ARMOR_KEYWORDS = /坦克|装甲|步兵战车|自行炮|榴弹炮|火炮|火箭炮|迫击炮|主战坦克|tank|armored|howitzer|artillery|MLRS|IFV|APC|self-propelled|mortar|AFV|MBT|Leopard|Abrams|T-90|T-14|K2|Challenger|Bradley|Stryker|BMP|Boxer|Patria|Puma|Lynx|CV90|Ajax|Redback|defense|military.vehicle/i;
+const EXCLUDE_KEYWORDS = /股票|股市|基金|比特币|加密货币|娱乐|明星|综艺|足球|篮球|电竞|旅游|美食|穿搭|护肤|减肥|星座|运势|养生|房地产|房价|彩票/i;
 
 // ─── 分类 ────────────────────────────────────────
 function categorize(title) {
@@ -53,38 +42,94 @@ function loadExistingData() {
 }
 
 // ─── RSS/XML 解析 ─────────────────────────────────
-function parseFeed(xml) {
+function parseFeedRSS(xmlText) {
   const items = [];
   const blockRe = /<(?:item|entry)>([\s\S]*?)<\/(?:item|entry)>/gi;
   let m;
-  while ((m = blockRe.exec(xml)) !== null) {
+  while ((m = blockRe.exec(xmlText)) !== null) {
     const b = m[1];
-    const title = tag(b, 'title');
-    const link = link(b);
-    const pubDate = tag(b, 'pubDate') || tag(b, 'published') || tag(b, 'updated') || tag(b, 'dc:date');
-    if (title && link) items.push({ title: d(title), url: link, pubDate: pubDate || '' });
+    const title = extractTag(b, 'title');
+    const url = extractLink(b);
+    const pubDate = extractTag(b, 'pubDate') || extractTag(b, 'published') || extractTag(b, 'updated') || extractTag(b, 'dc:date');
+    if (title && url) items.push({ title: decodeXml(title), url, pubDate: pubDate || '' });
   }
   return items;
 }
 
-function tag(xml, t) {
-  const esc = t.replace(/:/g, '\\:');
+function extractTag(xml, tagName) {
+  const esc = tagName.replace(/:/g, '\\:');
   const re = new RegExp(`<${esc}[^>]*>([\\s\\S]*?)<\\/${esc}>`, 'i');
-  const m = xml.match(re);
-  return m ? m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, '').trim() : '';
+  const m2 = xml.match(re);
+  if (!m2) return '';
+  return m2[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, '').trim();
 }
 
-function link(b) {
-  let l = tag(b, 'link');
-  if (!l) { const m = b.match(/<link[^>]*href=["']([^"']+)["'][^>]*\/?>/i); if (m) l = m[1]; }
-  return l;
+function extractLink(block) {
+  let l = extractTag(block, 'link');
+  if (!l) {
+    const m2 = block.match(/<link[^>]*href=["']([^"']+)["'][^>]*\/?>/i);
+    if (m2) l = m2[1];
+  }
+  return l ? l.trim() : '';
 }
 
-function d(t) { return t.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&apos;/g, "'"); }
+function decodeXml(t) {
+  return t.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&apos;/g, "'");
+}
 
 function isRecent(ds) {
   if (!ds) return true;
   try { const dt = new Date(ds); return isNaN(dt.getTime()) || Date.now() - dt.getTime() <= MAX_AGE_HOURS * 3600000; } catch { return true; }
+}
+
+// ─── NewsAPI 搜索 ─────────────────────────────────
+async function searchNewsAPI(query, category) {
+  if (!NEWSAPI_KEY) {
+    console.error('[NewsAPI] 未配置 NEWSAPI_KEY');
+    return [];
+  }
+  const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&pageSize=10&sortBy=publishedAt&language=en&apiKey=${NEWSAPI_KEY}`;
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'WangYe/1.0' },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) {
+      console.error('[NewsAPI] HTTP', res.status);
+      return [];
+    }
+    const data = await res.json();
+    if (data.status !== 'ok') {
+      console.error('[NewsAPI] status:', data.status, data.message);
+      return [];
+    }
+    return data.articles.map(a => ({
+      title: a.title || '',
+      url: a.url || '',
+      source: 'NewsAPI',
+      pubDate: a.publishedAt || '',
+      category,
+    }));
+  } catch (e) {
+    console.error('[NewsAPI] fetch failed:', e.message);
+    return [];
+  }
+}
+
+// ─── 防务网站 RSS ─────────────────────────────────
+const RSS_SOURCES = [
+  { name: 'Defense News',  url: 'https://www.defensenews.com/arc/outboundfeeds/v2/category/land/?outputType=xml', defaultCat: '国际动态' },
+  { name: 'Military.com',  url: 'https://www.military.com/rss/equipment.xml', defaultCat: '国际动态' },
+];
+
+async function fetchRSS(srcName, srcUrl, defaultCat) {
+  const res = await fetch(srcUrl, {
+    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; WangYe/1.0)' },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!res.ok) return [];
+  const xml = await res.text();
+  return parseFeedRSS(xml).map(it => ({ ...it, source: srcName, category: defaultCat }));
 }
 
 // ─── 主流程 ──────────────────────────────────────
@@ -95,22 +140,37 @@ async function main() {
   const all = [];
   const seen = new Set();
 
-  for (const src of RSS_SOURCES) {
-    console.error('[search]', src.name, '...');
-    try {
-      const res = await fetch(src.url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
-        signal: AbortSignal.timeout(25000),
-      });
-      if (!res.ok) { console.error('  HTTP', res.status); continue; }
-      const xml = await res.text();
-      const items = parseFeed(xml);
-      console.error('  原始:', items.length);
-      if (items.length === 0) {
-        // 调试：打印前 300 字符
-        console.error('  响应前300字:', xml.substring(0, 300).replace(/\s+/g, ' '));
-      }
+  // 第一阶段: NewsAPI 搜索（主力）
+  const newsapiQueries = [
+    { q: '"armored vehicle" OR "main battle tank" OR howitzer OR "self-propelled artillery"', cat: '智能火炮' },
+    { q: '"AI military" OR "autonomous combat vehicle" OR "unmanned ground vehicle" defense', cat: 'AI+军事' },
+    { q: '"tank" OR "armored" OR "artillery" OR "IFV" OR "APC" military', cat: '国际动态' },
+  ];
 
+  for (const { q, cat } of newsapiQueries) {
+    console.error('[NewsAPI]', q.substring(0, 50));
+    const articles = await searchNewsAPI(q, cat);
+    console.error('  原始:', articles.length);
+    let matched = 0;
+    for (const a of articles) {
+      if (seen.has(a.url) || existingUrls.has(a.url)) continue;
+      if (a.title.length < 10) continue;
+      if (!ARMOR_KEYWORDS.test(a.title)) continue;
+      if (EXCLUDE_KEYWORDS.test(a.title)) continue;
+      if (!isRecent(a.pubDate)) continue;
+      seen.add(a.url);
+      matched++;
+      all.push(a);
+    }
+    console.error('  匹配:', matched);
+  }
+
+  // 第二阶段: 防务 RSS 兜底
+  for (const src of RSS_SOURCES) {
+    console.error('[RSS]', src.name);
+    try {
+      const items = await fetchRSS(src.name, src.url, src.defaultCat);
+      console.error('  原始:', items.length);
       let matched = 0;
       for (const it of items) {
         if (seen.has(it.url) || existingUrls.has(it.url)) continue;
@@ -118,10 +178,9 @@ async function main() {
         if (!ARMOR_KEYWORDS.test(it.title)) continue;
         if (EXCLUDE_KEYWORDS.test(it.title)) continue;
         if (!isRecent(it.pubDate)) continue;
-
         seen.add(it.url);
         matched++;
-        all.push({ title: it.title, url: it.url, source: src.name, pubDate: it.pubDate, category: categorize(it.title) });
+        all.push(it);
       }
       console.error('  匹配:', matched);
     } catch (e) {
@@ -131,7 +190,7 @@ async function main() {
 
   const stats = {};
   for (const r of all) stats[r.category] = (stats[r.category] || 0) + 1;
-  console.error('[search] 新文章:', all.length, Object.entries(stats).map(([k,v]) => k + ':' + v).join(' '));
+  console.error('[search] 新文章:', all.length, Object.entries(stats).map(([k, v]) => k + ':' + v).join(' '));
 
   process.stdout.write(JSON.stringify({ results: all }));
 }
