@@ -24,34 +24,44 @@ jobs:
         id: search
         run: |
           node .claude/skills/run-wangye/search_news.mjs > /tmp/search_result.json
-          COUNT=$(node --input-type=module -e "
-            import { readFileSync } from 'fs';
-            const d = JSON.parse(readFileSync('/tmp/search_result.json','utf-8'));
-            console.log(d.results.length);
+          COUNT=$(node -e "
+            const {readFileSync}=require('fs');
+            const d=JSON.parse(readFileSync('/tmp/search_result.json','utf-8'));
+            process.stdout.write(String(d.results.length));
           ")
           echo "count=$COUNT" >> $GITHUB_OUTPUT
           echo "Found $COUNT new article(s)"
+          echo "::group::Search Result"
+          cat /tmp/search_result.json | node -e "
+            const chunks=[];
+            process.stdin.on('data',c=>chunks.push(c));
+            process.stdin.on('end',()=>{
+              const d=JSON.parse(chunks.join(''));
+              d.results.slice(0,5).forEach(r=>console.log('  -',r.title.substring(0,80)));
+            });
+          "
+          echo "::endgroup::"
 
-      # ── 步骤2: AI 生成内容（仅当有新文章） ──
+      # ── 步骤2: AI 生成内容 ──
       - name: Enrich with AI
         id: enrich
-        if: steps.search.outputs.count > 0
+        if: steps.search.outputs.count != '0'
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         run: |
           cat /tmp/search_result.json | node .claude/skills/run-wangye/enrich_news.mjs > /tmp/enriched.json
-          COUNT=$(node --input-type=module -e "
-            import { readFileSync } from 'fs';
-            const d = JSON.parse(readFileSync('/tmp/enriched.json','utf-8'));
-            console.log(d.enriched.length);
+          ENRICHED=$(node -e "
+            const {readFileSync}=require('fs');
+            const d=JSON.parse(readFileSync('/tmp/enriched.json','utf-8'));
+            process.stdout.write(String(d.enriched.length));
           ")
-          echo "count=$COUNT" >> $GITHUB_OUTPUT
-          echo "Enriched $COUNT article(s)"
+          echo "count=$ENRICHED" >> $GITHUB_OUTPUT
+          echo "Enriched $ENRICHED article(s)"
 
       # ── 步骤3: 合并入库 ──
       - name: Merge into data.json
         id: merge
-        if: steps.enrich.outputs.count > 0
+        if: steps.enrich.outcome == 'success' && steps.enrich.outputs.count != '0'
         run: |
           cat /tmp/enriched.json | node .claude/skills/run-wangye/driver.mjs merge
           echo "merged=true" >> $GITHUB_OUTPUT
@@ -60,9 +70,9 @@ jobs:
       - name: Generate HTML
         run: cat data.json | node .claude/skills/run-wangye/driver.mjs generate
 
-      # ── 步骤5: 提交更新后的 data.json ──
+      # ── 步骤5: 提交更新 ──
       - name: Commit data.json update
-        if: steps.merge.outputs.merged == 'true'
+        if: steps.merge.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -70,7 +80,7 @@ jobs:
           git commit -m "daily: auto-collect $(date +%Y-%m-%d)" || true
           git push
 
-      # ── 步骤6: 部署到 GitHub Pages ──
+      # ── 步骤6: 部署 GitHub Pages ──
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -85,10 +95,11 @@ jobs:
           SERVER_CHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
           SERVER_CHAN_KEY_2: ${{ secrets.SERVERCHAN_KEY1 }}
         run: |
-          if [ "${{ steps.enrich.outputs.count }}" -gt 0 ]; then
-            DESC="今日采集到 ${{ steps.enrich.outputs.count }} 篇新资讯，装甲车辆最新动态已更新"
+          NEW_COUNT="${{ steps.enrich.outputs.count }}"
+          if [ -n "$NEW_COUNT" ] && [ "$NEW_COUNT" != "0" ]; then
+            DESC="今日采集到 ${NEW_COUNT} 篇新装甲车辆资讯，已更新至网站"
           else
-            DESC="今日暂无新增装甲车辆资讯，点击查看历史资讯"
+            DESC="今日暂无新增装甲车辆资讯，点击查看历史内容"
           fi
           node .claude/skills/run-wangye/driver.mjs push \
             "每日更新" \

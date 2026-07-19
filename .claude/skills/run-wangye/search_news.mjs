@@ -1,8 +1,6 @@
 /*!
- * search_news.mjs — 从军事防务网站 RSS 采集装甲车辆相关新闻
- *
- * 输出: { results: [{title, url, source, pubDate, category}] }
- * 自动过滤 72 小时前的旧闻 + 与 data.json 中已有 URL 去重
+ * search_news.mjs — 装甲车辆新闻采集
+ * 策略: Bing News RSS (微软→Azure GH Actions 无阻) + 防务网站 RSS 兜底
  */
 
 import { readFileSync } from 'node:fs';
@@ -12,71 +10,35 @@ import path from 'node:path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const DATA_FILE = path.join(ROOT, 'data.json');
-const MAX_AGE_HOURS = 72;
+const MAX_AGE_HOURS = 168; // 放宽到 7 天（RSS 更新不一定及时）
 
-// ─── RSS 源 ──────────────────────────────────────
+// ─── 关键词（宽松匹配，确保不漏新闻） ───────────
+const ARMOR_KEYWORDS = /坦克|装甲|步兵战车|自行炮|榴弹炮|火炮|火箭炮|迫击炮|战车|主战坦克|tank|armored|howitzer|artillery|MLRS|IFV|APC|self-propelled|mortar|AFV|MBT|Leopard|Abrams|T-90|T-14|K2|Challenger|Bradley|Stryker|BMP|Boxer|Patria|Puma|Lynx|CV90|Ajax|Redback/i;
+const EXCLUDE_KEYWORDS = /股票|股市|基金|比特币|加密货币|娱乐|明星|综艺|足球|篮球|电竞|赛事|旅游|美食|穿搭|护肤|减肥|星座|生肖|运势|养生|房地产|房价|天气|彩票/i;
+
+// ─── RSS 源（Bing News 优先） ─────────────────────
 const RSS_SOURCES = [
-  // ── 国际防务 RSS（免费，无需 API Key）──
-  {
-    name: 'Defense News - Land',
-    url: 'https://www.defensenews.com/arc/outboundfeeds/v2/category/land/?outputType=xml',
-    lang: 'en',
-    defaultCat: '国际动态',
-  },
-  {
-    name: 'Breaking Defense - Land',
-    url: 'https://breakingdefense.com/category/land/feed/',
-    lang: 'en',
-    defaultCat: '国际动态',
-  },
-  {
-    name: 'Army Technology',
-    url: 'https://www.army-technology.com/feed/',
-    lang: 'en',
-    defaultCat: '国际动态',
-  },
-  {
-    name: 'The Defense Post',
-    url: 'https://www.thedefensepost.com/feed/',
-    lang: 'en',
-    defaultCat: '国际动态',
-  },
-  {
-    name: 'Military.com - Equipment',
-    url: 'https://www.military.com/rss/equipment.xml',
-    lang: 'en',
-    defaultCat: '国际动态',
-  },
-  // ── 中文军事 RSS ──
-  {
-    name: '观察者网-军事',
-    url: 'https://www.guancha.cn/rss/military.xml',
-    lang: 'zh',
-    defaultCat: '国内装甲',
-  },
-  {
-    name: '环球网-军事',
-    url: 'https://mil.huanqiu.com/rss',
-    lang: 'zh',
-    defaultCat: '国内装甲',
-  },
+  // Bing News RSS — 微软自有，Azure 零延迟
+  { name: 'Bing News-装甲火炮',  url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('坦克 OR 装甲车 OR 自行火炮 OR 榴弹炮') + '&format=rss', defaultCat: '智能火炮' },
+  { name: 'Bing News-军事AI',    url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('人工智能 军事 OR 无人战车 OR AI 军事') + '&format=rss', defaultCat: 'AI+军事' },
+  { name: 'Bing News-EN tanks',  url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('tank OR armored vehicle OR self-propelled howitzer OR artillery military') + '&format=rss', defaultCat: '国际动态' },
+  { name: 'Bing News-EN AI',     url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('AI military OR autonomous combat vehicle OR drone defense') + '&format=rss', defaultCat: 'AI+军事' },
+  // 直连防务 RSS 兜底
+  { name: 'Defense News',        url: 'https://www.defensenews.com/arc/outboundfeeds/v2/category/land/?outputType=xml', defaultCat: '国际动态' },
+  { name: 'Breaking Defense',    url: 'https://breakingdefense.com/category/land/feed/', defaultCat: '国际动态' },
+  { name: 'Army Technology',     url: 'https://www.army-technology.com/feed/', defaultCat: '国际动态' },
+  { name: 'Military.com',        url: 'https://www.military.com/rss/equipment.xml', defaultCat: '国际动态' },
 ];
 
-// ─── 关键词过滤（必须包含至少一个装甲车辆相关词）───
-const ARMOR_KEYWORDS = /坦克|装甲|步兵战车|自行炮|榴弹炮|火炮|火箭炮|迫击炮|战车|tank|armored|howitzer|artillery|MLRS|IFV|APC|self-propelled|howitzer|mortar|AFV|MBT|infantry.?(fighting|combat)|assault.?(vehicle|gun)/i;
-
-// ─── 排除词（无关内容） ──────────────────────────
-const EXCLUDE_KEYWORDS = /股票|股市|基金|比特币|加密货币|娱乐|明星|综艺|足球|篮球|电竞|赛事|旅游|美食|穿搭|护肤|减肥|星座|生肖|运势|养生|房地产|房价/i;
-
-// ─── 分类判定 ────────────────────────────────────
+// ─── 分类 ────────────────────────────────────────
 function categorize(title) {
-  if (/\u706B\u70AE|\u69B4\u5F39\u70AE|\u52A0\u519C\u70AE|\u8FEB\u51FB\u70AE|\u706B\u7BAD\u70AE|\u81EA\u884C\u70AE|Howitzer|artillery|howitzer|MLRS|mortar|\u70AE\u5C04|\u589E\u7A0B\u5F39|\u6FC0\u5149\u6B66\u5668/i.test(title)) return '\u667A\u80FD\u706B\u70AE';
-  if (/AI|\u4EBA\u5DE5\u667A\u80FD|\u65E0\u4EBA|\u81EA\u4E3B|\u667A\u80FD|autonomous|unmanned|drone|UAV|UGV|robot/i.test(title)) return 'AI+\u519B\u4E8B';
-  if (/\u4E2D\u56FD|PLA|\u89E3\u653E\u519B|99\u5F0F|15\u5F0F|04\u5F0F|ZBL|ZBD|ZTZ|Type.?99|Type.?15/i.test(title)) return '\u56FD\u5185\u88C5\u7532';
-  return '\u56FD\u9645\u52A8\u6001';
+  if (/火炮|榴弹炮|加农炮|迫击炮|火箭炮|自行炮|howitzer|artillery|MLRS|mortar/i.test(title)) return '智能火炮';
+  if (/AI|人工智能|无人|自主|智能|autonomous|unmanned|drone|UAV|UGV|robot/i.test(title)) return 'AI+军事';
+  if (/中国|PLA|解放军|99式|15式|04式|ZBL|ZBD|ZTZ|Type.?99|Type.?15/i.test(title)) return '国内装甲';
+  return '国际动态';
 }
 
-// ─── 已存在 URL 去重 ─────────────────────────────
+// ─── 已有 URL 去重 ───────────────────────────────
 const existingUrls = new Set();
 function loadExistingData() {
   try {
@@ -84,122 +46,94 @@ function loadExistingData() {
     const data = JSON.parse(raw);
     for (const cat of Object.values(data)) {
       if (Array.isArray(cat)) {
-        for (const item of cat) {
-          if (item.url) existingUrls.add(item.url);
-        }
+        for (const item of cat) if (item.url) existingUrls.add(item.url);
       }
     }
-  } catch (e) {
-    console.error('[search] 无法加载已有数据:', e.message);
-  }
+  } catch (e) { console.error('[search] 加载已有数据失败:', e.message); }
 }
 
-// ─── XML RSS 解析 ─────────────────────────────────
-function parseRSS(xml) {
+// ─── RSS/XML 解析 ─────────────────────────────────
+function parseFeed(xml) {
   const items = [];
-  // 支持 <item> 和 <entry> (Atom) 两种格式
-  const itemRegex = /<(?:item|entry)>([\s\S]*?)<\/(?:item|entry)>/gi;
-  let match;
-  while ((match = itemRegex.exec(xml)) !== null) {
-    const block = match[1];
-    const title = extractTag(block, 'title');
-    const link = extractLink(block);
-    const pubDate = extractTag(block, 'pubDate') || extractTag(block, 'published') || extractTag(block, 'updated') || extractTag(block, 'dc:date');
-    if (title && link) {
-      items.push({ title: decodeEntities(title), url: link, pubDate: pubDate || '' });
-    }
+  const blockRe = /<(?:item|entry)>([\s\S]*?)<\/(?:item|entry)>/gi;
+  let m;
+  while ((m = blockRe.exec(xml)) !== null) {
+    const b = m[1];
+    const title = tag(b, 'title');
+    const link = link(b);
+    const pubDate = tag(b, 'pubDate') || tag(b, 'published') || tag(b, 'updated') || tag(b, 'dc:date');
+    if (title && link) items.push({ title: d(title), url: link, pubDate: pubDate || '' });
   }
   return items;
 }
 
-function extractTag(xml, tag) {
-  const escTag = tag.replace(/:/g, '\\:');
-  const re = new RegExp(`<${escTag}[^>]*>([\\s\\S]*?)<\\/${escTag}>`, 'i');
+function tag(xml, t) {
+  const esc = t.replace(/:/g, '\\:');
+  const re = new RegExp(`<${esc}[^>]*>([\\s\\S]*?)<\\/${esc}>`, 'i');
   const m = xml.match(re);
-  if (!m) return '';
-  return m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, '').trim();
+  return m ? m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, '').trim() : '';
 }
 
-function extractLink(block) {
-  // Try <link>text</link> first
-  let link = extractTag(block, 'link');
-  // Try <link href="..."/> (Atom format)
-  if (!link) {
-    const m = block.match(/<link[^>]*href=["']([^"']+)["'][^>]*\/?>/i);
-    if (m) link = m[1];
-  }
-  return link;
+function link(b) {
+  let l = tag(b, 'link');
+  if (!l) { const m = b.match(/<link[^>]*href=["']([^"']+)["'][^>]*\/?>/i); if (m) l = m[1]; }
+  return l;
 }
 
-function decodeEntities(text) {
-  return text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&apos;/g, "'");
-}
+function d(t) { return t.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&apos;/g, "'"); }
 
-// ─── 日期过滤 ────────────────────────────────────
-function isRecent(pubDateStr) {
-  if (!pubDateStr) return true;
-  try {
-    const d = new Date(pubDateStr);
-    if (isNaN(d.getTime())) return true;
-    return (Date.now() - d.getTime()) <= MAX_AGE_HOURS * 3600000;
-  } catch { return true; }
+function isRecent(ds) {
+  if (!ds) return true;
+  try { const dt = new Date(ds); return isNaN(dt.getTime()) || Date.now() - dt.getTime() <= MAX_AGE_HOURS * 3600000; } catch { return true; }
 }
 
 // ─── 主流程 ──────────────────────────────────────
 async function main() {
   loadExistingData();
-  console.error('[search] 已有文章数:', existingUrls.size);
+  console.error('[search] 已有:', existingUrls.size, '篇');
 
-  const allResults = [];
-  const seenUrls = new Set();
+  const all = [];
+  const seen = new Set();
 
   for (const src of RSS_SOURCES) {
-    console.error('[search] 搜索:', src.name);
+    console.error('[search]', src.name, '...');
     try {
       const res = await fetch(src.url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; WangYeBot/1.0; +https://very-npu.github.io/vehicle_send/)' },
-        signal: AbortSignal.timeout(20000),
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+        signal: AbortSignal.timeout(25000),
       });
-      if (!res.ok) {
-        console.error('[search]   HTTP', res.status);
-        continue;
-      }
+      if (!res.ok) { console.error('  HTTP', res.status); continue; }
       const xml = await res.text();
-      const items = parseRSS(xml);
-      console.error('[search]   原始', items.length, '条');
+      const items = parseFeed(xml);
+      console.error('  原始:', items.length);
+      if (items.length === 0) {
+        // 调试：打印前 300 字符
+        console.error('  响应前300字:', xml.substring(0, 300).replace(/\s+/g, ' '));
+      }
 
       let matched = 0;
-      for (const item of items) {
-        if (seenUrls.has(item.url) || existingUrls.has(item.url)) continue;
-        if (item.title.length < 10) continue;
-        // 关键词匹配
-        if (!ARMOR_KEYWORDS.test(item.title)) continue;
-        // 排除无关
-        if (EXCLUDE_KEYWORDS.test(item.title)) continue;
-        // 日期
-        if (!isRecent(item.pubDate)) continue;
+      for (const it of items) {
+        if (seen.has(it.url) || existingUrls.has(it.url)) continue;
+        if (it.title.length < 8) continue;
+        if (!ARMOR_KEYWORDS.test(it.title)) continue;
+        if (EXCLUDE_KEYWORDS.test(it.title)) continue;
+        if (!isRecent(it.pubDate)) continue;
 
-        seenUrls.add(item.url);
+        seen.add(it.url);
         matched++;
-        allResults.push({
-          title: item.title,
-          url: item.url,
-          source: src.name,
-          pubDate: item.pubDate,
-          category: categorize(item.title),
-        });
+        all.push({ title: it.title, url: it.url, source: src.name, pubDate: it.pubDate, category: categorize(it.title) });
       }
-      console.error('[search]   匹配', matched, '条');
+      console.error('  匹配:', matched);
     } catch (e) {
-      console.error('[search]   失败:', e.message);
+      console.error('  失败:', e.message);
     }
   }
 
   const stats = {};
-  for (const r of allResults) stats[r.category] = (stats[r.category] || 0) + 1;
-  console.error('[search] 新文章总计:', allResults.length, Object.entries(stats).map(([k,v]) => k + ':' + v).join(', '));
+  for (const r of all) stats[r.category] = (stats[r.category] || 0) + 1;
+  console.error('[search] 新文章:', all.length, Object.entries(stats).map(([k,v]) => k + ':' + v).join(' '));
 
-  process.stdout.write(JSON.stringify({ results: allResults }));
+  process.stdout.write(JSON.stringify({ results: all }));
 }
 
 main().catch(e => {
