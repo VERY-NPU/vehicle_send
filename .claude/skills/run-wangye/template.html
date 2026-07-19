@@ -607,6 +607,12 @@ function catMatches(item, filter) {
 }
 
 // ====== RENDER NEWS ITEM ======
+function cleanContent(text) {
+  if (!text) return '';
+  return text.replace(/^[#]{1,3}\s*[^\n]*[\n\r]+/gm, '')
+    .replace(/^【[^】]*】[：:]*\s*/gm, '')
+    .trim();
+}
 function renderItem(item, showFav) {
   const id = makeId(item);
   const isFav = !!favorites[id];
@@ -632,12 +638,12 @@ function renderItem(item, showFav) {
           <span style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
             <span>${esc(item.source || '网络')}</span>
             ${hasAnalysis ? '<button class="expand-toggle" onclick="toggleSection(this,\'.analysis-section\')" data-expanded="0">📋 军迷深度分析</button>' : ''}
-            ${hasAnalysis ? '<button class="expand-toggle china-btn" onclick="toggleSection(this,\'.china-insight\')" data-expanded="0">🇨🇳 对我国的启示</button>' : ''}
+            ${hasAnalysis ? '<button class="expand-toggle china-btn" onclick="toggleSection(this,\'.china-insight\')" data-expanded="0">对我国的启示</button>' : ''}
           </span>
           <a href="${esc(item.url || '#')}" target="_blank" rel="noopener">阅读原文 →</a>
         </div>
-        ${hasAnalysis ? '<div class="analysis-section">' + esc(item.expert_analysis) + '</div>' : ''}
-        ${item.china_insight ? '<div class="analysis-section china-insight">' + esc(item.china_insight) + '</div>' : ''}
+        ${hasAnalysis ? '<div class="analysis-section">' + esc(cleanContent(item.expert_analysis)) + '</div>' : ''}
+        ${item.china_insight ? '<div class="analysis-section china-insight">' + esc(cleanContent(item.china_insight)) + '</div>' : ''}
       </div>
       <button class="fav-btn${isFav ? ' is-fav' : ''}" onclick="toggleFav(this)" title="${isFav ? '已收藏，点击取消' : '点击收藏'}">${isFav ? '★' : '☆'}</button>
     </div>`;
@@ -664,10 +670,10 @@ function openDetail(el) {
   document.getElementById('modal-origin-link').href = url;
   document.getElementById('modal-summary').innerHTML = '<div class="modal-section-title">📝 资讯概要</div>' + esc(summary);
   document.getElementById('modal-analysis').innerHTML = analysis
-    ? '<div class="modal-section-title">🎯 军迷深度分析</div>' + esc(analysis)
+    ? '<div class="modal-section-title">🎯 军迷深度分析</div>' + esc(cleanContent(analysis))
     : '<div class="modal-section-title">🎯 军迷深度分析</div><span style="color:var(--text2)">暂无分析</span>';
   document.getElementById('modal-china').innerHTML = china
-    ? '<div class="modal-section-title">🇨🇳 对我国的启示</div>' + esc(china)
+    ? '<div class="modal-section-title">对我国的启示</div>' + esc(cleanContent(china))
     : '';
   document.getElementById('detail-modal').classList.add('show');
   document.body.style.overflow = 'hidden';
@@ -836,11 +842,11 @@ function toggleSection(btn, selector) {
   if (expanded) {
     section.classList.remove('show');
     btn.dataset.expanded = '0';
-    btn.textContent = btn.classList.contains('china-btn') ? '🇨🇳 对我国的启示' : '📋 军迷深度分析';
+    btn.textContent = btn.classList.contains('china-btn') ? '对我国的启示' : '📋 军迷深度分析';
   } else {
     section.classList.add('show');
     btn.dataset.expanded = '1';
-    btn.textContent = btn.classList.contains('china-btn') ? '🇨🇳 收起' : '📋 收起';
+    btn.textContent = btn.classList.contains('china-btn') ? '收起' : '📋 收起';
   }
 }
 
@@ -912,12 +918,12 @@ function renderFavPanel() {
           <span style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
             <span>${esc(f.source || '')} · ${(f.savedAt || '').slice(0,10)}</span>
             ${f.expert_analysis ? '<button class="expand-toggle" onclick="toggleSection(this,\'.analysis-section\')" data-expanded="0">📋 军迷深度分析</button>' : ''}
-            ${f.expert_analysis ? '<button class="expand-toggle china-btn" onclick="toggleSection(this,\'.china-insight\')" data-expanded="0">🇨🇳 对我国的启示</button>' : ''}
+            ${f.expert_analysis ? '<button class="expand-toggle china-btn" onclick="toggleSection(this,\'.china-insight\')" data-expanded="0">对我国的启示</button>' : ''}
           </span>
           <a href="${esc(f.url) || '#'}" target="_blank" rel="noopener">阅读原文 →</a>
         </div>
-        ${f.expert_analysis ? '<div class="analysis-section">' + esc(f.expert_analysis) + '</div>' : ''}
-        ${f.china_insight ? '<div class="analysis-section china-insight">' + esc(f.china_insight) + '</div>' : ''}
+        ${f.expert_analysis ? '<div class="analysis-section">' + esc(cleanContent(f.expert_analysis)) + '</div>' : ''}
+        ${f.china_insight ? '<div class="analysis-section china-insight">' + esc(cleanContent(f.china_insight)) + '</div>' : ''}
       </div>
       <button class="fav-btn is-fav" onclick="removeFav('${esc(f.id)}')" title="取消收藏">★</button>
     </div>`;
