@@ -99,7 +99,13 @@ jobs:
         run: |
           NEW_COUNT="${{ steps.enrich.outputs.count }}"
           if [ -n "$NEW_COUNT" ] && [ "$NEW_COUNT" != "0" ]; then
-            DESC="今日采集到 ${NEW_COUNT} 篇新装甲车辆资讯，已更新至网站"
+            TITLES=$(node -e "
+              const {readFileSync}=require('fs');
+              const d=JSON.parse(readFileSync('/tmp/enriched.json','utf-8'));
+              d.enriched.slice(0,8).forEach((a,i)=>console.log((i+1)+'. '+a.title.substring(0,50)));
+              if(d.enriched.length>8) console.log('...等共'+d.enriched.length+'篇');
+            ")
+            DESC="今日新增 ${NEW_COUNT} 篇装甲车辆资讯：\n${TITLES}\n\n已更新至网站"
           else
             DESC="今日暂无新增装甲车辆资讯，点击查看历史内容"
           fi
@@ -107,3 +113,15 @@ jobs:
             "每日更新" \
             "https://${{ github.repository_owner }}.github.io/vehicle_send/" \
             "$DESC"
+
+      # ── 步骤8: 失败预警 ──
+      - name: Failure Notification
+        if: failure()
+        env:
+          SERVER_CHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
+          SERVER_CHAN_KEY_2: ${{ secrets.SERVERCHAN_KEY1 }}
+        run: |
+          node .claude/skills/run-wangye/driver.mjs push \
+            "采集失败预警" \
+            "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            "今日装甲车辆资讯自动采集流程失败，请检查 Actions 日志"

@@ -336,6 +336,15 @@
   /* ====== Empty ====== */
   .empty-state { text-align: center; padding: 16px; color: var(--text2); font-size: 0.8em; }
 
+  /* 展开更多按钮 */
+  .expand-more {
+    display: block; width: 100%; padding: 10px;
+    background: rgba(96,165,250,0.06); border: 1px dashed var(--border);
+    border-radius: 8px; color: var(--accent); font-size: 0.82em;
+    cursor: pointer; margin-top: 8px; transition: all 0.2s;
+  }
+  .expand-more:hover { background: rgba(96,165,250,0.15); border-color: var(--accent); }
+
   /* ====== Footer ====== */
   footer { text-align: center; padding: 10px; color: var(--text2); font-size: 0.72em; border-top: 1px solid var(--footer-border); }
 
@@ -493,6 +502,7 @@
       </div>
     </div>
     <div class="news-list" id="artillery-list"></div>
+    <button class="expand-more" id="arty-expand-btn" onclick="toggleExpand('artillery')" style="display:none">展开更多</button>
   </div>
 
   <!-- AI Section -->
@@ -513,7 +523,8 @@
         <span class="category-tab" onclick="switchTab('cn','坦克', this)">🏗️ 坦克</span>
         <span class="category-tab" onclick="switchTab('cn','装甲车辆', this)">🚛 装甲车</span>
       </div>
-      <div class="region-body"><div class="news-list" id="cn-list"></div></div>
+      <div class="region-body"><div class="news-list" id="cn-list"></div>
+      <button class="expand-more" id="cn-expand-btn" onclick="toggleExpand('cn')" style="display:none">展开更多</button></div>
     </div>
     <div class="region" id="int-region">
       <div class="region-header">🌍 国际资讯</div>
@@ -522,7 +533,8 @@
         <span class="category-tab" onclick="switchTab('int','坦克', this)">🏗️ 坦克</span>
         <span class="category-tab" onclick="switchTab('int','装甲车辆', this)">🚛 装甲车</span>
       </div>
-      <div class="region-body"><div class="news-list" id="int-list"></div></div>
+      <div class="region-body"><div class="news-list" id="int-list"></div>
+      <button class="expand-more" id="int-expand-btn" onclick="toggleExpand('int')" style="display:none">展开更多</button></div>
     </div>
   </div>
 
@@ -562,6 +574,8 @@ let intFilter = 'all';
 let artilleryFilter = 'all';
 let aiCollapsed = false;
 const AI_VISIBLE_DEFAULT = 6;
+const SECTION_VISIBLE_DEFAULT = 8;
+const expandState = { artillery: false, cn: false, int: false };
 
 try { favorites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { favorites = {}; }
 
@@ -680,27 +694,50 @@ function renderAll() {
 
   renderArtillerySection();
   renderAiSection();
-  document.getElementById('cn-list').innerHTML = renderList(DATA.cn || [], cnFilter);
-  document.getElementById('int-list').innerHTML = renderList(DATA.int || [], intFilter);
+  document.getElementById('cn-list').innerHTML = renderListWithExpand(DATA.cn || [], cnFilter, 'cn');
+  document.getElementById('int-list').innerHTML = renderListWithExpand(DATA.int || [], intFilter, 'int');
   if (searchTerm) applySearch();
   updateFavCount();
   renderFavPanel();
 }
 
 // ====== ARTILLERY SECTION ======
+function getVisibleItems(items, sectionKey) {
+  const expanded = expandState[sectionKey];
+  if (expanded) return { items, isTruncated: false };
+  return { items: items.slice(0, SECTION_VISIBLE_DEFAULT), isTruncated: items.length > SECTION_VISIBLE_DEFAULT };
+}
 function renderArtillerySection() {
   const items = DATA.artillery || [];
   const filtered = artilleryFilter === 'all' ? items : items.filter(i => catMatches(i, artilleryFilter));
   const el = document.getElementById('artillery-list');
+  const btn = document.getElementById('arty-expand-btn');
   if (filtered.length === 0) {
     el.innerHTML = '<div class="empty-state">📭 暂无此类火炮资讯</div>';
+    btn.style.display = 'none';
     return;
   }
-  el.innerHTML = filtered.map(i => renderItem(i, true)).join('');
+  const { items: visible, isTruncated } = getVisibleItems(filtered, 'artillery');
+  el.innerHTML = visible.map(i => renderItem(i, true)).join('');
+  btn.style.display = isTruncated || expandState.artillery ? '' : 'none';
+  btn.textContent = expandState.artillery ? `收起 (${filtered.length}条)` : `展开更多 (${filtered.length - SECTION_VISIBLE_DEFAULT}条)`;
 }
 
+function toggleExpand(section) {
+  expandState[section] = !expandState[section];
+  if (section === 'artillery') renderArtillerySection();
+  else {
+    document.getElementById(section + '-list').innerHTML = renderListWithExpand(DATA[section] || [], section === 'cn' ? cnFilter : intFilter, section);
+    const btn = document.getElementById(section + '-expand-btn');
+    const all = section === 'cn' ? DATA.cn || [] : DATA.int || [];
+    const filtered = all.filter(i => catMatches(i, section === 'cn' ? cnFilter : intFilter));
+    btn.textContent = expandState[section] ? `收起 (${filtered.length}条)` : `展开更多 (${filtered.length - SECTION_VISIBLE_DEFAULT}条)`;
+  }
+  if (searchTerm) applySearch();
+}
 function switchArtilleryTab(filter, btn) {
   artilleryFilter = filter;
+  expandState.artillery = false;
   document.querySelectorAll('#artillery-tabs .artillery-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   renderArtillerySection();
@@ -726,6 +763,15 @@ function renderList(items, filter) {
   const filtered = items.filter(i => catMatches(i, filter));
   if (filtered.length === 0) return '<div class="empty-state">📭 暂无相关资讯</div>';
   return filtered.map(i => renderItem(i, true)).join('');
+}
+function renderListWithExpand(items, filter, sectionKey) {
+  const filtered = items.filter(i => catMatches(i, filter));
+  if (filtered.length === 0) return '<div class="empty-state">📭 暂无相关资讯</div>';
+  const { items: visible, isTruncated } = getVisibleItems(filtered, sectionKey);
+  const btn = document.getElementById(sectionKey + '-expand-btn');
+  btn.style.display = (isTruncated || expandState[sectionKey]) ? '' : 'none';
+  btn.textContent = expandState[sectionKey] ? `收起 (${filtered.length}条)` : `展开更多 (${filtered.length - SECTION_VISIBLE_DEFAULT}条)`;
+  return visible.map(i => renderItem(i, true)).join('');
 }
 
 // ====== SEARCH ======
@@ -760,12 +806,14 @@ function applySearch() {
 function switchTab(region, filter, el) {
   if (region === 'cn') {
     cnFilter = filter;
-    document.getElementById('cn-list').innerHTML = renderList(DATA.cn || [], filter);
+    expandState.cn = false;
+    document.getElementById('cn-list').innerHTML = renderListWithExpand(DATA.cn || [], filter, 'cn');
     document.querySelectorAll('#cn-tabs .category-tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
   } else {
     intFilter = filter;
-    document.getElementById('int-list').innerHTML = renderList(DATA.int || [], filter);
+    expandState.int = false;
+    document.getElementById('int-list').innerHTML = renderListWithExpand(DATA.int || [], filter, 'int');
     document.querySelectorAll('#int-tabs .category-tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
   }

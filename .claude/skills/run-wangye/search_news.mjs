@@ -83,12 +83,12 @@ function isRecent(ds) {
 }
 
 // ─── NewsAPI 搜索 ─────────────────────────────────
-async function searchNewsAPI(query, category) {
+async function searchNewsAPI(query, category, lang = 'en') {
   if (!NEWSAPI_KEY) {
     console.error('[NewsAPI] 未配置 NEWSAPI_KEY');
     return [];
   }
-  const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&pageSize=10&sortBy=publishedAt&language=en&apiKey=${NEWSAPI_KEY}`;
+  const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&pageSize=10&sortBy=publishedAt&language=${lang}&apiKey=${NEWSAPI_KEY}`;
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'WangYe/1.0' },
@@ -140,16 +140,20 @@ async function main() {
   const all = [];
   const seen = new Set();
 
-  // 第一阶段: NewsAPI 搜索（主力）
+  // 第一阶段: NewsAPI 搜索（主力 — 英文 + 中文双源）
   const newsapiQueries = [
-    { q: '"armored vehicle" OR "main battle tank" OR howitzer OR "self-propelled artillery"', cat: '智能火炮' },
-    { q: '"AI military" OR "autonomous combat vehicle" OR "unmanned ground vehicle" defense', cat: 'AI+军事' },
-    { q: '"tank" OR "armored" OR "artillery" OR "IFV" OR "APC" military', cat: '国际动态' },
+    // 英文源
+    { q: '"armored vehicle" OR "main battle tank" OR howitzer OR "self-propelled artillery"', cat: '智能火炮', lang: 'en' },
+    { q: '"AI military" OR "autonomous combat vehicle" OR "unmanned ground vehicle" defense', cat: 'AI+军事', lang: 'en' },
+    { q: '"tank" OR "armored" OR "artillery" OR "IFV" OR "APC" military', cat: '国际动态', lang: 'en' },
+    // 中文源
+    { q: '坦克 OR 装甲车 OR 自行火炮 OR 榴弹炮 OR 步兵战车', cat: '智能火炮', lang: 'zh' },
+    { q: '人工智能 军事 OR 无人战车 OR AI 武器', cat: 'AI+军事', lang: 'zh' },
   ];
 
-  for (const { q, cat } of newsapiQueries) {
-    console.error('[NewsAPI]', q.substring(0, 50));
-    const articles = await searchNewsAPI(q, cat);
+  for (const { q, cat, lang } of newsapiQueries) {
+    console.error('[NewsAPI', lang.toUpperCase(), ']', q.substring(0, 50));
+    const articles = await searchNewsAPI(q, cat, lang);
     console.error('  原始:', articles.length);
     let matched = 0;
     for (const a of articles) {
