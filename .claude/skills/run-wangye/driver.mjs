@@ -41,6 +41,7 @@ const DOCS = path.join(ROOT, 'docs');
 const ARCHIVE = path.join(DOCS, 'archive');
 const INDEX_HTML = path.join(DOCS, 'index.html');
 const TEMPLATE = path.join(__dirname, 'template.html');
+const DATA_FILE = path.join(ROOT, 'data.json');
 
 // ---------- Helpers ----------
 function ensureDir(dir) {
@@ -165,6 +166,90 @@ function push(titleSuffix, url, description) {
   }
 }
 
+// ---------- Merge new articles into data.json ----------
+const CATEGORY_MAP = {
+  '智能火炮': 'artillery',
+  '国内火炮': 'artillery',
+  'artillery': 'artillery',
+  'AI+军事': 'ai',
+  'ai': 'ai',
+  '国内装甲': 'cn',
+  'cn': 'cn',
+  '国际动态': 'int',
+  'int': 'int',
+};
+
+async function merge() {
+  // Read enriched articles from stdin
+  const chunks = [];
+  process.stdin.setEncoding('utf-8');
+  for await (const chunk of process.stdin) chunks.push(chunk);
+  const raw = chunks.join('');
+
+  let input;
+  try { input = JSON.parse(raw); } catch (e) {
+    console.error('Invalid merge input:', e.message);
+    process.exit(1);
+  }
+
+  const enriched = input.enriched || [];
+  if (enriched.length === 0) {
+    console.log('No new articles to merge.');
+    return;
+  }
+
+  // Read existing data
+  if (!fs.existsSync(DATA_FILE)) {
+    console.error('data.json not found');
+    process.exit(1);
+  }
+  const existing = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+
+  // Collect existing URLs for dedup
+  const existingUrls = new Set();
+  for (const cat of Object.values(existing)) {
+    if (Array.isArray(cat)) {
+      for (const item of cat) {
+        if (item.url) existingUrls.add(item.url);
+      }
+    }
+  }
+
+  // Merge new articles
+  let added = 0;
+  for (const article of enriched) {
+    if (!article.url || existingUrls.has(article.url)) continue;
+    if (!article.summary || article.summary.length < 20) continue;
+
+    const targetCat = CATEGORY_MAP[article.category] || 'int';
+    if (!existing[targetCat]) {
+      console.error(`Unknown category: ${targetCat}, skipping`);
+      continue;
+    }
+
+    // Prepend to array (newest first)
+    existing[targetCat].unshift({
+      title: article.title,
+      url: article.url,
+      summary: article.summary,
+      category: article.category,
+      source: article.source || '网络采集',
+      expert_analysis: article.expert_analysis || '',
+      china_insight: article.china_insight || '',
+    });
+    existingUrls.add(article.url);
+    added++;
+  }
+
+  // Update timestamp
+  existing.generated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
+
+  // Write back
+  fs.writeFileSync(DATA_FILE, JSON.stringify(existing, null, 2), 'utf-8');
+  console.log(`✅ Merged ${added} new articles into data.json`);
+  console.log(`   Total: artillery=${existing.artillery.length}, ai=${existing.ai.length}, cn=${existing.cn.length}, int=${existing.int.length}`);
+}
+
 // ---------- Daily ----------
 async function daily() {
   // Read JSON, generate, archive, deploy, push
@@ -236,6 +321,9 @@ switch (cmd) {
     break;
   case 'push':
     push(arg || '');
+    break;
+  case 'merge':
+    await merge();
     break;
   case 'daily':
     await daily();
