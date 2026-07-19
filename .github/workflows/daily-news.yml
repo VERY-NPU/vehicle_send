@@ -105,7 +105,10 @@ jobs:
               d.enriched.slice(0,8).forEach((a,i)=>console.log((i+1)+'. '+a.title.substring(0,50)));
               if(d.enriched.length>8) console.log('...等共'+d.enriched.length+'篇');
             ")
-            DESC="今日新增 ${NEW_COUNT} 篇装甲车辆资讯：\n${TITLES}\n\n已更新至网站"
+            DESC="今日新增 ${NEW_COUNT} 篇装甲车辆资讯：
+          ${TITLES}
+
+          已更新至网站"
           else
             DESC="今日暂无新增装甲车辆资讯，点击查看历史内容"
           fi

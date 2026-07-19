@@ -248,7 +248,7 @@
   .news-item .info .meta-row a:hover { text-decoration: underline; }
 
   /* ====== Expand / Analysis ====== */
-  .expand-toggle { cursor: pointer; color: var(--accent); border: none; background: none; font-size: 0.7em; padding: 2px 6px; margin-left: 6px; border-radius: 3px; background: rgba(245,158,11,0.08); white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
+  .expand-toggle { cursor: pointer; color: var(--accent); border: none; background: none; font-size: 0.7em; padding: 2px 8px; margin-left: 6px; border-radius: 3px; background: rgba(245,158,11,0.08); white-space: nowrap; transition: all 0.15s; flex-shrink: 0; overflow: visible; }
   .expand-toggle:hover { background: rgba(245,158,11,0.2); }
   .expand-toggle.china-btn { background: rgba(245,158,11,0.06); color: #fbbf24; }
   .expand-toggle.china-btn:hover { background: rgba(245,158,11,0.15); }
@@ -840,7 +840,7 @@ function toggleSection(btn, selector) {
   } else {
     section.classList.add('show');
     btn.dataset.expanded = '1';
-    btn.textContent = btn.classList.contains('china-btn') ? '🇨🇳 收起启示' : '📋 收起分析';
+    btn.textContent = btn.classList.contains('china-btn') ? '🇨🇳 收起' : '📋 收起';
   }
 }
 
