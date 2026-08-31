@@ -1,9 +1,6 @@
 name: Daily Armor News Update
 on:
-  schedule:
-    # 北京时间每天早上 10:00 (UTC+8) = UTC 2:00
-    - cron: '0 2 * * *'
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:  # 仅允许手动触发（已关闭每日定时）
 
 jobs:
   generate-and-deploy:
